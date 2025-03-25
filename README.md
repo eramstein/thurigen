@@ -1,6 +1,21 @@
-# GoMagic
+# Thuringen Simulation
 
-A turn-based collectible card game where players compete to control a grid using buildings and units.
+A colony building simulation/game set in the late middle ages (around 1400), where a group of people is gifted a domain with a small castle and its surroundings.
+
+## Project Structure
+
+```
+gomagic/
+├── cmd/
+│   └── game/           # Main entry point
+│       └── main.go     # Application entry point
+├── pkg/
+│   ├── engine/         # Game logic and state management
+│   │   └── models/     # Game state models
+│   └── ui/            # User interface and rendering
+├── go.mod              # Go module definition
+└── raylib.dll          # Raylib dynamic library
+```
 
 ## Prerequisites
 
@@ -27,37 +42,20 @@ To run the project, execute:
 go run cmd/game/main.go
 ```
 
-## Project Structure
+## Controls
 
-```
-gomagic/
-├── cmd/
-│   └── game/           # Main entry point
-│       └── main.go     # Application entry point
-├── pkg/
-│   └── game/          # Game logic packages
-│       ├── board/     # Grid and tile management
-│       ├── card/      # Card definitions and mechanics
-│       ├── player/    # Player state and actions
-│       ├── engine/    # Game rules and turn management
-│       └── ui/        # User interface and rendering
-├── go.mod             # Go module definition
-└── raylib.dll         # Raylib dynamic library
-```
-
-## Components
-
-- **board**: Manages the game grid, tile control, and placement rules
-- **card**: Defines card types (buildings/units), abilities, and effects
-- **player**: Handles player state, mana, and card collections
-- **engine**: Controls game flow, turn management, and rule enforcement
-- **ui**: Manages the game interface, input handling, and rendering
+- Press **SPACE** to pause and resume the simulation.
+- Press **ENTER** to restart the ticker.
 
 ## Features
 
-- Turn-based gameplay
-- Grid-based card placement
-- Mana system for card costs
-- Building and unit cards with special abilities
-- Tile control mechanics
-- Win condition tracking 
+- Time-based simulation (in minutes)
+- Colony building mechanics
+- Character simulation with AI agents
+- Simple graphics with no animations
+- Regional/zonal spatial management
+- Late middle ages setting (around 1400)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
