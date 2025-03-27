@@ -2,6 +2,7 @@ package main
 
 import (
 	"eramstein/thurigen/pkg/engine"
+	"eramstein/thurigen/pkg/input"
 	"eramstein/thurigen/pkg/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -20,7 +21,6 @@ func main() {
 	defer rl.CloseWindow()
 
 	ticker := 0
-	isPaused := false
 
 	// Initialize sim engine
 	sim := engine.NewSimulation()
@@ -28,16 +28,14 @@ func main() {
 	// Initialize UI
 	renderer := ui.NewRenderer(screenWidth, screenHeight, sim)
 
+	// Initialize input manager
+	inputManager := input.NewManager()
+
 	// Main sim loop
 	for !rl.WindowShouldClose() {
-		if rl.IsKeyPressed(rl.KeySpace) { // Press Space to toggle pause
-			isPaused = !isPaused
-		}
-		if isPaused {
-			rl.DrawText("Paused", screenWidth/2-50, screenHeight/2-10, 20, rl.Red)
-		}
+		inputManager.Update(sim)
 
-		if !isPaused {
+		if !sim.Paused {
 			if ticker == sim.Speed {
 				go func() {
 					sim.Update()

@@ -25,6 +25,10 @@ func NewRenderer(width, height int, sim *engine.Simulation) *Renderer {
 // Render renders the current game state
 func (r *Renderer) Render(sim *engine.Simulation) {
 	r.DisplayTime(sim)
+
+	if sim.Paused {
+		rl.DrawText("Paused", int32(r.screenWidth/2-50), int32(r.screenHeight/2-10), 20, rl.Red)
+	}
 }
 
 // DisplayTime shows the current time
