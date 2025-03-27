@@ -10,7 +10,7 @@ import (
 
 const (
 	screenWidth  = 1024
-	screenHeight = 768
+	screenHeight = 1024
 	fps          = 60
 )
 

@@ -9,8 +9,9 @@ import (
 
 // Renderer handles all UI rendering
 type Renderer struct {
-	screenWidth  int
-	screenHeight int
+	screenWidth       int
+	screenHeight      int
+	backgroundTexture rl.Texture2D
 }
 
 // NewRenderer creates a new renderer instance
@@ -19,11 +20,17 @@ func NewRenderer(width, height int, sim *engine.Simulation) *Renderer {
 		screenWidth:  width,
 		screenHeight: height,
 	}
+	// Load the background texture
+	r.backgroundTexture = rl.LoadTexture("assets/images/world/domain_castle.png")
 	return r
 }
 
 // Render renders the current game state
 func (r *Renderer) Render(sim *engine.Simulation) {
+	// Draw background
+	rl.DrawTexture(r.backgroundTexture, 0, 0, rl.White)
+
+	// Draw time on top
 	r.DisplayTime(sim)
 
 	if sim.Paused {
