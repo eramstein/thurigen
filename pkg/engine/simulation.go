@@ -4,6 +4,7 @@ package engine
 func NewSimulation() *Simulation {
 	return &Simulation{
 		Speed: 60,
+		World: GetInitialWorld(),
 	}
 }
 

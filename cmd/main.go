@@ -1,6 +1,7 @@
 package main
 
 import (
+	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/engine"
 	"eramstein/thurigen/pkg/input"
 	"eramstein/thurigen/pkg/ui"
@@ -9,9 +10,9 @@ import (
 )
 
 const (
-	screenWidth  = 1024
-	screenHeight = 1024
-	fps          = 60
+	screenWidth  = config.WindowWidth
+	screenHeight = config.WindowHeight
+	fps          = config.FPS
 )
 
 func main() {
