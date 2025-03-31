@@ -1,4 +1,4 @@
-package engine
+package ng
 
 // NewSimulation creates a new Simulation instance
 func NewSimulation() *Simulation {

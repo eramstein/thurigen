@@ -1,7 +1,7 @@
 package input
 
 import (
-	"eramstein/thurigen/pkg/engine"
+	"eramstein/thurigen/pkg/ng"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -19,7 +19,7 @@ func NewManager() *Manager {
 }
 
 // Update updates the input state
-func (m *Manager) Update(sim *engine.Simulation) {
+func (m *Manager) Update(sim *ng.Simulation) {
 	if rl.IsKeyPressed(rl.KeySpace) { // Press Space to toggle pause
 		sim.Paused = !sim.Paused
 	}

@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"eramstein/thurigen/pkg/engine"
+	"eramstein/thurigen/pkg/ng"
 	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -15,7 +15,7 @@ type Renderer struct {
 }
 
 // NewRenderer creates a new renderer instance
-func NewRenderer(width, height int, sim *engine.Simulation) *Renderer {
+func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 	r := &Renderer{
 		screenWidth:  width,
 		screenHeight: height,
@@ -25,7 +25,7 @@ func NewRenderer(width, height int, sim *engine.Simulation) *Renderer {
 }
 
 // Render renders the current game state
-func (r *Renderer) Render(sim *engine.Simulation) {
+func (r *Renderer) Render(sim *ng.Simulation) {
 	// Update camera
 	r.camera.Update()
 
@@ -46,7 +46,7 @@ func (r *Renderer) Render(sim *engine.Simulation) {
 }
 
 // DisplayTime shows the current time
-func (r *Renderer) DisplayTime(sim *engine.Simulation) {
+func (r *Renderer) DisplayTime(sim *ng.Simulation) {
 	turnText := fmt.Sprintf("Minutes: %d", sim.Time)
 	rl.DrawText(turnText, 10, 10, 20, rl.Black)
 }

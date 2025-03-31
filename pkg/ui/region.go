@@ -2,29 +2,29 @@ package ui
 
 import (
 	"eramstein/thurigen/pkg/config"
-	"eramstein/thurigen/pkg/engine"
+	"eramstein/thurigen/pkg/ng"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-var terrainColors = map[engine.TerrainType]rl.Color{
-	engine.Dirt:  rl.Brown,
-	engine.Rock:  rl.Gray,
-	engine.Sand:  rl.Yellow,
-	engine.Water: rl.Blue,
+var terrainColors = map[ng.TerrainType]rl.Color{
+	ng.Dirt:  rl.Brown,
+	ng.Rock:  rl.Gray,
+	ng.Sand:  rl.Yellow,
+	ng.Water: rl.Blue,
 }
 
-var surfaceColors = map[engine.SurfaceType]rl.Color{
-	engine.Grass:       rl.Green,
-	engine.WoodSurface: rl.DarkBrown,
+var surfaceColors = map[ng.SurfaceType]rl.Color{
+	ng.Grass:       rl.DarkGreen,
+	ng.WoodSurface: rl.DarkBrown,
 }
 
-var volumeColors = map[engine.VolumeType]rl.Color{
-	engine.RockVolume: rl.DarkGray,
-	engine.WoodVolume: rl.Maroon,
+var volumeColors = map[ng.VolumeType]rl.Color{
+	ng.RockVolume: rl.DarkGray,
+	ng.WoodVolume: rl.Maroon,
 }
 
-func (r *Renderer) DisplayRegion(region engine.Region) {
+func (r *Renderer) DisplayRegion(region *ng.Region) {
 	for y := 0; y < config.RegionSize; y++ {
 		for x := 0; x < config.RegionSize; x++ {
 			// Get the tile at current position
@@ -43,6 +43,7 @@ func (r *Renderer) DisplayRegion(region engine.Region) {
 				color = volumeColors[tile.Volume]
 			}
 
+			// Draw the main tile
 			rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
 		}
 	}

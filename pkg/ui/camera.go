@@ -21,9 +21,10 @@ func NewCamera(width, height int) *Camera {
 	}
 
 	// Initialize camera
+	regionSize := float32(config.RegionSize * config.TilePixelSize)
 	c.camera = rl.Camera2D{
 		Offset:   rl.Vector2{X: float32(width) / 2, Y: float32(height) / 2},
-		Target:   rl.Vector2{X: 0, Y: 0},
+		Target:   rl.Vector2{X: regionSize / 2, Y: regionSize / 2},
 		Rotation: 0,
 		Zoom:     1.0,
 	}

@@ -2,8 +2,8 @@ package main
 
 import (
 	"eramstein/thurigen/pkg/config"
-	"eramstein/thurigen/pkg/engine"
 	"eramstein/thurigen/pkg/input"
+	"eramstein/thurigen/pkg/ng"
 	"eramstein/thurigen/pkg/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -24,7 +24,7 @@ func main() {
 	ticker := 0
 
 	// Initialize sim engine
-	sim := engine.NewSimulation()
+	sim := ng.NewSimulation()
 
 	// Initialize UI
 	renderer := ui.NewRenderer(screenWidth, screenHeight, sim)
@@ -46,9 +46,13 @@ func main() {
 			ticker++
 		}
 
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.RayWhite)
-		renderer.Render(sim)
-		rl.EndDrawing()
+		render(renderer, sim)
 	}
+}
+
+func render(renderer *ui.Renderer, sim *ng.Simulation) {
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.RayWhite)
+	renderer.Render(sim)
+	rl.EndDrawing()
 }

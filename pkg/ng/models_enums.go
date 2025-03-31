@@ -1,4 +1,4 @@
-package engine
+package ng
 
 type TerrainType int
 
@@ -12,13 +12,15 @@ const (
 type SurfaceType int
 
 const (
-	Grass SurfaceType = iota
+	NoSurface SurfaceType = iota
+	Grass
 	WoodSurface
 )
 
 type VolumeType int
 
 const (
-	RockVolume VolumeType = iota
+	NoVolume VolumeType = iota
+	RockVolume
 	WoodVolume
 )
