@@ -1,2 +1,1 @@
-load images only when needed
-click on links to go to other places
+add sprites for tress (oaks and apple trees) and rocks

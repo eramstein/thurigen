@@ -2,10 +2,11 @@ package ng
 
 // NewSimulation creates a new Simulation instance
 func NewSimulation() *Simulation {
-	return &Simulation{
+	sim := &Simulation{
 		Speed: 60,
-		World: GetInitialWorld(),
 	}
+	sim.InitWorld()
+	return sim
 }
 
 func (sim *Simulation) Update() {

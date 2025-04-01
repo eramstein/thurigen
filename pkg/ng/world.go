@@ -5,14 +5,17 @@ import (
 	"math/rand"
 )
 
-func GetInitialWorld() []*Region {
-	return []*Region{makeMainRegion()}
+func (sim *Simulation) InitWorld() {
+	mainRegion := makeMainRegion()
+	sim.World = []*Region{mainRegion}
+	sim.addRandomTrees()
 }
 
 func makeMainRegion() *Region {
 	regionTiles := fillBlankRegion()
 	addLake(regionTiles)
-	fillSurroundedWaterTiles(regionTiles)
+	addMountain(regionTiles)
+	fillSurroundedTiles(regionTiles)
 	return &Region{
 		Tiles: *regionTiles,
 	}
@@ -40,21 +43,35 @@ func addLake(tiles *[config.RegionSize][config.RegionSize]Tile) {
 	directions := [4]float64{0.2, 0.2, 0.2, 0.2}
 
 	// Create lake using flood fill with random variations
-	floodFill(tiles, centerX, centerY, limitSize, 2, 0, directions)
+	floodFillWater(tiles, centerX, centerY, limitSize, 2, 0, directions)
 }
 
-func fillSurroundedWaterTiles(tiles *[config.RegionSize][config.RegionSize]Tile) {
+func addMountain(tiles *[config.RegionSize][config.RegionSize]Tile) {
+	// Random lake parameters
+	centerX := rand.Intn(config.RegionSize-20) + 10 // Avoid edges
+	centerY := rand.Intn(config.RegionSize-20) + 10
+	limitSize := rand.Intn(8) + 20
+	directions := [4]float64{0.2, 0.4, 0.2, 0.4}
+
+	// Create mountain using flood fill with random variations
+	floodFillMountain(tiles, centerX, centerY, limitSize, 2, 0, directions)
+}
+
+func fillSurroundedTiles(tiles *[config.RegionSize][config.RegionSize]Tile) {
 	for x := 1; x < config.RegionSize-1; x++ {
 		for y := 1; y < config.RegionSize-1; y++ {
 			if tiles[x][y-1].Terrain == Water && tiles[x+1][y].Terrain == Water && tiles[x][y+1].Terrain == Water && tiles[x-1][y].Terrain == Water {
 				tiles[x][y].Terrain = Water
 				tiles[x][y].Surface = NoSurface
 			}
+			if tiles[x][y-1].Volume == RockVolume && tiles[x+1][y].Volume == RockVolume && tiles[x][y+1].Volume == RockVolume && tiles[x-1][y].Volume == RockVolume {
+				tiles[x][y].Volume = RockVolume
+			}
 		}
 	}
 }
 
-func floodFill(tiles *[config.RegionSize][config.RegionSize]Tile, x, y, limitSize, minSize, currentSize int, directions [4]float64) {
+func floodFillWater(tiles *[config.RegionSize][config.RegionSize]Tile, x, y, limitSize, minSize, currentSize int, directions [4]float64) {
 	if x < 0 || x >= config.RegionSize || y < 0 || y >= config.RegionSize || tiles[x][y].Terrain == Water {
 		return
 	}
@@ -64,16 +81,92 @@ func floodFill(tiles *[config.RegionSize][config.RegionSize]Tile, x, y, limitSiz
 		tiles[x][y].Surface = NoSurface
 		currentSize++
 		if currentSize < minSize || rand.Float64() > directions[0] {
-			floodFill(tiles, x+1, y, limitSize, minSize, currentSize, directions)
+			floodFillWater(tiles, x+1, y, limitSize, minSize, currentSize, directions)
 		}
 		if currentSize < minSize || rand.Float64() > directions[1] {
-			floodFill(tiles, x-1, y, limitSize, minSize, currentSize, directions)
+			floodFillWater(tiles, x-1, y, limitSize, minSize, currentSize, directions)
 		}
 		if currentSize < minSize || rand.Float64() > directions[2] {
-			floodFill(tiles, x, y+1, limitSize, minSize, currentSize, directions)
+			floodFillWater(tiles, x, y+1, limitSize, minSize, currentSize, directions)
 		}
 		if currentSize < minSize || rand.Float64() > directions[3] {
-			floodFill(tiles, x, y-1, limitSize, minSize, currentSize, directions)
+			floodFillWater(tiles, x, y-1, limitSize, minSize, currentSize, directions)
 		}
 	}
+}
+
+func floodFillMountain(tiles *[config.RegionSize][config.RegionSize]Tile, x, y, limitSize, minSize, currentSize int, directions [4]float64) {
+	if x < 0 || x >= config.RegionSize || y < 0 || y >= config.RegionSize || tiles[x][y].Volume == RockVolume {
+		return
+	}
+
+	if currentSize < limitSize {
+		tiles[x][y].Terrain = Dirt
+		tiles[x][y].Surface = NoSurface
+		tiles[x][y].Volume = RockVolume
+		currentSize++
+		if rand.Float64() > directions[0] {
+			floodFillMountain(tiles, x+1, y, limitSize, minSize, currentSize, directions)
+		}
+		if rand.Float64() > directions[1] {
+			floodFillMountain(tiles, x-1, y, limitSize, minSize, currentSize, directions)
+		}
+		if rand.Float64() > directions[2] {
+			floodFillMountain(tiles, x, y+1, limitSize, minSize, currentSize, directions)
+		}
+		if rand.Float64() > directions[3] {
+			floodFillMountain(tiles, x, y-1, limitSize, minSize, currentSize, directions)
+		}
+	}
+}
+
+// addRandomTrees adds a random number of trees to the world
+func (sim *Simulation) addRandomTrees() {
+	// Number of trees to add (adjust these values as needed)
+	minTrees := 20
+	maxTrees := 40
+	numTrees := rand.Intn(maxTrees-minTrees+1) + minTrees
+
+	for i := 0; i < numTrees; i++ {
+		x := rand.Intn(config.RegionSize)
+		y := rand.Intn(config.RegionSize)
+		tile := &sim.World[0].Tiles[y][x]
+
+		if !isValidTreeTile(tile) {
+			continue
+		}
+
+		// Create a new tree
+		tree := TreeStructure{
+			BaseStructure: BaseStructure{
+				Type:     Tree,
+				Variant:  rand.Intn(2), // 0 for Oak, 1 for Apple Tree
+				Size:     [2]int{1, 1}, // Trees occupy 1x1 tiles
+				Position: [2]int{x, y},
+				Region:   0,
+				Rotation: rand.Intn(4) * 90, // Random rotation (0, 90, 180, 270)
+				MoveCost: DifficultMoveCost, // Trees are difficult to move through
+			},
+			IsFruitBearing: rand.Float64() < 0.3, // 30% chance of being fruit-bearing
+			FruitType:      "apple",              // For now, just apple trees
+		}
+
+		// Add the tree to the simulation
+		sim.AddStructure(tree.BaseStructure)
+	}
+}
+
+// isValidTreeTile checks if a tile is suitable for a tree
+func isValidTreeTile(tile *Tile) bool {
+	// Trees can't be placed on water or rock
+	if tile.Terrain == Water || tile.Volume == RockVolume {
+		return false
+	}
+
+	// Trees can't be placed on existing structures
+	if tile.Occupation != nil {
+		return false
+	}
+
+	return tile.Surface == Grass || tile.Surface == NoSurface
 }

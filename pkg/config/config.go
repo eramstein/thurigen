@@ -5,5 +5,5 @@ const (
 	WindowHeight  = 1024
 	FPS           = 60
 	RegionSize    = 64
-	TilePixelSize = 16
+	TilePixelSize = 32
 )

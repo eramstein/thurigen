@@ -24,3 +24,22 @@ const (
 	RockVolume
 	WoodVolume
 )
+
+// MoveCost represents the cost of moving through a tile
+type MoveCost float64
+
+const (
+	DefaultMoveCost   MoveCost = 1.0  // Normal movement cost
+	DifficultMoveCost MoveCost = 2.0  // Increased cost for difficult terrain
+	ImpassableCost    MoveCost = -1.0 // Represents an impassable tile
+)
+
+// Objects that occupy one or more tiles (trees, walls, furniture...)
+type StructureType int
+
+const (
+	NoStructure StructureType = iota
+	Tree
+	Wall
+	Furniture
+)

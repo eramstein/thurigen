@@ -3,6 +3,7 @@ package ui
 import (
 	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
+	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -45,6 +46,24 @@ func (r *Renderer) DisplayRegion(region *ng.Region) {
 
 			// Draw the main tile
 			rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
+
+			// Draw structure information if the tile is occupied
+			if tile.Occupation != nil && tile.Occupation.Structure != nil {
+				structure := tile.Occupation.Structure
+				typeName := structure.Type
+				variantName := structure.Variant
+
+				// Create the text to display
+				text := fmt.Sprintf("%d\n%d", typeName, variantName)
+
+				// Calculate text position (centered in the tile)
+				textWidth := rl.MeasureText(text, 10)
+				textX := screenX + float32(config.TilePixelSize-textWidth)/2
+				textY := screenY + float32(config.TilePixelSize-20)/2
+
+				// Draw the text
+				rl.DrawText(text, int32(textX), int32(textY), 10, rl.Black)
+			}
 		}
 	}
 }
