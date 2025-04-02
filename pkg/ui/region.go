@@ -29,44 +29,42 @@ var (
 func (r *Renderer) DisplayRegion(region *ng.Region) {
 	for y := 0; y < config.RegionSize; y++ {
 		for x := 0; x < config.RegionSize; x++ {
-			// Get the tile at current position
-			tile := region.Tiles[y][x]
+			r.RenderTile(region.Tiles[y][x], x, y)
+		}
+	}
+}
 
-			// Calculate screen position
-			screenX := float32(x * config.TilePixelSize)
-			screenY := float32(y * config.TilePixelSize)
+func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
+	// Calculate screen position
+	screenX := float32(x * config.TilePixelSize)
+	screenY := float32(y * config.TilePixelSize)
 
-			// Draw the tile rectangle with the appropriate color
-			color := terrainColors[tile.Terrain]
-			if tile.Surface != 0 {
-				color = surfaceColors[tile.Surface]
-			}
-			if tile.Volume != 0 {
-				color = volumeColors[tile.Volume]
-			}
+	// Draw the tile rectangle with the appropriate color
+	color := terrainColors[tile.Terrain]
+	if tile.Surface != 0 {
+		color = surfaceColors[tile.Surface]
+	}
+	if tile.Volume != 0 {
+		color = volumeColors[tile.Volume]
+	}
 
-			// Draw the main tile
-			rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
+	// Draw the main tile
+	rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
 
-			// Draw structure information if the tile is occupied
-			if tile.Occupation != nil && tile.Occupation.Structure != nil {
-				structure := tile.Occupation.Structure
-				variantIndex := structure.Variant
-				// Get the appropriate sprite sheet based on structure type
-				if structure.Type == ng.Tree {
-					if sheet, exists := r.spriteManager.GetSpriteSheet("trees"); exists {
-						if spriteRect, exists := sheet.Sprites[variantIndex]; exists {
-							// Draw the sprite centered in the tile
-							rl.DrawTextureRec(
-								sheet.Texture,
-								spriteRect,
-								rl.NewVector2(screenX, screenY),
-								rl.White,
-							)
-						}
-					}
-				}
-			}
+	// Draw structure information if the tile is occupied
+	if tile.Occupation != nil && tile.Occupation.Structure != nil {
+		structure := tile.Occupation.Structure
+		// Get the sprite sheet name for this structure type
+		sheetConfig := structureToSpriteSheet[structure.Type]
+		sheet := r.spriteManager.sheets[sheetConfig.Name]
+		if spriteRect, exists := sheet.Sprites[structure.Variant]; exists {
+			// Draw the sprite centered in the tile
+			rl.DrawTextureRec(
+				sheet.Texture,
+				spriteRect,
+				rl.NewVector2(screenX, screenY),
+				rl.White,
+			)
 		}
 	}
 }

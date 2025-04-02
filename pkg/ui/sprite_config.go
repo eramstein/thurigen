@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"eramstein/thurigen/pkg/ng"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -12,18 +14,15 @@ type SpriteSheetConfig struct {
 	Sprites  map[int]rl.Rectangle
 }
 
-// GetSpriteSheetConfigs returns all sprite sheet configurations
-func GetSpriteSheetConfigs() []SpriteSheetConfig {
-	return []SpriteSheetConfig{
-		{
-			Name:     "trees",
-			Path:     "assets/images/world/trees.png",
-			TileSize: 32,
-			Sprites: map[int]rl.Rectangle{
-				0: rl.NewRectangle(0, 0, 32, 32),
-				1: rl.NewRectangle(32, 0, 32, 32),
-				2: rl.NewRectangle(64, 0, 32, 32),
-			},
+var structureToSpriteSheet = map[ng.StructureType]SpriteSheetConfig{
+	ng.Tree: {
+		Name:     "trees",
+		Path:     "assets/images/world/trees.png",
+		TileSize: 32,
+		Sprites: map[int]rl.Rectangle{
+			0: rl.NewRectangle(0, 0, 32, 32),
+			1: rl.NewRectangle(32, 0, 32, 32),
+			2: rl.NewRectangle(64, 0, 32, 32),
 		},
-	}
+	},
 }

@@ -28,11 +28,8 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 
 // LoadTextures loads all required textures for the renderer
 func (r *Renderer) LoadTextures() error {
-	// Get all sprite sheet configurations
-	configs := GetSpriteSheetConfigs()
-
 	// Load each sprite sheet
-	for _, config := range configs {
+	for _, config := range structureToSpriteSheet {
 		if err := r.spriteManager.LoadSpriteSheet(config.Name, config.Path, config.TileSize, config.Sprites); err != nil {
 			return fmt.Errorf("failed to load sprite sheet %s: %v", config.Name, err)
 		}

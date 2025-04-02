@@ -41,12 +41,6 @@ func (sm *SpriteManager) LoadSpriteSheet(name, path string, tileSize int32, spri
 	return nil
 }
 
-// GetSpriteSheet returns a loaded sprite sheet by name
-func (sm *SpriteManager) GetSpriteSheet(name string) (*SpriteSheet, bool) {
-	sheet, exists := sm.sheets[name]
-	return sheet, exists
-}
-
 // UnloadAll unloads all loaded sprite sheets
 func (sm *SpriteManager) UnloadAll() {
 	for _, sheet := range sm.sheets {
