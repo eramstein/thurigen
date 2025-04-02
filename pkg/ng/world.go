@@ -26,9 +26,17 @@ func fillBlankRegion() *[config.RegionSize][config.RegionSize]Tile {
 	for x := 0; x < config.RegionSize; x++ {
 		tiles[x] = [config.RegionSize]Tile{}
 		for y := 0; y < config.RegionSize; y++ {
-			tiles[x][y] = Tile{
-				Terrain: Dirt,
-				Surface: Grass,
+			if (x == 0 || x == config.RegionSize-1) || (y == 0 || y == config.RegionSize-1) {
+				tiles[x][y] = Tile{
+					Terrain: Dirt,
+					Surface: Grass,
+					Volume:  RockVolume,
+				}
+			} else {
+				tiles[x][y] = Tile{
+					Terrain: Dirt,
+					Surface: Grass,
+				}
 			}
 		}
 	}

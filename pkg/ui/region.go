@@ -27,8 +27,31 @@ var (
 )
 
 func (r *Renderer) DisplayRegion(region *ng.Region) {
-	for y := 0; y < config.RegionSize; y++ {
-		for x := 0; x < config.RegionSize; x++ {
+	// Get the camera's view bounds
+	camera := r.camera.GetCamera()
+
+	// Calculate visible area in world coordinates
+	screenLeftTop := rl.GetScreenToWorld2D(rl.Vector2{X: 0, Y: 0}, camera)
+	screenRightBottom := rl.GetScreenToWorld2D(rl.Vector2{
+		X: float32(r.screenWidth),
+		Y: float32(r.screenHeight),
+	}, camera)
+
+	// Convert world coordinates to tile indices
+	startTileX := int(screenLeftTop.X) / config.TilePixelSize
+	startTileY := int(screenLeftTop.Y) / config.TilePixelSize
+	endTileX := int(screenRightBottom.X)/config.TilePixelSize + 1 // +1 to handle partial tiles
+	endTileY := int(screenRightBottom.Y)/config.TilePixelSize + 1
+
+	// Clamp values to region bounds
+	startTileX = clamp(startTileX, 0, config.RegionSize-1)
+	startTileY = clamp(startTileY, 0, config.RegionSize-1)
+	endTileX = clamp(endTileX, 0, config.RegionSize)
+	endTileY = clamp(endTileY, 0, config.RegionSize)
+
+	// Only render tiles within the visible area
+	for y := startTileY; y < endTileY; y++ {
+		for x := startTileX; x < endTileX; x++ {
 			r.RenderTile(region.Tiles[y][x], x, y)
 		}
 	}
@@ -67,4 +90,15 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 			)
 		}
 	}
+}
+
+// Add this helper function at the package level
+func clamp(value, min, max int) int {
+	if value < min {
+		return min
+	}
+	if value > max {
+		return max
+	}
+	return value
 }

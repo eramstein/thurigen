@@ -34,13 +34,13 @@ func NewCamera(width, height int) *Camera {
 
 // Update updates the camera position based on input
 func (c *Camera) Update() {
-	// Calculate camera bounds based on region size and zoom
-	regionSize := float32(config.RegionSize * config.TilePixelSize * c.camera.Zoom)
+	// Calculate camera bounds based on region size
+	regionSize := float32(config.RegionSize * config.TilePixelSize)
 
-	maxX := regionSize
-	maxY := regionSize
-	minX := float32(0.0)
-	minY := float32(0.0)
+	maxX := regionSize - c.camera.Offset.X/c.camera.Zoom
+	maxY := regionSize - c.camera.Offset.Y/c.camera.Zoom
+	minX := c.camera.Offset.X / c.camera.Zoom
+	minY := c.camera.Offset.Y / c.camera.Zoom
 
 	// Camera movement with WASD
 	if rl.IsKeyDown(rl.KeyW) {
@@ -67,8 +67,8 @@ func (c *Camera) Update() {
 	wheel := rl.GetMouseWheelMove()
 	if wheel != 0 {
 		c.zoom += wheel * 0.1
-		if c.zoom < 0.1 {
-			c.zoom = 0.1
+		if c.zoom < 0.5 {
+			c.zoom = 0.5
 		}
 		if c.zoom > 3.0 {
 			c.zoom = 3.0
