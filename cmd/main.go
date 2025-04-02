@@ -29,6 +29,12 @@ func main() {
 	// Initialize UI
 	renderer := ui.NewRenderer(screenWidth, screenHeight, sim)
 
+	// Load textures
+	if err := renderer.LoadTextures(); err != nil {
+		rl.CloseWindow()
+		panic(err)
+	}
+
 	// Initialize input manager
 	inputManager := input.NewManager()
 

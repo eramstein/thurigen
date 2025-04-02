@@ -3,27 +3,28 @@ package ui
 import (
 	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
-	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-var terrainColors = map[ng.TerrainType]rl.Color{
-	ng.Dirt:  rl.Brown,
-	ng.Rock:  rl.Gray,
-	ng.Sand:  rl.Yellow,
-	ng.Water: rl.Blue,
-}
+var (
+	terrainColors = map[ng.TerrainType]rl.Color{
+		ng.Dirt:  rl.Brown,
+		ng.Rock:  rl.Gray,
+		ng.Sand:  rl.Yellow,
+		ng.Water: rl.Blue,
+	}
 
-var surfaceColors = map[ng.SurfaceType]rl.Color{
-	ng.Grass:       rl.DarkGreen,
-	ng.WoodSurface: rl.DarkBrown,
-}
+	surfaceColors = map[ng.SurfaceType]rl.Color{
+		ng.Grass:       rl.DarkGreen,
+		ng.WoodSurface: rl.DarkBrown,
+	}
 
-var volumeColors = map[ng.VolumeType]rl.Color{
-	ng.RockVolume: rl.DarkGray,
-	ng.WoodVolume: rl.Maroon,
-}
+	volumeColors = map[ng.VolumeType]rl.Color{
+		ng.RockVolume: rl.DarkGray,
+		ng.WoodVolume: rl.Maroon,
+	}
+)
 
 func (r *Renderer) DisplayRegion(region *ng.Region) {
 	for y := 0; y < config.RegionSize; y++ {
@@ -50,19 +51,21 @@ func (r *Renderer) DisplayRegion(region *ng.Region) {
 			// Draw structure information if the tile is occupied
 			if tile.Occupation != nil && tile.Occupation.Structure != nil {
 				structure := tile.Occupation.Structure
-				typeName := structure.Type
-				variantName := structure.Variant
-
-				// Create the text to display
-				text := fmt.Sprintf("%d\n%d", typeName, variantName)
-
-				// Calculate text position (centered in the tile)
-				textWidth := rl.MeasureText(text, 10)
-				textX := screenX + float32(config.TilePixelSize-textWidth)/2
-				textY := screenY + float32(config.TilePixelSize-20)/2
-
-				// Draw the text
-				rl.DrawText(text, int32(textX), int32(textY), 10, rl.Black)
+				variantIndex := structure.Variant
+				// Get the appropriate sprite sheet based on structure type
+				if structure.Type == ng.Tree {
+					if sheet, exists := r.spriteManager.GetSpriteSheet("trees"); exists {
+						if spriteRect, exists := sheet.Sprites[variantIndex]; exists {
+							// Draw the sprite centered in the tile
+							rl.DrawTextureRec(
+								sheet.Texture,
+								spriteRect,
+								rl.NewVector2(screenX, screenY),
+								rl.White,
+							)
+						}
+					}
+				}
 			}
 		}
 	}

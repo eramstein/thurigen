@@ -140,12 +140,12 @@ func (sim *Simulation) addRandomTrees() {
 		tree := TreeStructure{
 			BaseStructure: BaseStructure{
 				Type:     Tree,
-				Variant:  rand.Intn(2), // 0 for Oak, 1 for Apple Tree
-				Size:     [2]int{1, 1}, // Trees occupy 1x1 tiles
+				Variant:  rand.Intn(2), // e.g. 0 for Oak, 1 for Apple Tree
+				Size:     [2]int{1, 1},
 				Position: [2]int{x, y},
 				Region:   0,
-				Rotation: rand.Intn(4) * 90, // Random rotation (0, 90, 180, 270)
-				MoveCost: DifficultMoveCost, // Trees are difficult to move through
+				Rotation: 0,
+				MoveCost: DifficultMoveCost,
 			},
 			IsFruitBearing: rand.Float64() < 0.3, // 30% chance of being fruit-bearing
 			FruitType:      "apple",              // For now, just apple trees

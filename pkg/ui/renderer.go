@@ -9,19 +9,36 @@ import (
 
 // Renderer handles all UI rendering
 type Renderer struct {
-	screenWidth  int
-	screenHeight int
-	camera       *Camera
+	screenWidth   int
+	screenHeight  int
+	camera        *Camera
+	spriteManager *SpriteManager
 }
 
 // NewRenderer creates a new renderer instance
 func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 	r := &Renderer{
-		screenWidth:  width,
-		screenHeight: height,
+		screenWidth:   width,
+		screenHeight:  height,
+		spriteManager: NewSpriteManager(),
 	}
 	r.camera = NewCamera(width, height)
 	return r
+}
+
+// LoadTextures loads all required textures for the renderer
+func (r *Renderer) LoadTextures() error {
+	// Get all sprite sheet configurations
+	configs := GetSpriteSheetConfigs()
+
+	// Load each sprite sheet
+	for _, config := range configs {
+		if err := r.spriteManager.LoadSpriteSheet(config.Name, config.Path, config.TileSize, config.Sprites); err != nil {
+			return fmt.Errorf("failed to load sprite sheet %s: %v", config.Name, err)
+		}
+	}
+
+	return nil
 }
 
 // Render renders the current game state
