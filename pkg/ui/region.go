@@ -84,25 +84,33 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 		if spriteRect, exists := sheet.Sprites[base.Variant]; exists {
 			// Draw the sprite centered in the tile
 			if plant, ok := structure.(*ng.Plant); ok {
-				scale := 0.3 + (float32(plant.GrowthStage) / 100.0 * 0.7)
-				scaledsize := float32(config.TilePixelSize) * scale
-				offset := scaledsize / 2
-				rl.DrawTexturePro(
-					sheet.Texture,
-					spriteRect,
-					rl.NewRectangle(screenX-offset, screenY-offset, scaledsize, scaledsize),
-					rl.Vector2{X: 0, Y: 0},
-					0,
-					rl.White,
-				)
+				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage)
 			} else {
-				rl.DrawTextureRec(
-					sheet.Texture,
-					spriteRect,
-					rl.NewVector2(screenX, screenY),
-					rl.White,
-				)
+				r.RenderStructure(spriteRect, sheet.Texture, screenX, screenY)
 			}
 		}
 	}
+}
+
+func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, growthStage int) {
+	scale := 0.3 + (float32(growthStage) / 100.0 * 0.7)
+	scaledsize := float32(config.TilePixelSize) * scale
+	offset := scaledsize / 2
+	rl.DrawTexturePro(
+		texture,
+		spriteRect,
+		rl.NewRectangle(screenX-offset, screenY-offset, scaledsize, scaledsize),
+		rl.Vector2{X: 0, Y: 0},
+		0,
+		rl.White,
+	)
+}
+
+func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32) {
+	rl.DrawTextureRec(
+		texture,
+		spriteRect,
+		rl.NewVector2(screenX, screenY),
+		rl.White,
+	)
 }
