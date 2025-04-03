@@ -145,22 +145,22 @@ func (sim *Simulation) addRandomTrees() {
 		}
 
 		// Create a new tree
-		tree := TreeStructure{
-			BaseStructure: BaseStructure{
+		tree := &PlantStructure{
+			BaseStructure: &BaseStructure{
 				Type:     Tree,
-				Variant:  rand.Intn(2), // e.g. 0 for Oak, 1 for Apple Tree
+				Variant:  rand.Intn(2),
 				Size:     [2]int{1, 1},
 				Position: [2]int{x, y},
 				Region:   0,
 				Rotation: 0,
 				MoveCost: DifficultMoveCost,
 			},
-			IsFruitBearing: rand.Float64() < 0.3, // 30% chance of being fruit-bearing
-			FruitType:      "apple",              // For now, just apple trees
+			GrowthStage:     rand.Intn(100),
+			ProductionStage: 0,
 		}
 
 		// Add the tree to the simulation
-		sim.AddStructure(tree.BaseStructure)
+		sim.AddStructure(tree)
 	}
 }
 

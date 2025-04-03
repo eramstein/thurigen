@@ -34,7 +34,6 @@ const (
 	ImpassableCost    MoveCost = -1.0 // Represents an impassable tile
 )
 
-// Objects that occupy one or more tiles (trees, walls, furniture...)
 type StructureType int
 
 const (

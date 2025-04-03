@@ -77,17 +77,32 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 	// Draw structure information if the tile is occupied
 	if tile.Occupation != nil && tile.Occupation.Structure != nil {
 		structure := tile.Occupation.Structure
+		base := structure.GetBase()
 		// Get the sprite sheet name for this structure type
-		sheetConfig := structureToSpriteSheet[structure.Type]
+		sheetConfig := structureToSpriteSheet[base.Type]
 		sheet := r.spriteManager.sheets[sheetConfig.Name]
-		if spriteRect, exists := sheet.Sprites[structure.Variant]; exists {
+		if spriteRect, exists := sheet.Sprites[base.Variant]; exists {
 			// Draw the sprite centered in the tile
-			rl.DrawTextureRec(
-				sheet.Texture,
-				spriteRect,
-				rl.NewVector2(screenX, screenY),
-				rl.White,
-			)
+			if plant, ok := structure.(*ng.PlantStructure); ok {
+				scale := 0.3 + (float32(plant.GrowthStage) / 100.0 * 0.7)
+				scaledsize := float32(config.TilePixelSize) * scale
+				offset := scaledsize / 2
+				rl.DrawTexturePro(
+					sheet.Texture,
+					spriteRect,
+					rl.NewRectangle(screenX-offset, screenY-offset, scaledsize, scaledsize),
+					rl.Vector2{X: 0, Y: 0},
+					0,
+					rl.White,
+				)
+			} else {
+				rl.DrawTextureRec(
+					sheet.Texture,
+					spriteRect,
+					rl.NewVector2(screenX, screenY),
+					rl.White,
+				)
+			}
 		}
 	}
 }

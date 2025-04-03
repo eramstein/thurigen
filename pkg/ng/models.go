@@ -8,7 +8,7 @@ type Simulation struct {
 	Speed      int // how many frames until next sim update
 	Time       int // in minutes since the start of the simulation
 	World      []*Region
-	Structures []*BaseStructure
+	Structures []Structure
 }
 
 type Region struct {
@@ -20,14 +20,20 @@ type Tile struct {
 	Surface    SurfaceType
 	Volume     VolumeType
 	Occupation *TileOccupation
-	MoveCost   MoveCost // Cached for path
+	MoveCost   MoveCost // Cached for pathfinding
 }
 
 type TileOccupation struct {
-	Structure  *BaseStructure // Pointer to a structure occupying this tile
-	IsMainTile bool           // True if this is the main tile of the object
+	Structure  Structure
+	IsMainTile bool // True if this is the main tile of the object
 }
 
+// Structures occupy one or more tiles. There can be only one structure on a tile.
+type Structure interface {
+	GetBase() *BaseStructure
+}
+
+// All structure types embed
 type BaseStructure struct {
 	Type     StructureType
 	Variant  int
@@ -38,15 +44,13 @@ type BaseStructure struct {
 	MoveCost MoveCost // Cost to move through this structure
 }
 
-type FurnitureStructure struct {
-	BaseStructure
-	IsDecorative    bool // Indicates if the furniture is purely decorative
-	CanContainItems bool // Indicates if the furniture can hold items
-	StorageCapacity int  // Number of items it can hold (if applicable)
+// Plants grow and can produce edible or craft materials (fruits, wood, etc.)
+type PlantStructure struct {
+	*BaseStructure
+	GrowthStage     int // 0-100
+	ProductionStage int // 0-100
 }
 
-type TreeStructure struct {
-	BaseStructure
-	IsFruitBearing bool   // Indicates if the tree produces fruit
-	FruitType      string // Type of fruit produced (if applicable)
+func (b *PlantStructure) GetBase() *BaseStructure {
+	return b.BaseStructure
 }
