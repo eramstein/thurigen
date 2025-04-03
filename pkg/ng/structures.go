@@ -3,10 +3,7 @@ package ng
 import "eramstein/thurigen/pkg/config"
 
 func (sim *Simulation) AddStructure(structure Structure) {
-	// Add the structure to the Structures slice
-	sim.Structures = append(sim.Structures, structure)
-
-	base := structure.GetBase()
+	base := structure.GetStructure()
 
 	// Update the tiles it occupies
 	for dx := 0; dx < base.Size[0]; dx++ {
@@ -23,4 +20,9 @@ func (sim *Simulation) AddStructure(structure Structure) {
 			}
 		}
 	}
+}
+
+func (sim *Simulation) AddPlant(plant *Plant) {
+	sim.World[plant.Region].Plants = append(sim.World[plant.Region].Plants, plant)
+	sim.AddStructure(plant)
 }

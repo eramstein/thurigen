@@ -145,8 +145,8 @@ func (sim *Simulation) addRandomTrees() {
 		}
 
 		// Create a new tree
-		tree := &PlantStructure{
-			BaseStructure: &BaseStructure{
+		tree := &Plant{
+			BaseStructure: BaseStructure{
 				Type:     Tree,
 				Variant:  rand.Intn(2),
 				Size:     [2]int{1, 1},
@@ -160,7 +160,7 @@ func (sim *Simulation) addRandomTrees() {
 		}
 
 		// Add the tree to the simulation
-		sim.AddStructure(tree)
+		sim.AddPlant(tree)
 	}
 }
 

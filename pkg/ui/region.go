@@ -77,13 +77,13 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 	// Draw structure information if the tile is occupied
 	if tile.Occupation != nil && tile.Occupation.Structure != nil {
 		structure := tile.Occupation.Structure
-		base := structure.GetBase()
+		base := structure.GetStructure()
 		// Get the sprite sheet name for this structure type
 		sheetConfig := structureToSpriteSheet[base.Type]
 		sheet := r.spriteManager.sheets[sheetConfig.Name]
 		if spriteRect, exists := sheet.Sprites[base.Variant]; exists {
 			// Draw the sprite centered in the tile
-			if plant, ok := structure.(*ng.PlantStructure); ok {
+			if plant, ok := structure.(*ng.Plant); ok {
 				scale := 0.3 + (float32(plant.GrowthStage) / 100.0 * 0.7)
 				scaledsize := float32(config.TilePixelSize) * scale
 				offset := scaledsize / 2

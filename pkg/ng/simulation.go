@@ -11,12 +11,5 @@ func NewSimulation() *Simulation {
 
 func (sim *Simulation) Update() {
 	sim.Time++
-	for _, structure := range sim.Structures {
-		if plant, ok := structure.(*PlantStructure); ok {
-			plant.GrowthStage += 10
-			if plant.GrowthStage >= 100 {
-				plant.GrowthStage = 0
-			}
-		}
-	}
+	sim.UpdatePlants()
 }

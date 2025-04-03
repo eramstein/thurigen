@@ -4,15 +4,15 @@ import "eramstein/thurigen/pkg/config"
 
 // Simulation represents the main simulation state
 type Simulation struct {
-	Paused     bool
-	Speed      int // how many frames until next sim update
-	Time       int // in minutes since the start of the simulation
-	World      []*Region
-	Structures []Structure
+	Paused bool
+	Speed  int // how many frames until next sim update
+	Time   int // in minutes since the start of the simulation
+	World  []*Region
 }
 
 type Region struct {
-	Tiles [config.RegionSize][config.RegionSize]Tile
+	Tiles  [config.RegionSize][config.RegionSize]Tile
+	Plants []*Plant
 }
 
 type Tile struct {
@@ -30,7 +30,7 @@ type TileOccupation struct {
 
 // Structures occupy one or more tiles. There can be only one structure on a tile.
 type Structure interface {
-	GetBase() *BaseStructure
+	GetStructure() *BaseStructure
 }
 
 // All structure types embed
@@ -45,12 +45,12 @@ type BaseStructure struct {
 }
 
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
-type PlantStructure struct {
-	*BaseStructure
+type Plant struct {
+	BaseStructure
 	GrowthStage     int // 0-100
 	ProductionStage int // 0-100
 }
 
-func (b *PlantStructure) GetBase() *BaseStructure {
-	return b.BaseStructure
+func (b *Plant) GetStructure() *BaseStructure {
+	return &b.BaseStructure
 }
