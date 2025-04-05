@@ -103,7 +103,7 @@ func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
 		sheet := r.spriteManager.sheets[sheetConfig.Name]
 		if spriteRect, exists := sheet.Sprites[base.Variant]; exists {
 			// Draw the sprite centered in the tile
-			if plant, ok := structure.(*ng.Plant); ok {
+			if plant, ok := structure.(*ng.PlantStructure); ok {
 				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage)
 			} else {
 				r.RenderStructure(spriteRect, sheet.Texture, screenX, screenY)

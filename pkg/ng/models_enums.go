@@ -38,9 +38,16 @@ type StructureType int
 
 const (
 	NoStructure StructureType = iota
-	Tree
+	Plant
 	Wall
 	Furniture
+)
+
+type PlantType int
+
+const (
+	NoPlant PlantType = iota
+	Tree
 )
 
 type ItemType int

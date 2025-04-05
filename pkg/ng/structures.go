@@ -21,8 +21,3 @@ func (sim *Simulation) AddStructure(structure Structure) {
 		}
 	}
 }
-
-func (sim *Simulation) AddPlant(plant *Plant) {
-	sim.World[plant.Region].Plants = append(sim.World[plant.Region].Plants, plant)
-	sim.AddStructure(plant)
-}

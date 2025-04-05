@@ -15,7 +15,7 @@ type SpriteSheetConfig struct {
 }
 
 var structureToSpriteSheet = map[ng.StructureType]SpriteSheetConfig{
-	ng.Tree: {
+	ng.Plant: {
 		Name:     "plants",
 		Path:     "assets/images/world/plants.png",
 		TileSize: 32,

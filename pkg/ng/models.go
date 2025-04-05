@@ -13,7 +13,7 @@ type Simulation struct {
 
 type Region struct {
 	Tiles  [config.RegionSize][config.RegionSize]Tile // Tiles[X][Y]
-	Plants []*Plant
+	Plants []*PlantStructure
 }
 
 type Tile struct {
@@ -47,7 +47,7 @@ type BaseStructure struct {
 }
 
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
-type Plant struct {
+type PlantStructure struct {
 	BaseStructure
 	GrowthStage     int // 0-100
 	ProductionStage int // 0-100
