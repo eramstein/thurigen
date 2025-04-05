@@ -3,6 +3,7 @@ package ui
 import (
 	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
+	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -49,15 +50,28 @@ func (r *Renderer) DisplayRegion(region *ng.Region) {
 	endTileX = clamp(endTileX, 0, config.RegionSize)
 	endTileY = clamp(endTileY, 0, config.RegionSize)
 
-	// Only render tiles within the visible area
+	// First pass: Render all surface rectangles
 	for y := startTileY; y < endTileY; y++ {
 		for x := startTileX; x < endTileX; x++ {
-			r.RenderTile(region.Tiles[y][x], x, y)
+			r.RenderTileSurface(region.Tiles[x][y], x, y)
+		}
+	}
+
+	// Second pass: Render all structures
+	for y := startTileY; y < endTileY; y++ {
+		for x := startTileX; x < endTileX; x++ {
+			r.RenderTileStructures(region.Tiles[x][y], x, y)
+		}
+	}
+
+	// Third pass: Render all items
+	for y := startTileY; y < endTileY; y++ {
+		for x := startTileX; x < endTileX; x++ {
+			r.RenderTileItems(region.Tiles[x][y], x, y)
 		}
 	}
 }
-
-func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
+func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
 	// Calculate screen position
 	screenX := float32(x * config.TilePixelSize)
 	screenY := float32(y * config.TilePixelSize)
@@ -73,6 +87,12 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 
 	// Draw the main tile
 	rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
+}
+
+func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
+	// Calculate screen position
+	screenX := float32(x * config.TilePixelSize)
+	screenY := float32(y * config.TilePixelSize)
 
 	// Draw structure information if the tile is occupied
 	if tile.Occupation != nil && tile.Occupation.Structure != nil {
@@ -89,6 +109,28 @@ func (r *Renderer) RenderTile(tile ng.Tile, x, y int) {
 				r.RenderStructure(spriteRect, sheet.Texture, screenX, screenY)
 			}
 		}
+	}
+}
+
+func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int) {
+	// Calculate screen position
+	screenX := float32(x * config.TilePixelSize)
+	screenY := float32(y * config.TilePixelSize)
+
+	// Only render if there are items
+	if len(tile.Items) > 0 {
+		itemCount := len(tile.Items)
+		itemText := fmt.Sprintf("%d", itemCount)
+
+		// Position the text in the bottom-right corner of the tile
+		textX := screenX + float32(config.TilePixelSize)/4
+		textY := screenY + float32(config.TilePixelSize)/4
+
+		// Draw a semi-transparent background for better visibility
+		rl.DrawRectangle(int32(textX-2), int32(textY-2), 12, 12, rl.NewColor(0, 0, 0, 128))
+
+		// Draw the text
+		rl.DrawText(itemText, int32(textX), int32(textY), 10, rl.White)
 	}
 }
 

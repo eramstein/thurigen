@@ -131,14 +131,14 @@ func floodFillMountain(tiles *[config.RegionSize][config.RegionSize]Tile, x, y, 
 // addRandomTrees adds a random number of trees to the world
 func (sim *Simulation) addRandomTrees() {
 	// Number of trees to add (adjust these values as needed)
-	minTrees := 20
-	maxTrees := 40
+	minTrees := 2
+	maxTrees := 3
 	numTrees := rand.Intn(maxTrees-minTrees+1) + minTrees
 
 	for i := 0; i < numTrees; i++ {
 		x := rand.Intn(config.RegionSize)
 		y := rand.Intn(config.RegionSize)
-		tile := &sim.World[0].Tiles[y][x]
+		tile := &sim.World[0].Tiles[x][y]
 
 		if !isValidTreeTile(tile) {
 			continue
@@ -148,7 +148,7 @@ func (sim *Simulation) addRandomTrees() {
 		tree := &Plant{
 			BaseStructure: BaseStructure{
 				Type:     Tree,
-				Variant:  rand.Intn(2),
+				Variant:  1,
 				Size:     [2]int{1, 1},
 				Position: [2]int{x, y},
 				Region:   0,
@@ -157,6 +157,15 @@ func (sim *Simulation) addRandomTrees() {
 			},
 			GrowthStage:     rand.Intn(100),
 			ProductionStage: 0,
+			GrowthRate:      10,
+			ProductionRate:  20,
+		}
+
+		if tree.Variant == 1 {
+			tree.Produces = PlantProduction{
+				Type:    Food,
+				Variant: int(Apple),
+			}
 		}
 
 		// Add the tree to the simulation

@@ -8,10 +8,11 @@ type Simulation struct {
 	Speed  int // how many frames until next sim update
 	Time   int // in minutes since the start of the simulation
 	World  []*Region
+	Items  []*Item
 }
 
 type Region struct {
-	Tiles  [config.RegionSize][config.RegionSize]Tile
+	Tiles  [config.RegionSize][config.RegionSize]Tile // Tiles[X][Y]
 	Plants []*Plant
 }
 
@@ -20,6 +21,7 @@ type Tile struct {
 	Surface    SurfaceType
 	Volume     VolumeType
 	Occupation *TileOccupation
+	Items      []*Item  // Items lying on the tile
 	MoveCost   MoveCost // Cached for pathfinding
 }
 
@@ -49,8 +51,31 @@ type Plant struct {
 	BaseStructure
 	GrowthStage     int // 0-100
 	ProductionStage int // 0-100
+	GrowthRate      int // How many growth stages per update
+	ProductionRate  int // How many production stages per update
+	Produces        PlantProduction
 }
 
-func (b *Plant) GetStructure() *BaseStructure {
-	return &b.BaseStructure
+type PlantProduction struct {
+	Type    ItemType
+	Variant int
+}
+
+// Items are small objects that can be on a tile, on a character, or in a container
+// They can be owned, traded, discarded, consumed, used for crafting, etc.
+type Item interface {
+	GetItem() *BaseItem
+}
+
+// All item types embed
+type BaseItem struct {
+	Type    ItemType
+	Variant int
+	OnTile  [3]int // If on ground: Region / X / Y
+}
+
+// Food items can be consumed by characters to restore nutrition
+type FoodItem struct {
+	BaseItem
+	Nutrition int // 0-100
 }

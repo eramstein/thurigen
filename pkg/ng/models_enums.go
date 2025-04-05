@@ -42,3 +42,17 @@ const (
 	Wall
 	Furniture
 )
+
+type ItemType int
+
+const (
+	NoItem ItemType = iota
+	Food
+)
+
+type FoodVariant int
+
+const (
+	NoFood FoodVariant = iota
+	Apple
+)

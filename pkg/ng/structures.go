@@ -12,7 +12,7 @@ func (sim *Simulation) AddStructure(structure Structure) {
 			tileY := base.Position[1] + dy
 
 			if tileX >= 0 && tileX < config.RegionSize && tileY >= 0 && tileY < config.RegionSize {
-				tile := &sim.World[base.Region].Tiles[tileY][tileX]
+				tile := &sim.World[base.Region].Tiles[tileX][tileY]
 				tile.Occupation = &TileOccupation{
 					Structure:  structure,          // Assign the structure to the tile
 					IsMainTile: dx == 0 && dy == 0, // Mark the main tile
