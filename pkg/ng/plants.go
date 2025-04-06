@@ -22,28 +22,10 @@ func (sim *Simulation) SpawnPlant(plant *PlantStructure) {
 }
 
 func MakePlant(region int, x, y int, plantType PlantType, variant int) *PlantStructure {
-	plant := &PlantStructure{
-		BaseStructure: BaseStructure{
-			Type:     StructureType(plantType),
-			Variant:  variant,
-			Size:     [2]int{1, 1},
-			Position: [2]int{x, y},
-			Region:   region,
-			Rotation: 0,
-			MoveCost: DifficultMoveCost,
-		},
-		GrowthStage:     0,
-		ProductionStage: 0,
-		GrowthRate:      10,
-		ProductionRate:  20,
-	}
-	if plantType == Tree && variant == 1 {
-		plant.Produces = PlantProduction{
-			Type:    Food,
-			Variant: int(Apple),
-		}
-	}
-	return plant
+	plant := GetPlantConfig(plantType, variant)
+	plant.BaseStructure.Region = region
+	plant.BaseStructure.Position = [2]int{x, y}
+	return &plant.PlantStructure
 }
 
 func (plant *PlantStructure) Update() {

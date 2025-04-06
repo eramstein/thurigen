@@ -141,7 +141,7 @@ func (sim *Simulation) addRandomTrees() {
 		tile := &sim.World[0].Tiles[x][y]
 
 		if isValidTreeTile(tile) {
-			plant := MakePlant(0, x, y, Tree, 1)
+			plant := MakePlant(0, x, y, Tree, rand.Intn(3))
 			sim.SpawnPlant(plant)
 		}
 	}

@@ -2,6 +2,7 @@ package ng
 
 // NewSimulation creates a new Simulation instance
 func NewSimulation() *Simulation {
+	loadData()
 	sim := &Simulation{
 		Speed: 60,
 	}
@@ -12,4 +13,8 @@ func NewSimulation() *Simulation {
 func (sim *Simulation) Update() {
 	sim.Time++
 	sim.UpdatePlants()
+}
+
+func loadData() {
+	LoadPlantConfigs()
 }
