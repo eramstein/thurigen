@@ -59,21 +59,6 @@ const (
 	Tool
 )
 
-type FoodVariant int
-
-const (
-	NoFood FoodVariant = iota
-	Apple
-)
-
-type MaterialVariant int
-
-const (
-	NoMaterial MaterialVariant = iota
-	Wood
-	Stone
-)
-
 type MaterialType int
 
 const (
@@ -81,3 +66,105 @@ const (
 	WoodMaterial
 	StoneMaterial
 )
+
+// String returns a human-readable description of the TerrainType
+func (t TerrainType) String() string {
+	switch t {
+	case Dirt:
+		return "Dirt"
+	case Rock:
+		return "Rock"
+	case Sand:
+		return "Sand"
+	case Water:
+		return "Water"
+	default:
+		return "Unknown Terrain"
+	}
+}
+
+// String returns a human-readable description of the SurfaceType
+func (s SurfaceType) String() string {
+	switch s {
+	case NoSurface:
+		return "No Surface"
+	case Grass:
+		return "Grass"
+	case WoodSurface:
+		return "Wood Surface"
+	default:
+		return "Unknown Surface"
+	}
+}
+
+// String returns a human-readable description of the VolumeType
+func (v VolumeType) String() string {
+	switch v {
+	case NoVolume:
+		return "No Volume"
+	case RockVolume:
+		return "Rock Volume"
+	case WoodVolume:
+		return "Wood Volume"
+	default:
+		return "Unknown Volume"
+	}
+}
+
+// String returns a human-readable description of the StructureType
+func (s StructureType) String() string {
+	switch s {
+	case NoStructure:
+		return "No Structure"
+	case Plant:
+		return "Plant"
+	case Wall:
+		return "Wall"
+	case Furniture:
+		return "Furniture"
+	default:
+		return "Unknown Structure"
+	}
+}
+
+// String returns a human-readable description of the PlantType
+func (p PlantType) String() string {
+	switch p {
+	case NoPlant:
+		return "No Plant"
+	case Tree:
+		return "Tree"
+	default:
+		return "Unknown Plant"
+	}
+}
+
+// String returns a human-readable description of the ItemType
+func (i ItemType) String() string {
+	switch i {
+	case NoItem:
+		return "No Item"
+	case Food:
+		return "Food"
+	case Material:
+		return "Material"
+	case Tool:
+		return "Tool"
+	default:
+		return "Unknown Item"
+	}
+}
+
+// String returns a human-readable description of the MaterialType
+func (m MaterialType) String() string {
+	switch m {
+	case NoMaterialType:
+		return "No Material Type"
+	case WoodMaterial:
+		return "Wood Material"
+	case StoneMaterial:
+		return "Stone Material"
+	default:
+		return "Unknown Material Type"
+	}
+}

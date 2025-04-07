@@ -1,5 +1,7 @@
 package ng
 
+import "fmt"
+
 func (b *PlantStructure) GetStructure() *BaseStructure {
 	return &b.BaseStructure
 }
@@ -16,16 +18,31 @@ func (sim *Simulation) UpdatePlants() {
 	}
 }
 
-func (sim *Simulation) SpawnPlant(plant *PlantStructure) {
-	sim.World[plant.Region].Plants = append(sim.World[plant.Region].Plants, plant)
-	sim.AddStructure(plant)
-}
+func (sim *Simulation) SpawnPlant(region int, x, y int, variant int) {
+	structureConfig := GetStructureConfig(Plant, variant)
+	plant, ok := structureConfig.Structure.(*PlantStructure)
+	if !ok {
+		fmt.Printf("Error: Structure is not a PlantStructure: %T\n", structureConfig.Structure)
+		return
+	}
 
-func MakePlant(region int, x, y int, plantType PlantType, variant int) *PlantStructure {
-	plant := GetPlantConfig(plantType, variant)
-	plant.BaseStructure.Region = region
-	plant.BaseStructure.Position = [2]int{x, y}
-	return &plant.PlantStructure
+	newPlant := &PlantStructure{
+		BaseStructure: BaseStructure{
+			Type:     Plant,
+			Variant:  variant,
+			Size:     [2]int{1, 1},
+			MoveCost: plant.MoveCost,
+		},
+		GrowthRate:     plant.GrowthRate,
+		ProductionRate: plant.ProductionRate,
+		Produces:       plant.Produces,
+	}
+
+	newPlant.Position = [2]int{x, y}
+	newPlant.Region = region
+
+	sim.World[region].Plants = append(sim.World[region].Plants, newPlant)
+	sim.AddStructure(newPlant)
 }
 
 func (plant *PlantStructure) Update() {

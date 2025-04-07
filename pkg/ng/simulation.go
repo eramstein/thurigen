@@ -16,6 +16,6 @@ func (sim *Simulation) Update() {
 }
 
 func loadData() {
-	LoadPlantConfigs()
+	LoadStructuresConfigs()
 	LoadItemsConfigs()
 }

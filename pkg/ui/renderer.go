@@ -66,6 +66,9 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 
 	// Draw time on top
 	r.DisplayTime(sim)
+
+	// Draw side panel
+	r.DisplayTileSidePanel()
 }
 
 // DisplayTime shows the current time
