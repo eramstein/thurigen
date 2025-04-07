@@ -33,25 +33,25 @@ func (r *Renderer) DisplayTileSidePanel() {
 
 	// Tile coordinates
 	coordText := fmt.Sprintf("Tile: (%d, %d)", tileX, tileY)
-	rl.DrawText(coordText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+	r.RenderText(coordText, panelX+10, yOffset)
 	yOffset += lineHeight
 
 	// Terrain type
-	terrainText := fmt.Sprintf("Terrain: %v", tile.Terrain)
-	rl.DrawText(terrainText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+	terrainText := fmt.Sprintf("%v", tile.Terrain)
+	r.RenderText(terrainText, panelX+10, yOffset)
 	yOffset += lineHeight
 
 	// Surface type
 	if tile.Surface != 0 {
-		surfaceText := fmt.Sprintf("Surface: %v", tile.Surface)
-		rl.DrawText(surfaceText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+		surfaceText := fmt.Sprintf("%v", tile.Surface)
+		r.RenderText(surfaceText, panelX+10, yOffset)
 		yOffset += lineHeight
 	}
 
 	// Volume type
 	if tile.Volume != 0 {
-		volumeText := fmt.Sprintf("Volume: %v", tile.Volume)
-		rl.DrawText(volumeText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+		volumeText := fmt.Sprintf("%v", tile.Volume)
+		r.RenderText(volumeText, panelX+10, yOffset)
 		yOffset += lineHeight
 	}
 
@@ -59,14 +59,19 @@ func (r *Renderer) DisplayTileSidePanel() {
 	if tile.Occupation != nil && tile.Occupation.Structure != nil {
 		structure := tile.Occupation.Structure
 		base := structure.GetStructure()
-		structureText := fmt.Sprintf("Structure: %v (Variant: %d)", base.Type, base.Variant)
-		rl.DrawText(structureText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+		config := ng.GetStructureConfig(base.Type, base.Variant)
+		structureText := fmt.Sprintf(config.Name)
+		r.RenderText(structureText, panelX+10, yOffset)
 		yOffset += lineHeight
 
 		// If it's a plant, show growth stage
 		if plant, ok := structure.(*ng.PlantStructure); ok {
 			growthText := fmt.Sprintf("Growth: %d%%", plant.GrowthStage)
-			rl.DrawText(growthText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+			r.RenderText(growthText, panelX+10, yOffset)
+			yOffset += lineHeight
+
+			prodText := fmt.Sprintf("Production: %d%%", plant.ProductionStage)
+			r.RenderText(prodText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}
 	}
@@ -74,7 +79,7 @@ func (r *Renderer) DisplayTileSidePanel() {
 	// Items information
 	if len(tile.Items) > 0 {
 		itemsText := fmt.Sprintf("Items: %d", len(tile.Items))
-		rl.DrawText(itemsText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+		r.RenderText(itemsText, panelX+10, yOffset)
 		yOffset += lineHeight
 
 		// List each item type and count
@@ -86,7 +91,7 @@ func (r *Renderer) DisplayTileSidePanel() {
 		}
 		for itemName, count := range itemCounts {
 			itemText := fmt.Sprintf("  - %s: %d", itemName, count)
-			rl.DrawText(itemText, int32(panelX+10), int32(yOffset), 20, rl.Black)
+			r.RenderText(itemText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}
 	}

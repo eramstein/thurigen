@@ -7,4 +7,5 @@ const (
 	RegionSize         = 64
 	TilePixelSize      = 32
 	TileSidePanelWidth = 350
+	BaseFontSize       = 16
 )

@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
 	"fmt"
 
@@ -13,6 +14,8 @@ type Renderer struct {
 	screenHeight  int
 	camera        *Camera
 	spriteManager *SpriteManager
+	fontManager   *FontManager
+	defaultFont   rl.Font // Cache the default font
 	uiState       *Model
 }
 
@@ -22,6 +25,7 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		screenWidth:   width,
 		screenHeight:  height,
 		spriteManager: NewSpriteManager(),
+		fontManager:   NewFontManager(),
 		uiState: &Model{
 			DisplayedRegion: sim.World[0],
 		},
@@ -44,6 +48,14 @@ func (r *Renderer) LoadTextures() error {
 		}
 	}
 
+	// Load fonts
+	if err := r.fontManager.LoadFont("default", "assets/fonts/Roboto-Regular.ttf", config.BaseFontSize); err != nil {
+		return fmt.Errorf("failed to load default font: %v", err)
+	}
+
+	// Cache the default font
+	r.defaultFont = r.fontManager.GetFont("default")
+
 	return nil
 }
 
@@ -61,7 +73,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	rl.EndMode2D()
 
 	if sim.Paused {
-		rl.DrawText("Paused", int32(r.screenWidth/2-50), int32(r.screenHeight/2-10), 20, rl.Red)
+		r.RenderTextWithColor("Paused", r.screenWidth/2-50, r.screenHeight/2-10, rl.Red)
 	}
 
 	// Draw time on top
@@ -74,5 +86,15 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 // DisplayTime shows the current time
 func (r *Renderer) DisplayTime(sim *ng.Simulation) {
 	turnText := fmt.Sprintf("Minutes: %d", sim.Time)
-	rl.DrawText(turnText, 10, 10, 20, rl.Black)
+	r.RenderText(turnText, 10, 10)
+}
+
+// RenderText renders text at a specific position
+func (r *Renderer) RenderText(text string, x, y int) {
+	rl.DrawTextEx(r.defaultFont, text, rl.Vector2{X: float32(x), Y: float32(y)}, float32(r.defaultFont.BaseSize), 1.0, rl.Black)
+}
+
+// RenderTextWithColor renders text at a specific position with a specific color
+func (r *Renderer) RenderTextWithColor(text string, x, y int, color rl.Color) {
+	rl.DrawTextEx(r.defaultFont, text, rl.Vector2{X: float32(x), Y: float32(y)}, float32(r.defaultFont.BaseSize), 1.0, color)
 }
