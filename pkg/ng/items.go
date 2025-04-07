@@ -8,6 +8,10 @@ func (b *FoodItem) GetItem() *BaseItem {
 	return &b.BaseItem
 }
 
+func (b *MaterialItem) GetItem() *BaseItem {
+	return &b.BaseItem
+}
+
 func (sim *Simulation) SpawnItem(item Item, region, x, y int) {
 	// Add to simulation's items
 	sim.Items = append(sim.Items, &item)

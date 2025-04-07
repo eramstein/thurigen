@@ -55,6 +55,8 @@ type ItemType int
 const (
 	NoItem ItemType = iota
 	Food
+	Material
+	Tool
 )
 
 type FoodVariant int
@@ -62,4 +64,20 @@ type FoodVariant int
 const (
 	NoFood FoodVariant = iota
 	Apple
+)
+
+type MaterialVariant int
+
+const (
+	NoMaterial MaterialVariant = iota
+	Wood
+	Stone
+)
+
+type MaterialType int
+
+const (
+	NoMaterialType MaterialType = iota
+	WoodMaterial
+	StoneMaterial
 )

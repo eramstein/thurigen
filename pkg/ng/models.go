@@ -79,3 +79,8 @@ type FoodItem struct {
 	BaseItem
 	Nutrition int // 0-100
 }
+
+type MaterialItem struct {
+	BaseItem
+	MaterialType MaterialType // Wood, Stone, etc.
+}
