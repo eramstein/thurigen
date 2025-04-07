@@ -13,6 +13,7 @@ type Renderer struct {
 	screenHeight  int
 	camera        *Camera
 	spriteManager *SpriteManager
+	uiState       *Model
 }
 
 // NewRenderer creates a new renderer instance
@@ -21,9 +22,17 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		screenWidth:   width,
 		screenHeight:  height,
 		spriteManager: NewSpriteManager(),
+		uiState: &Model{
+			DisplayedRegion: sim.World[0],
+		},
 	}
 	r.camera = NewCamera(width, height)
 	return r
+}
+
+// GetCamera returns the current camera state
+func (r *Renderer) GetCamera() rl.Camera2D {
+	return r.camera.GetCamera()
 }
 
 // LoadTextures loads all required textures for the renderer
@@ -46,7 +55,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	// Begin camera drawing
 	rl.BeginMode2D(r.camera.GetCamera())
 
-	r.DisplayRegion(sim.World[0])
+	r.DisplayRegion()
 
 	// End camera drawing
 	rl.EndMode2D()

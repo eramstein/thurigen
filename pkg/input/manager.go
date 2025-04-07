@@ -1,7 +1,9 @@
 package input
 
 import (
+	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
+	"eramstein/thurigen/pkg/ui"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -11,6 +13,7 @@ type Manager struct {
 	mousePosition rl.Vector2
 	leftPressed   bool
 	rightPressed  bool
+	camera        *rl.Camera2D
 }
 
 // NewManager creates a new input manager
@@ -18,8 +21,15 @@ func NewManager() *Manager {
 	return &Manager{}
 }
 
+// SetCamera sets the camera for coordinate conversion
+func (m *Manager) SetCamera(camera rl.Camera2D) {
+	m.camera = &camera
+}
+
 // Update updates the input state
-func (m *Manager) Update(sim *ng.Simulation) {
+func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
+	m.SetCamera(renderer.GetCamera())
+
 	if rl.IsKeyPressed(rl.KeySpace) { // Press Space to toggle pause
 		sim.Paused = !sim.Paused
 	}
@@ -32,6 +42,25 @@ func (m *Manager) Update(sim *ng.Simulation) {
 	m.mousePosition = rl.GetMousePosition()
 	m.leftPressed = rl.IsMouseButtonPressed(rl.MouseLeftButton)
 	m.rightPressed = rl.IsMouseButtonPressed(rl.MouseRightButton)
+
+	// Handle clicks
+	if m.leftPressed && m.camera != nil {
+		tileX, tileY := m.ScreenToTileCoordinates(m.mousePosition)
+		if tileX >= 0 && tileX < config.RegionSize && tileY >= 0 && tileY < config.RegionSize {
+			renderer.ToggleTileSelection(tileX, tileY)
+		}
+	}
+}
+
+// ScreenToTileCoordinates converts screen coordinates to tile coordinates
+func (m *Manager) ScreenToTileCoordinates(screenPos rl.Vector2) (int, int) {
+	if m.camera == nil {
+		return -1, -1
+	}
+	worldPos := rl.GetScreenToWorld2D(screenPos, *m.camera)
+	tileX := int(worldPos.X) / config.TilePixelSize
+	tileY := int(worldPos.Y) / config.TilePixelSize
+	return tileX, tileY
 }
 
 // IsKeyJustPressed returns true if the key was just pressed

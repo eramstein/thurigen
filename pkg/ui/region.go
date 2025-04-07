@@ -27,7 +27,9 @@ var (
 	}
 )
 
-func (r *Renderer) DisplayRegion(region *ng.Region) {
+func (r *Renderer) DisplayRegion() {
+	region := r.uiState.DisplayedRegion
+
 	// Get the camera's view bounds
 	camera := r.camera.GetCamera()
 
@@ -70,7 +72,20 @@ func (r *Renderer) DisplayRegion(region *ng.Region) {
 			r.RenderTileItems(region.Tiles[x][y], x, y)
 		}
 	}
+
+	//r.DrawGridLines(startTileX, startTileY, endTileX, endTileY)
+	r.BorderSelectedTile()
 }
+
+func (r *Renderer) BorderSelectedTile() {
+	if r.uiState.SelectedTile != nil {
+		s := *r.uiState.SelectedTile
+		screenX := float32(s[0] * config.TilePixelSize)
+		screenY := float32(s[1] * config.TilePixelSize)
+		rl.DrawRectangleLines(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), rl.White)
+	}
+}
+
 func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
 	// Calculate screen position
 	screenX := float32(x * config.TilePixelSize)
@@ -87,6 +102,7 @@ func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
 
 	// Draw the main tile
 	rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
+
 }
 
 func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
@@ -123,8 +139,8 @@ func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int) {
 		itemText := fmt.Sprintf("%d", itemCount)
 
 		// Position the text in the bottom-right corner of the tile
-		textX := screenX + float32(config.TilePixelSize)/4
-		textY := screenY + float32(config.TilePixelSize)/4
+		textX := screenX + 3*float32(config.TilePixelSize)/4
+		textY := screenY + 3*float32(config.TilePixelSize)/4
 
 		// Draw a semi-transparent background for better visibility
 		rl.DrawRectangle(int32(textX-2), int32(textY-2), 12, 12, rl.NewColor(0, 0, 0, 128))
@@ -137,11 +153,11 @@ func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int) {
 func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, growthStage int) {
 	scale := 0.3 + (float32(growthStage) / 100.0 * 0.7)
 	scaledsize := float32(config.TilePixelSize) * scale
-	offset := scaledsize / 2
+	offset := (config.TilePixelSize - scaledsize) / 2
 	rl.DrawTexturePro(
 		texture,
 		spriteRect,
-		rl.NewRectangle(screenX-offset, screenY-offset, scaledsize, scaledsize),
+		rl.NewRectangle(screenX+offset, screenY+offset, scaledsize, scaledsize),
 		rl.Vector2{X: 0, Y: 0},
 		0,
 		rl.White,
@@ -155,4 +171,33 @@ func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D
 		rl.NewVector2(screenX, screenY),
 		rl.White,
 	)
+}
+
+// DrawGridLines draws white lines to separate tiles
+func (r *Renderer) DrawGridLines(startTileX, startTileY, endTileX, endTileY int) {
+	// Draw vertical lines
+	for x := startTileX; x <= endTileX; x++ {
+		lineX := float32(x * config.TilePixelSize)
+		startY := float32(startTileY * config.TilePixelSize)
+		endY := float32(endTileY * config.TilePixelSize)
+		rl.DrawLineEx(
+			rl.Vector2{X: lineX, Y: startY},
+			rl.Vector2{X: lineX, Y: endY},
+			1.0, // Line thickness
+			rl.White,
+		)
+	}
+
+	// Draw horizontal lines
+	for y := startTileY; y <= endTileY; y++ {
+		lineY := float32(y * config.TilePixelSize)
+		startX := float32(startTileX * config.TilePixelSize)
+		endX := float32(endTileX * config.TilePixelSize)
+		rl.DrawLineEx(
+			rl.Vector2{X: startX, Y: lineY},
+			rl.Vector2{X: endX, Y: lineY},
+			1.0, // Line thickness
+			rl.White,
+		)
+	}
 }

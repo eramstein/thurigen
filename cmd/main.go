@@ -40,8 +40,7 @@ func main() {
 
 	// Main sim loop
 	for !rl.WindowShouldClose() {
-		inputManager.Update(sim)
-
+		inputManager.Update(sim, renderer)
 		if !sim.Paused {
 			if ticker == sim.Speed {
 				go func() {
