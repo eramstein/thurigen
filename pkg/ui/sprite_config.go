@@ -26,3 +26,14 @@ var structureToSpriteSheet = map[ng.StructureType]SpriteSheetConfig{
 		},
 	},
 }
+
+var charactersSpriteSheet = SpriteSheetConfig{
+	Name:     "characters",
+	Path:     "assets/images/characters/characters.png",
+	TileSize: 32,
+	Sprites: map[int]rl.Rectangle{
+		0: rl.NewRectangle(0, 0, 32, 32),
+		1: rl.NewRectangle(32, 0, 32, 32),
+		2: rl.NewRectangle(64, 0, 32, 32),
+	},
+}

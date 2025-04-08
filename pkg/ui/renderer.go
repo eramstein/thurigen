@@ -48,6 +48,11 @@ func (r *Renderer) LoadTextures() error {
 		}
 	}
 
+	// Load character sprite sheet
+	if err := r.spriteManager.LoadSpriteSheet(charactersSpriteSheet.Name, charactersSpriteSheet.Path, charactersSpriteSheet.TileSize, charactersSpriteSheet.Sprites); err != nil {
+		return fmt.Errorf("failed to load sprite sheet %s: %v", charactersSpriteSheet.Name, err)
+	}
+
 	// Load fonts
 	if err := r.fontManager.LoadFont("default", "assets/fonts/Roboto-Regular.ttf", config.BaseFontSize); err != nil {
 		return fmt.Errorf("failed to load default font: %v", err)
@@ -68,6 +73,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	rl.BeginMode2D(r.camera.GetCamera())
 
 	r.DisplayRegion()
+	r.DisplayCharacters(sim.Characters)
 
 	// End camera drawing
 	rl.EndMode2D()

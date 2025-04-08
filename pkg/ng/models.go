@@ -4,11 +4,19 @@ import "eramstein/thurigen/pkg/config"
 
 // Simulation represents the main simulation state
 type Simulation struct {
-	Paused bool
-	Speed  int // how many frames until next sim update
-	Time   int // in minutes since the start of the simulation
-	World  []*Region
-	Items  []*Item
+	Paused     bool
+	Speed      int // how many frames until next sim update
+	Time       int // in minutes since the start of the simulation
+	World      []*Region
+	Items      []*Item
+	Characters []*Character
+}
+
+type Character struct {
+	ID        int
+	Name      string
+	Position  [2]int
+	Inventory []*Item
 }
 
 type Region struct {

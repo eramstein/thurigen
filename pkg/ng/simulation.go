@@ -7,6 +7,7 @@ func NewSimulation() *Simulation {
 		Speed: 60,
 	}
 	sim.InitWorld()
+	sim.InitCharacters()
 	return sim
 }
 
