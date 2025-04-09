@@ -133,6 +133,18 @@ func (r *Renderer) DisplayTileSidePanel() {
 			}
 		}
 
+		// Objectives
+		if len(character.Objectives) > 0 {
+			objectivesText := "Objectives:"
+			r.RenderText(objectivesText, panelX+10, yOffset)
+			yOffset += lineHeight
+			for _, objective := range character.Objectives {
+				objectiveText := fmt.Sprintf("  - %v", objective.Type)
+				r.RenderText(objectiveText, panelX+10, yOffset)
+				yOffset += lineHeight
+			}
+		}
+
 		// Inventory
 		if len(character.Inventory) > 0 {
 			inventoryText := "Inventory:"

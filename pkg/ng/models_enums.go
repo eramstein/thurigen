@@ -73,6 +73,8 @@ const (
 	NoTask TaskType = iota
 	GotoTask
 	EatTask
+	DrinkTask
+	SleepTask
 )
 
 type ObjectiveType int
@@ -80,7 +82,8 @@ type ObjectiveType int
 const (
 	NoObjective ObjectiveType = iota
 	EatObjective
-	BuildObjective
+	DrinkObjective
+	SleepObjective
 )
 
 // String returns a human-readable description of the TerrainType
@@ -182,5 +185,37 @@ func (m MaterialType) String() string {
 		return "Stone Material"
 	default:
 		return "Unknown Material Type"
+	}
+}
+
+func (t TaskType) String() string {
+	switch t {
+	case NoTask:
+		return "No Task"
+	case GotoTask:
+		return "Goto Task"
+	case EatTask:
+		return "Eat Task"
+	case DrinkTask:
+		return "Drink Task"
+	case SleepTask:
+		return "Sleep Task"
+	default:
+		return "Unknown Task"
+	}
+}
+
+func (o ObjectiveType) String() string {
+	switch o {
+	case NoObjective:
+		return "No Objective"
+	case EatObjective:
+		return "Eat Objective"
+	case DrinkObjective:
+		return "Drink Objective"
+	case SleepObjective:
+		return "Sleep Objective"
+	default:
+		return "Unknown Objective"
 	}
 }

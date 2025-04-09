@@ -21,11 +21,13 @@ type Character struct {
 	Tasks      []*Task
 	Objectives []*Objective
 	Ambitions  []*Ambition
-	Needs      struct {
-		Food  int // 0-100
-		Water int // 0-100
-		Sleep int // 0-100
-	}
+	Needs      Needs
+}
+
+type Needs struct {
+	Food  int // 0-100
+	Water int // 0-100
+	Sleep int // 0-100
 }
 
 type Task struct {

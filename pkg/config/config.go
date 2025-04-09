@@ -8,4 +8,7 @@ const (
 	TilePixelSize      = 32
 	TileSidePanelWidth = 350
 	BaseFontSize       = 16
+
+	CharacterNeedsUpdateInterval     = 1
+	CharacterObjectiveUpdateInterval = 5
 )
