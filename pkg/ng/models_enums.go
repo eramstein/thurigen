@@ -67,6 +67,22 @@ const (
 	StoneMaterial
 )
 
+type TaskType int
+
+const (
+	NoTask TaskType = iota
+	GotoTask
+	EatTask
+)
+
+type ObjectiveType int
+
+const (
+	NoObjective ObjectiveType = iota
+	EatObjective
+	BuildObjective
+)
+
 // String returns a human-readable description of the TerrainType
 func (t TerrainType) String() string {
 	switch t {

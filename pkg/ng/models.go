@@ -13,10 +13,32 @@ type Simulation struct {
 }
 
 type Character struct {
-	ID        int
-	Name      string
-	Position  [2]int
-	Inventory []*Item
+	ID         int
+	Name       string
+	Region     int
+	Position   [2]int
+	Inventory  []*Item
+	Tasks      []*Task
+	Objectives []*Objective
+	Ambitions  []*Ambition
+	Needs      struct {
+		Food  int // 0-100
+		Water int // 0-100
+		Sleep int // 0-100
+	}
+}
+
+type Task struct {
+	Type      TaskType
+	Objective *Objective
+}
+
+type Objective struct {
+	Type ObjectiveType
+}
+
+type Ambition struct {
+	Description string
 }
 
 type Region struct {
@@ -29,8 +51,9 @@ type Tile struct {
 	Surface    SurfaceType
 	Volume     VolumeType
 	Occupation *TileOccupation
-	Items      []*Item  // Items lying on the tile
-	MoveCost   MoveCost // Cached for pathfinding
+	Character  *Character // Character standing on the tile
+	Items      []*Item    // Items lying on the tile
+	MoveCost   MoveCost   // Cached for pathfinding
 }
 
 type TileOccupation struct {

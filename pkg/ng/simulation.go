@@ -14,6 +14,7 @@ func NewSimulation() *Simulation {
 func (sim *Simulation) Update() {
 	sim.Time++
 	sim.UpdatePlants()
+	sim.UpdateCharacters()
 }
 
 func loadData() {

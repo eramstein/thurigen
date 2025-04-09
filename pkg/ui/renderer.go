@@ -28,6 +28,7 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		fontManager:   NewFontManager(),
 		uiState: &Model{
 			DisplayedRegion: sim.World[0],
+			Simulation:      sim,
 		},
 	}
 	r.camera = NewCamera(width, height)

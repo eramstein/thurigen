@@ -95,4 +95,60 @@ func (r *Renderer) DisplayTileSidePanel() {
 			yOffset += lineHeight
 		}
 	}
+
+	// Check for characters at this position
+	if tile.Character != nil {
+		character := tile.Character
+
+		// separator
+		separatorText := "--------------------------------"
+		r.RenderText(separatorText, panelX+10, yOffset)
+		yOffset += lineHeight
+
+		// Character name and ID
+		charText := fmt.Sprintf("Character: %s", character.Name)
+		r.RenderText(charText, panelX+10, yOffset)
+		yOffset += lineHeight
+
+		// Character needs
+		needsText := "Needs:"
+		r.RenderText(needsText, panelX+10, yOffset)
+		yOffset += lineHeight
+		r.RenderText(fmt.Sprintf("  Food: %d%%", character.Needs.Food), panelX+10, yOffset)
+		yOffset += lineHeight
+		r.RenderText(fmt.Sprintf("  Water: %d%%", character.Needs.Water), panelX+10, yOffset)
+		yOffset += lineHeight
+		r.RenderText(fmt.Sprintf("  Sleep: %d%%", character.Needs.Sleep), panelX+10, yOffset)
+		yOffset += lineHeight
+
+		// Current tasks
+		if len(character.Tasks) > 0 {
+			tasksText := "Current Tasks:"
+			r.RenderText(tasksText, panelX+10, yOffset)
+			yOffset += lineHeight
+			for _, task := range character.Tasks {
+				taskText := fmt.Sprintf("  - %v", task.Type)
+				r.RenderText(taskText, panelX+10, yOffset)
+				yOffset += lineHeight
+			}
+		}
+
+		// Inventory
+		if len(character.Inventory) > 0 {
+			inventoryText := "Inventory:"
+			r.RenderText(inventoryText, panelX+10, yOffset)
+			yOffset += lineHeight
+			itemCounts := make(map[string]int)
+			for _, item := range character.Inventory {
+				baseItem := (*item).GetItem()
+				config := ng.GetItemConfig(baseItem.Type, baseItem.Variant)
+				itemCounts[config.Name]++
+			}
+			for itemName, count := range itemCounts {
+				itemText := fmt.Sprintf("  - %s: %d", itemName, count)
+				r.RenderText(itemText, panelX+10, yOffset)
+				yOffset += lineHeight
+			}
+		}
+	}
 }
