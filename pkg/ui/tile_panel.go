@@ -127,7 +127,7 @@ func (r *Renderer) DisplayTileSidePanel() {
 			r.RenderText(tasksText, panelX+10, yOffset)
 			yOffset += lineHeight
 			for _, task := range character.Tasks {
-				taskText := fmt.Sprintf("  - %v", task.Type)
+				taskText := fmt.Sprintf("  - %v", (*task).GetTask().Type)
 				r.RenderText(taskText, panelX+10, yOffset)
 				yOffset += lineHeight
 			}

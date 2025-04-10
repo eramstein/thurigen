@@ -70,11 +70,12 @@ const (
 type TaskType int
 
 const (
-	NoTask TaskType = iota
-	GotoTask
-	EatTask
-	DrinkTask
-	SleepTask
+	NoTaskType TaskType = iota
+	Goto
+	Eat
+	Drink
+	Sleep
+	Find
 )
 
 type ObjectiveType int
@@ -190,16 +191,18 @@ func (m MaterialType) String() string {
 
 func (t TaskType) String() string {
 	switch t {
-	case NoTask:
+	case NoTaskType:
 		return "No Task"
-	case GotoTask:
+	case Goto:
 		return "Goto Task"
-	case EatTask:
+	case Eat:
 		return "Eat Task"
-	case DrinkTask:
+	case Drink:
 		return "Drink Task"
-	case SleepTask:
+	case Sleep:
 		return "Sleep Task"
+	case Find:
+		return "Find Task"
 	default:
 		return "Unknown Task"
 	}

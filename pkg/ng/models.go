@@ -30,9 +30,32 @@ type Needs struct {
 	Sleep int // 0-100
 }
 
-type Task struct {
+type Task interface {
+	GetTask() *BaseTask
+}
+
+type BaseTask struct {
 	Type      TaskType
 	Objective *Objective
+	Progress  int // 0-100
+}
+
+type FindTask struct {
+	BaseTask
+	Target ItemType
+}
+
+type EatTask struct {
+	BaseTask
+	Target *FoodItem
+}
+
+type DrinkTask struct {
+	BaseTask
+}
+
+type SleepTask struct {
+	BaseTask
 }
 
 type Objective struct {

@@ -62,9 +62,26 @@ func (sim *Simulation) MakeCharacter(name string, region int, position [2]int) *
 }
 
 func (character *Character) AddObjective(objectiveType ObjectiveType) {
-	character.Objectives = append(character.Objectives, &Objective{
+	objective := &Objective{
 		Type: objectiveType,
-	})
+	}
+	character.Objectives = append(character.Objectives, objective)
+	character.PlanTasks(objective)
+}
+
+func (character *Character) PlanTasks(objective *Objective) {
+	switch objective.Type {
+	case EatObjective:
+		character.PlanEatingTasks(objective)
+	case DrinkObjective:
+		character.PlanDrinkingTasks(objective)
+	case SleepObjective:
+		character.PlanSleepingTasks(objective)
+	}
+}
+
+func (character *Character) AddTask(task Task) {
+	character.Tasks = append(character.Tasks, &task)
 }
 
 func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
