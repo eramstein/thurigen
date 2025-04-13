@@ -7,8 +7,8 @@
         },
         "2": {
             "name": "Apple Tree",
-            "growthRate": 10,
-            "productionRate": 20,
+            "growthRate": 100,
+            "productionRate": 100,
             "produces": {
                 "type": 1,
                 "variant": 1

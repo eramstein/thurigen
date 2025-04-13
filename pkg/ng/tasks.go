@@ -1,5 +1,9 @@
 package ng
 
+import (
+	"eramstein/thurigen/pkg/config"
+)
+
 func (b *BaseTask) GetTask() *BaseTask {
 	return b
 }
@@ -20,34 +24,40 @@ func (b *FindTask) GetTask() *BaseTask {
 	return &b.BaseTask
 }
 
-func (character *Character) PlanEatingTasks(objective *Objective) {
+func (b *MoveTask) GetTask() *BaseTask {
+	return &b.BaseTask
+}
+
+func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objective) {
 	// Check if the character has the item in their inventory
-	item := character.FindInInventory(Food)
+	itemInInventory := character.FindInInventory(Food)
 
 	// If the character has the item in their inventory, add a task to eat it
-	if item != nil {
-		if foodItem, ok := (*item).(*FoodItem); ok {
-			character.AddTask(&EatTask{
-				BaseTask: BaseTask{
-					Objective: objective,
-					Type:      Eat,
-				},
-				Target: foodItem,
-			})
-		}
-	} else {
-		character.AddTask(&FindTask{
+	if itemInInventory != nil {
+		character.AddTask(&EatTask{
 			BaseTask: BaseTask{
 				Objective: objective,
-				Type:      Find,
+				Type:      Eat,
 			},
-			Target: Food,
+			Target: (*itemInInventory).(*FoodItem),
 		})
+	} else {
+		// TODO: find the closest food item and add a task to go to it
+		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2, Food)
+		if closestItem != nil {
+			character.AddTask(&MoveTask{
+				BaseTask: BaseTask{
+					Objective: objective,
+					Type:      Move,
+				},
+				Target: (*closestItem).GetItem().OnTile,
+			})
+		}
 	}
 }
 
-func (character *Character) PlanDrinkingTasks(objective *Objective) {
+func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Objective) {
 }
 
-func (character *Character) PlanSleepingTasks(objective *Objective) {
+func (sim *Simulation) PlanSleepingTasks(character *Character, objective *Objective) {
 }

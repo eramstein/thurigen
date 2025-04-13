@@ -71,7 +71,7 @@ type TaskType int
 
 const (
 	NoTaskType TaskType = iota
-	Goto
+	Move
 	Eat
 	Drink
 	Sleep
@@ -193,8 +193,8 @@ func (t TaskType) String() string {
 	switch t {
 	case NoTaskType:
 		return "No Task"
-	case Goto:
-		return "Goto Task"
+	case Move:
+		return "Move Task"
 	case Eat:
 		return "Eat Task"
 	case Drink:

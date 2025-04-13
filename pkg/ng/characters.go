@@ -3,7 +3,7 @@ package ng
 import "eramstein/thurigen/pkg/config"
 
 func (sim *Simulation) InitCharacters() {
-	sim.MakeCharacter("Henry", 0, [2]int{30, 30})
+	sim.MakeCharacter("Henry", Position{Region: 0, X: 30, Y: 30})
 }
 
 func (sim *Simulation) UpdateCharacters() {
@@ -14,7 +14,7 @@ func (sim *Simulation) UpdateCharacters() {
 	}
 	if sim.Time%config.CharacterObjectiveUpdateInterval == 0 {
 		for _, character := range sim.Characters {
-			character.UpdateObjectives()
+			sim.UpdateObjectives(character)
 		}
 	}
 }
@@ -25,17 +25,17 @@ func (character *Character) UpdateNeeds() {
 	character.Needs.Sleep += 1
 }
 
-func (character *Character) UpdateObjectives() {
+func (sim *Simulation) UpdateObjectives(character *Character) {
 	if character.Needs.Food >= 50 && !character.HasObjective(EatObjective) {
-		character.AddObjective(EatObjective)
+		sim.AddObjective(character, EatObjective)
 	}
 
 	if character.Needs.Water >= 50 && !character.HasObjective(DrinkObjective) {
-		character.AddObjective(DrinkObjective)
+		sim.AddObjective(character, DrinkObjective)
 	}
 
 	if character.Needs.Sleep >= 50 && !character.HasObjective(SleepObjective) {
-		character.AddObjective(SleepObjective)
+		sim.AddObjective(character, SleepObjective)
 	}
 }
 
@@ -47,36 +47,35 @@ func (sim *Simulation) RemoveCharacter(character *Character) {
 	}
 }
 
-func (sim *Simulation) MakeCharacter(name string, region int, position [2]int) *Character {
+func (sim *Simulation) MakeCharacter(name string, pos Position) *Character {
 	character := &Character{
 		ID:        len(sim.Characters),
 		Name:      name,
-		Region:    region,
-		Position:  position,
+		Position:  pos,
 		Inventory: []*Item{},
 		Needs:     Needs{Food: 49, Water: 0, Sleep: 0},
 	}
 	sim.Characters = append(sim.Characters, character)
-	sim.World[region].Tiles[position[0]][position[1]].Character = character
+	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
 	return character
 }
 
-func (character *Character) AddObjective(objectiveType ObjectiveType) {
+func (sim *Simulation) AddObjective(character *Character, objectiveType ObjectiveType) {
 	objective := &Objective{
 		Type: objectiveType,
 	}
 	character.Objectives = append(character.Objectives, objective)
-	character.PlanTasks(objective)
+	sim.PlanTasks(character, objective)
 }
 
-func (character *Character) PlanTasks(objective *Objective) {
+func (sim *Simulation) PlanTasks(character *Character, objective *Objective) {
 	switch objective.Type {
 	case EatObjective:
-		character.PlanEatingTasks(objective)
+		sim.PlanEatingTasks(character, objective)
 	case DrinkObjective:
-		character.PlanDrinkingTasks(objective)
+		sim.PlanDrinkingTasks(character, objective)
 	case SleepObjective:
-		character.PlanSleepingTasks(objective)
+		sim.PlanSleepingTasks(character, objective)
 	}
 }
 

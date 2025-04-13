@@ -12,11 +12,16 @@ type Simulation struct {
 	Characters []*Character
 }
 
+type Position struct {
+	Region int
+	X      int
+	Y      int
+}
+
 type Character struct {
 	ID         int
 	Name       string
-	Region     int
-	Position   [2]int
+	Position   Position
 	Inventory  []*Item
 	Tasks      []*Task
 	Objectives []*Objective
@@ -38,6 +43,11 @@ type BaseTask struct {
 	Type      TaskType
 	Objective *Objective
 	Progress  int // 0-100
+}
+
+type MoveTask struct {
+	BaseTask
+	Target Position
 }
 
 type FindTask struct {
@@ -96,8 +106,7 @@ type BaseStructure struct {
 	Type     StructureType
 	Variant  int
 	Size     [2]int // Width and height in tiles
-	Position [2]int // Position of the main tile
-	Region   int
+	Position Position
 	Rotation int      // 0, 90, 180, 270 degrees
 	MoveCost MoveCost // Cost to move through this structure
 }
@@ -127,7 +136,7 @@ type Item interface {
 type BaseItem struct {
 	Type    ItemType
 	Variant int
-	OnTile  [3]int // If on ground: Region / X / Y
+	OnTile  Position
 }
 
 // Food items can be consumed by characters to restore nutrition

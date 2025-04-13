@@ -9,8 +9,8 @@ import (
 
 func (r *Renderer) DisplayCharacters(Characters []*ng.Character) {
 	for _, character := range Characters {
-		screenX := float32(character.Position[0] * config.TilePixelSize)
-		screenY := float32(character.Position[1] * config.TilePixelSize)
+		screenX := float32(character.Position.X * config.TilePixelSize)
+		screenY := float32(character.Position.Y * config.TilePixelSize)
 
 		sheet := r.spriteManager.sheets[charactersSpriteSheet.Name]
 		if spriteRect, exists := sheet.Sprites[character.ID]; exists {

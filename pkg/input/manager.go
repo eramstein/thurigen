@@ -38,6 +38,10 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 		rl.CloseWindow()
 	}
 
+	if rl.IsKeyPressed(rl.KeyF1) {
+		sim.Benchmark()
+	}
+
 	// Update mouse state
 	m.mousePosition = rl.GetMousePosition()
 	m.leftPressed = rl.IsMouseButtonPressed(rl.MouseLeftButton)
