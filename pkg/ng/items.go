@@ -12,12 +12,14 @@ func (b *MaterialItem) GetItem() *BaseItem {
 	return &b.BaseItem
 }
 
-func (sim *Simulation) SpawnItem(item Item, region, x, y int) {
+func (sim *Simulation) SpawnItem(item *Item, position Position) {
+	// Set item's position
+	(*item).GetItem().OnTile = position
 	// Add to simulation's items
-	sim.Items = append(sim.Items, &item)
+	sim.Items = append(sim.Items, item)
 	// Add to tile's items
-	tile := &sim.World[region].Tiles[x][y]
-	tile.Items = append(tile.Items, &item)
+	tile := &sim.World[position.Region].Tiles[position.X][position.Y]
+	tile.Items = append(tile.Items, item)
 }
 
 func MakeItem(itemType ItemType, variant int) Item {

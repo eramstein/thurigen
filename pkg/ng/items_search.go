@@ -1,5 +1,9 @@
 package ng
 
+import (
+	"eramstein/thurigen/pkg/config"
+)
+
 // ScanForItem searches the closest item of a given type by looping tiles around a position
 func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType ItemType) *Item {
 	// Check current tile
@@ -114,7 +118,7 @@ func (sim *Simulation) ScanForItemFullRegion(position Position, itemType ItemTyp
 
 func (sim *Simulation) FindItemInTile(region int, x int, y int, itemType ItemType) *Item {
 	// Skip if out of bounds
-	if x < 0 || x >= len(sim.World[region].Tiles) || y < 0 || y >= len(sim.World[region].Tiles[0]) {
+	if x < 0 || x >= config.RegionSize || y < 0 || y >= config.RegionSize {
 		return nil
 	}
 

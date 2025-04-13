@@ -2,6 +2,7 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
+	"fmt"
 )
 
 func (b *BaseTask) GetTask() *BaseTask {
@@ -42,16 +43,26 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 			Target: (*itemInInventory).(*FoodItem),
 		})
 	} else {
-		// TODO: find the closest food item and add a task to go to it
+		// Find the closest food item and add a task to go to it
 		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2, Food)
 		if closestItem != nil {
+			base := (*closestItem).GetItem()
 			character.AddTask(&MoveTask{
 				BaseTask: BaseTask{
 					Objective: objective,
 					Type:      Move,
 				},
-				Target: (*closestItem).GetItem().OnTile,
+				Target: base.OnTile,
 			})
+			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, base.OnTile.X, base.OnTile.Y)
+			fmt.Println("closestItem", base.OnTile)
+			if path != nil {
+				for _, pos := range path {
+					fmt.Println("pos", pos)
+				}
+			} else {
+				fmt.Println("no path")
+			}
 		}
 	}
 }

@@ -12,7 +12,7 @@ func (sim *Simulation) UpdatePlants() {
 			plant.Update()
 			if plant.Produces.Type != NoItem && plant.ProductionStage >= 100 {
 				item := MakeItem(plant.Produces.Type, plant.Produces.Variant)
-				sim.SpawnItem(item, plant.Position.Region, plant.Position.X, plant.Position.Y)
+				sim.SpawnItem(&item, plant.Position)
 			}
 		}
 	}
@@ -32,13 +32,12 @@ func (sim *Simulation) SpawnPlant(region int, x, y int, variant int) {
 			Variant:  variant,
 			Size:     [2]int{1, 1},
 			MoveCost: plant.MoveCost,
+			Position: Position{Region: region, X: x, Y: y},
 		},
 		GrowthRate:     plant.GrowthRate,
 		ProductionRate: plant.ProductionRate,
 		Produces:       plant.Produces,
 	}
-
-	newPlant.Position = Position{Region: region, X: x, Y: y}
 
 	sim.World[region].Plants = append(sim.World[region].Plants, newPlant)
 	sim.AddStructure(newPlant)
