@@ -11,4 +11,5 @@ const (
 
 	CharacterNeedsUpdateInterval     = 1
 	CharacterObjectiveUpdateInterval = 5
+	CharacterTaskUpdateInterval      = 1
 )

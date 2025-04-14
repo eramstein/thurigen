@@ -1,6 +1,9 @@
 package ng
 
-import "eramstein/thurigen/pkg/config"
+import (
+	"eramstein/thurigen/pkg/config"
+	"fmt"
+)
 
 func (sim *Simulation) InitCharacters() {
 	sim.MakeCharacter("Henry", Position{Region: 0, X: 30, Y: 30})
@@ -15,6 +18,11 @@ func (sim *Simulation) UpdateCharacters() {
 	if sim.Time%config.CharacterObjectiveUpdateInterval == 0 {
 		for _, character := range sim.Characters {
 			sim.UpdateObjectives(character)
+		}
+	}
+	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
+		for _, character := range sim.Characters {
+			sim.UpdatePriorityTask(character)
 		}
 	}
 }
@@ -90,4 +98,19 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 		}
 	}
 	return false
+}
+
+func (character *Character) Move() {
+	fmt.Println("Moving character", character.Name)
+	if character.Path == nil {
+		return
+	}
+	path := *character.Path
+	if len(path) > 0 {
+		character.Position = path[0]
+		newPath := path[1:]
+		character.Path = &newPath
+	}
+	// TODO: handle partial movement (leftover action points? generalize it to all tasks)
+	// TODO: handle move task completion
 }

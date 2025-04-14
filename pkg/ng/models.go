@@ -27,6 +27,7 @@ type Character struct {
 	Objectives []*Objective
 	Ambitions  []*Ambition
 	Needs      Needs
+	Path       *[]Position
 }
 
 type Needs struct {
@@ -35,37 +36,11 @@ type Needs struct {
 	Sleep int // 0-100
 }
 
-type Task interface {
-	GetTask() *BaseTask
-}
-
-type BaseTask struct {
+type Task struct {
 	Type      TaskType
 	Objective *Objective
-	Progress  int // 0-100
-}
-
-type MoveTask struct {
-	BaseTask
-	Target Position
-}
-
-type FindTask struct {
-	BaseTask
-	Target ItemType
-}
-
-type EatTask struct {
-	BaseTask
-	Target *FoodItem
-}
-
-type DrinkTask struct {
-	BaseTask
-}
-
-type SleepTask struct {
-	BaseTask
+	Progress  int         // 0-100
+	Target    interface{} // Can be any type of struct
 }
 
 type Objective struct {
