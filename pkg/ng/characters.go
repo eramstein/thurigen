@@ -100,17 +100,27 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 	return false
 }
 
-func (character *Character) Move() {
+func (sim *Simulation) FollowPath(character *Character) {
 	fmt.Println("Moving character", character.Name)
 	if character.Path == nil {
 		return
 	}
 	path := *character.Path
 	if len(path) > 0 {
-		character.Position = path[0]
+		sim.MoveCharacter(character, path[0])
 		newPath := path[1:]
 		character.Path = &newPath
 	}
 	// TODO: handle partial movement (leftover action points? generalize it to all tasks)
 	// TODO: handle move task completion
+}
+
+func (sim *Simulation) MoveCharacter(character *Character, position Position) {
+	// TODO: handle other invalid moves
+	if sim.World[position.Region].Tiles[position.X][position.Y].Character != nil {
+		return
+	}
+	sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = nil
+	sim.World[position.Region].Tiles[position.X][position.Y].Character = character
+	character.Position = position
 }

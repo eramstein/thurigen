@@ -12,7 +12,7 @@ func (sim *Simulation) UpdatePriorityTask(character *Character) {
 	task := character.Tasks[0]
 	switch task.Type {
 	case Move:
-		character.Move()
+		sim.FollowPath(character)
 	}
 }
 
