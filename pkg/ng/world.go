@@ -16,6 +16,7 @@ func makeMainRegion() *Region {
 	addLake(regionTiles)
 	addMountain(regionTiles)
 	fillSurroundedTiles(regionTiles)
+	computeMoveCosts(regionTiles)
 	return &Region{
 		Tiles: *regionTiles,
 	}
@@ -41,6 +42,24 @@ func fillBlankRegion() *[config.RegionSize][config.RegionSize]Tile {
 		}
 	}
 	return &tiles
+}
+
+func computeMoveCosts(tiles *[config.RegionSize][config.RegionSize]Tile) {
+	for x := 0; x < config.RegionSize; x++ {
+		for y := 0; y < config.RegionSize; y++ {
+			tiles[x][y].MoveCost = getTileMoseCost(tiles[x][y])
+		}
+	}
+}
+
+func getTileMoseCost(tile Tile) MoveCost {
+	if tile.Terrain == Water {
+		return ImpassableCost
+	}
+	if tile.Volume == RockVolume {
+		return ImpassableCost
+	}
+	return DefaultMoveCost
 }
 
 func addLake(tiles *[config.RegionSize][config.RegionSize]Tile) {

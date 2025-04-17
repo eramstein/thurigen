@@ -17,6 +17,8 @@ func (sim *Simulation) AddStructure(structure Structure) {
 					Structure:  structure,          // Assign the structure to the tile
 					IsMainTile: dx == 0 && dy == 0, // Mark the main tile
 				}
+				// adjust tile move cost based on structure type
+				tile.MoveCost = base.MoveCost
 			}
 		}
 	}

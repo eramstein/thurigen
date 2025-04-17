@@ -22,12 +22,17 @@ type Character struct {
 	ID         int
 	Name       string
 	Position   Position
+	Stats      CharacterStats
 	Inventory  []*Item
 	Tasks      []*Task
 	Objectives []*Objective
 	Ambitions  []*Ambition
 	Needs      Needs
 	Path       *[]Position
+}
+
+type CharacterStats struct {
+	Speed float32 // movement speed, modifier applied to move cost
 }
 
 type Needs struct {
@@ -39,7 +44,7 @@ type Needs struct {
 type Task struct {
 	Type      TaskType
 	Objective *Objective
-	Progress  int         // 0-100
+	Progress  float32     // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
 	Target    interface{} // Can be any type of struct
 }
 

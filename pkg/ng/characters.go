@@ -2,11 +2,10 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
-	"fmt"
 )
 
 func (sim *Simulation) InitCharacters() {
-	sim.MakeCharacter("Henry", Position{Region: 0, X: 30, Y: 30})
+	sim.MakeCharacter("Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.5})
 }
 
 func (sim *Simulation) UpdateCharacters() {
@@ -55,11 +54,12 @@ func (sim *Simulation) RemoveCharacter(character *Character) {
 	}
 }
 
-func (sim *Simulation) MakeCharacter(name string, pos Position) *Character {
+func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterStats) *Character {
 	character := &Character{
 		ID:        len(sim.Characters),
 		Name:      name,
 		Position:  pos,
+		Stats:     stats,
 		Inventory: []*Item{},
 		Needs:     Needs{Food: 49, Water: 0, Sleep: 0},
 	}
@@ -100,26 +100,65 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 	return false
 }
 
-func (sim *Simulation) FollowPath(character *Character) {
-	fmt.Println("Moving character", character.Name)
+func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bool) {
 	if character.Path == nil {
 		return
 	}
 	path := *character.Path
 	if len(path) > 0 {
-		sim.MoveCharacter(character, path[0])
-		newPath := path[1:]
-		character.Path = &newPath
+		moveCost := sim.GetMoveCost(character, path[0])
+		if moveCost == -1 {
+			return
+		}
+
+		// for move tasks, the progress represents how many move points have been spent in the move to next tile in the path
+		// an "etra move" is using only left over action points from the same tick
+		if !extraMove {
+			task.Progress += character.Stats.Speed
+		}
+		// if enough move points have been spent, set the character to the new position
+		if task.Progress >= moveCost {
+			sim.SetCharacterPosition(character, path[0])
+			if len(path) == 1 {
+				character.Path = nil
+				character.CompleteTask(task)
+				return
+			}
+			newPath := path[1:]
+			character.Path = &newPath
+			task.Progress = task.Progress - moveCost
+			// get started on next move if excess move points
+			if task.Progress >= 1 {
+				sim.FollowPath(character, task, true)
+			}
+		}
 	}
-	// TODO: handle partial movement (leftover action points? generalize it to all tasks)
-	// TODO: handle move task completion
 }
 
-func (sim *Simulation) MoveCharacter(character *Character, position Position) {
-	// TODO: handle other invalid moves
-	if sim.World[position.Region].Tiles[position.X][position.Y].Character != nil {
-		return
+// How much movement points are needed for a character to move to a tile
+// One movement point corresponds to one tick for a character with speed 1 on a default tile
+// Returns -1 if the tile is impassable or occupied
+func (sim *Simulation) GetMoveCost(character *Character, position Position) float32 {
+	if character.Stats.Speed == 0 {
+		return -1
 	}
+	// check if tile is passable or occupied
+	targetTile := sim.World[position.Region].Tiles[position.X][position.Y]
+	if targetTile.Character != nil || targetTile.MoveCost == ImpassableCost {
+		return -1
+	}
+	// base tile move cost
+	moveCost := float32(targetTile.MoveCost)
+	// diagonal move cost
+	dx := character.Position.X - position.X
+	dy := character.Position.Y - position.Y
+	if dx != 0 && dy != 0 {
+		moveCost *= 1.41421356
+	}
+	return moveCost
+}
+
+func (sim *Simulation) SetCharacterPosition(character *Character, position Position) {
 	sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = nil
 	sim.World[position.Region].Tiles[position.X][position.Y].Character = character
 	character.Position = position

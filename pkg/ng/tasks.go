@@ -12,8 +12,18 @@ func (sim *Simulation) UpdatePriorityTask(character *Character) {
 	task := character.Tasks[0]
 	switch task.Type {
 	case Move:
-		sim.FollowPath(character)
+		sim.FollowPath(character, task, false)
 	}
+}
+
+func (character *Character) CompleteTask(task *Task) {
+	for i, t := range character.Tasks {
+		if t == task {
+			character.Tasks = append(character.Tasks[:i], character.Tasks[i+1:]...)
+			return
+		}
+	}
+	// TODO: find next task based on current objective
 }
 
 func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objective) {

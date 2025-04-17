@@ -189,12 +189,12 @@ func containsNode(pq *PriorityQueue, node *Node) bool {
 	return false
 }
 
-// reconstructPath builds the path from end node to start node
+// reconstructPath builds the path from end node to start node, excluding the initial position
 func reconstructPath(endNode *Node) []Position {
 	path := make([]Position, 0)
 	current := endNode
 
-	for current != nil {
+	for current != nil && current.Parent != nil {
 		path = append([]Position{{X: current.X, Y: current.Y}}, path...)
 		current = current.Parent
 	}
