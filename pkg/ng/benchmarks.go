@@ -7,6 +7,7 @@ import (
 
 // A temporary function containing whatever function we currently want to benchmark
 func (sim *Simulation) Benchmark() {
+	fmt.Println(len(sim.World[0].Plants))
 	// sim.BenchmarkItemSearch(0, [2]int{32, 32}, Food, 1000)
 }
 

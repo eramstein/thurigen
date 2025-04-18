@@ -48,6 +48,7 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 			fmt.Printf("Failed to save simulation state: %v\n", err)
 		} else {
 			fmt.Println("Simulation state saved successfully")
+			fmt.Println(len(sim.World[0].Plants))
 		}
 	}
 
@@ -58,6 +59,7 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 			// Replace current simulation with loaded one
 			*sim = *loadedSim
 			fmt.Println("Latest save loaded successfully")
+			fmt.Println(len(sim.World[0].Plants))
 		}
 	}
 

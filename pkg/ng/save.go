@@ -1,7 +1,8 @@
 package ng
 
 import (
-	"encoding/json"
+	"encoding/gob"
+	"eramstein/thurigen/pkg/config"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +10,30 @@ import (
 	"strings"
 	"time"
 )
+
+func init() {
+	// Register all types that need to be encoded/decoded
+	gob.Register([]*Region{})
+	gob.Register([]*Item{})
+	gob.Register([]*Character{})
+	gob.Register([]*PlantStructure{})
+	gob.Register(&PlantStructure{})
+	gob.Register(&BaseStructure{})
+	gob.Register(&PlantProduction{})
+	gob.Register(&Position{})
+	gob.Register(&TileOccupation{})
+	gob.Register(&FoodItem{})
+	gob.Register(&MaterialItem{})
+	gob.Register(&BaseItem{})
+
+	// Register tile-related types
+	gob.Register([config.RegionSize][config.RegionSize]Tile{})
+	gob.Register(&Tile{})
+	gob.Register(TerrainType(0))
+	gob.Register(SurfaceType(0))
+	gob.Register(VolumeType(0))
+	gob.Register(MoveCost(0))
+}
 
 // SaveState saves the current simulation state to a file
 func (sim *Simulation) SaveState() error {
@@ -20,7 +45,7 @@ func (sim *Simulation) SaveState() error {
 
 	// Generate filename with timestamp
 	timestamp := time.Now().Format("2006-01-02_15-04-05")
-	filename := filepath.Join(savesDir, fmt.Sprintf("save_%s.json", timestamp))
+	filename := filepath.Join(savesDir, fmt.Sprintf("save_%s.bin", timestamp))
 
 	// Create save data structure
 	saveData := struct {
@@ -39,15 +64,19 @@ func (sim *Simulation) SaveState() error {
 		Characters: sim.Characters,
 	}
 
-	// Marshal to JSON
-	data, err := json.MarshalIndent(saveData, "", "  ")
+	// Create file
+	file, err := os.Create(filename)
 	if err != nil {
-		return fmt.Errorf("failed to marshal simulation state: %v", err)
+		return fmt.Errorf("failed to create save file: %v", err)
 	}
+	defer file.Close()
 
-	// Write to file
-	if err := os.WriteFile(filename, data, 0644); err != nil {
-		return fmt.Errorf("failed to write save file: %v", err)
+	// Create gob encoder
+	encoder := gob.NewEncoder(file)
+
+	// Encode the data
+	if err := encoder.Encode(saveData); err != nil {
+		return fmt.Errorf("failed to encode simulation state: %v", err)
 	}
 
 	return nil
@@ -55,13 +84,17 @@ func (sim *Simulation) SaveState() error {
 
 // LoadState loads a simulation state from a file
 func LoadState(filename string) (*Simulation, error) {
-	// Read file
-	data, err := os.ReadFile(filename)
+	// Open file
+	file, err := os.Open(filename)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read save file: %v", err)
+		return nil, fmt.Errorf("failed to open save file: %v", err)
 	}
+	defer file.Close()
 
-	// Unmarshal JSON
+	// Create gob decoder
+	decoder := gob.NewDecoder(file)
+
+	// Unmarshal binary data
 	var saveData struct {
 		Paused     bool         `json:"paused"`
 		Speed      int          `json:"speed"`
@@ -71,8 +104,8 @@ func LoadState(filename string) (*Simulation, error) {
 		Characters []*Character `json:"characters"`
 	}
 
-	if err := json.Unmarshal(data, &saveData); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal simulation state: %v", err)
+	if err := decoder.Decode(&saveData); err != nil {
+		return nil, fmt.Errorf("failed to decode simulation state: %v", err)
 	}
 
 	// Create new simulation
@@ -100,7 +133,7 @@ func LoadLatestState() (*Simulation, error) {
 	// Filter for save files and sort by name (which includes timestamp)
 	var saveFiles []string
 	for _, file := range files {
-		if !file.IsDir() && strings.HasPrefix(file.Name(), "save_") && strings.HasSuffix(file.Name(), ".json") {
+		if !file.IsDir() && strings.HasPrefix(file.Name(), "save_") && strings.HasSuffix(file.Name(), ".bin") {
 			saveFiles = append(saveFiles, file.Name())
 		}
 	}

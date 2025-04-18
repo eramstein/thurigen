@@ -27,8 +27,8 @@ var (
 	}
 )
 
-func (r *Renderer) DisplayRegion() {
-	region := r.uiState.DisplayedRegion
+func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
+	region := sim.World[r.uiState.DisplayedRegion]
 
 	// Get the camera's view bounds
 	camera := r.camera.GetCamera()

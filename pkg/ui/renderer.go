@@ -27,7 +27,7 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		spriteManager: NewSpriteManager(),
 		fontManager:   NewFontManager(),
 		uiState: &Model{
-			DisplayedRegion: sim.World[0],
+			DisplayedRegion: 0,
 		},
 	}
 	r.camera = NewCamera(width, height)
@@ -72,7 +72,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	// Begin camera drawing
 	rl.BeginMode2D(r.camera.GetCamera())
 
-	r.DisplayRegion()
+	r.DisplayRegion(sim)
 	r.DisplayCharacters(sim.Characters)
 
 	// End camera drawing
@@ -86,7 +86,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	r.DisplayTime(sim)
 
 	// Draw side panel
-	r.DisplayTileSidePanel()
+	r.DisplayTileSidePanel(sim)
 }
 
 // DisplayTime shows the current time

@@ -9,7 +9,7 @@ import (
 )
 
 // DisplayTileSidePanel shows information about the selected tile
-func (r *Renderer) DisplayTileSidePanel() {
+func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 	if r.uiState.SelectedTile == nil {
 		return
 	}
@@ -25,7 +25,7 @@ func (r *Renderer) DisplayTileSidePanel() {
 
 	// Get selected tile data
 	tileX, tileY := (*r.uiState.SelectedTile)[0], (*r.uiState.SelectedTile)[1]
-	tile := r.uiState.DisplayedRegion.Tiles[tileX][tileY]
+	tile := sim.World[r.uiState.DisplayedRegion].Tiles[tileX][tileY]
 
 	// Draw tile information
 	yOffset := 20

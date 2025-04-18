@@ -1,8 +1,6 @@
 package ui
 
-import "eramstein/thurigen/pkg/ng"
-
 type Model struct {
-	DisplayedRegion *ng.Region
+	DisplayedRegion int
 	SelectedTile    *[2]int
 }
