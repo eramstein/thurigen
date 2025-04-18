@@ -4,6 +4,7 @@ import (
 	"eramstein/thurigen/pkg/config"
 	"eramstein/thurigen/pkg/ng"
 	"eramstein/thurigen/pkg/ui"
+	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -40,6 +41,24 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 
 	if rl.IsKeyPressed(rl.KeyF1) {
 		sim.Benchmark()
+	}
+
+	if rl.IsKeyPressed(rl.KeyF5) { // Press F5 to save
+		if err := sim.SaveState(); err != nil {
+			fmt.Printf("Failed to save simulation state: %v\n", err)
+		} else {
+			fmt.Println("Simulation state saved successfully")
+		}
+	}
+
+	if rl.IsKeyPressed(rl.KeyF4) { // Press F4 to load latest save
+		if loadedSim, err := ng.LoadLatestState(); err != nil {
+			fmt.Printf("Failed to load latest save: %v\n", err)
+		} else {
+			// Replace current simulation with loaded one
+			*sim = *loadedSim
+			fmt.Println("Latest save loaded successfully")
+		}
 	}
 
 	// Update mouse state

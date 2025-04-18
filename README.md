@@ -44,8 +44,19 @@ go run cmd/game/main.go
 
 ## Controls
 
-- Press **SPACE** to pause and resume the simulation.
-- Press **ENTER** to restart the ticker.
+- Press **SPACE** to pause and resume the simulation
+- Press **ENTER** to restart the ticker
+- Press **F5** to save the current simulation state
+- Press **F4** to load the most recent save file
+- Press **F1** to run benchmarks
+
+## Save Files
+
+Save files are stored in the `saves` directory with timestamps in their filenames (e.g., `save_2024-03-21_15-30-45.json`). Each save file contains the complete state of the simulation, including:
+- World state (tiles, terrain, structures)
+- Characters and their states
+- Items and their locations
+- Simulation time and settings
 
 ## Features
 
@@ -55,6 +66,7 @@ go run cmd/game/main.go
 - Simple graphics with no animations
 - Regional/zonal spatial management
 - Late middle ages setting (around 1400)
+- Save/Load functionality
 
 ## License
 
