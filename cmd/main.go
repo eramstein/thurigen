@@ -5,6 +5,7 @@ import (
 	"eramstein/thurigen/pkg/input"
 	"eramstein/thurigen/pkg/ng"
 	"eramstein/thurigen/pkg/ui"
+	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -24,7 +25,17 @@ func main() {
 	ticker := 0
 
 	// Initialize sim engine
-	sim := ng.NewSimulation()
+	var sim *ng.Simulation
+	var err error
+
+	// Try to load the latest saved state
+	sim, err = ng.LoadLatestState()
+	if err != nil {
+		fmt.Println("No saved state found, creating new simulation:", err)
+		sim = ng.NewSimulation()
+	} else {
+		fmt.Println("Loaded saved simulation state")
+	}
 
 	// Initialize UI
 	renderer := ui.NewRenderer(screenWidth, screenHeight, sim)

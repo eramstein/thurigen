@@ -2,6 +2,7 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
+	"fmt"
 )
 
 func (sim *Simulation) InitCharacters() {
@@ -21,7 +22,7 @@ func (sim *Simulation) UpdateCharacters() {
 	}
 	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
 		for _, character := range sim.Characters {
-			sim.UpdatePriorityTask(character)
+			sim.WorkOnPriorityTask(character)
 		}
 	}
 }
@@ -100,6 +101,15 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 	return false
 }
 
+func (character *Character) CompleteObjective(objective *Objective) {
+	fmt.Println("Completing objective", objective.Type, objective)
+	for i, charObjective := range character.Objectives {
+		if charObjective == objective {
+			character.Objectives = append(character.Objectives[:i], character.Objectives[i+1:]...)
+		}
+	}
+}
+
 func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bool) {
 	if character.Path == nil {
 		return
@@ -121,7 +131,7 @@ func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bo
 			sim.SetCharacterPosition(character, path[0])
 			if len(path) == 1 {
 				character.Path = nil
-				character.CompleteTask(task)
+				sim.CompleteTask(character, task)
 				return
 			}
 			newPath := path[1:]
@@ -162,4 +172,24 @@ func (sim *Simulation) SetCharacterPosition(character *Character, position Posit
 	sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = nil
 	sim.World[position.Region].Tiles[position.X][position.Y].Character = character
 	character.Position = position
+}
+
+func (sim *Simulation) Eat(character *Character, task *Task) {
+	// First dereference the *Item to get the Item interface
+	itemInterface := *(task.Target.(*Item))
+	// Then do the type assertion to *FoodItem
+	food, ok := itemInterface.(*FoodItem)
+	if !ok {
+		fmt.Println("Task target is not a FoodItem", task.Target)
+		return
+	}
+	task.Progress += 10
+	if task.Progress >= 100 {
+		character.Needs.Food -= food.Nutrition
+		if character.Needs.Food < 0 {
+			character.Needs.Food = 0
+		}
+		sim.DeleteItem(task.Target.(*Item))
+		sim.CompleteTask(character, task)
+	}
 }

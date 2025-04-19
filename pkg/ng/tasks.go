@@ -4,7 +4,7 @@ import (
 	"eramstein/thurigen/pkg/config"
 )
 
-func (sim *Simulation) UpdatePriorityTask(character *Character) {
+func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 	if len(character.Tasks) == 0 {
 		return
 	}
@@ -13,19 +13,33 @@ func (sim *Simulation) UpdatePriorityTask(character *Character) {
 	switch task.Type {
 	case Move:
 		sim.FollowPath(character, task, false)
+	case Eat:
+		sim.Eat(character, task)
 	}
 }
 
-func (character *Character) CompleteTask(task *Task) {
+func (sim *Simulation) CompleteTask(character *Character, task *Task) {
 	for i, t := range character.Tasks {
 		if t == task {
 			character.Tasks = append(character.Tasks[:i], character.Tasks[i+1:]...)
-			return
+			break
 		}
 	}
-	// TODO: find next task based on current objective
+	sim.CheckIfObjectiveIsAchieved(character, task.Objective)
+	if len(character.Objectives) > 0 {
+		sim.PlanTasks(character, character.Objectives[0])
+	}
 }
 
+func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objective *Objective) {
+	if objective.Type == EatObjective {
+		if character.Needs.Food < 40 {
+			character.CompleteObjective(objective)
+		}
+	}
+}
+
+// Set next task required to achieve an eat objective
 func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objective) {
 	// Check if the character has the item in their inventory
 	itemInInventory := character.FindInInventory(Food)
@@ -37,8 +51,15 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 			Type:      Eat,
 			Target:    itemInInventory,
 		})
+		// If the character is on a tile with a food item, add a task to eat it
+	} else if itemOnTile := sim.FindItemInTile(character.Position.Region, character.Position.X, character.Position.Y, Food); itemOnTile != nil {
+		character.AddTask(Task{
+			Objective: objective,
+			Type:      Eat,
+			Target:    itemOnTile,
+		})
 	} else {
-		// Find the closest food item and add a task to go to it
+		// If no food on tile, find the closest food item and add a task to go to it
 		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2, Food)
 		if closestItem != nil {
 			base := (*closestItem).GetItem()

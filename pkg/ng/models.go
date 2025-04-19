@@ -114,9 +114,10 @@ type Item interface {
 
 // All item types embed
 type BaseItem struct {
-	Type    ItemType
-	Variant int
-	OnTile  Position
+	Type          ItemType
+	Variant       int
+	OnTile        *Position
+	InInventoryOf *Character
 }
 
 // Food items can be consumed by characters to restore nutrition
