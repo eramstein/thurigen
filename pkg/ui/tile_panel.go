@@ -85,8 +85,7 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 		// List each item type and count
 		itemCounts := make(map[string]int)
 		for _, item := range tile.Items {
-			baseItem := (*item).GetItem()
-			config := ng.GetItemConfig(baseItem.Type, baseItem.Variant)
+			config := ng.GetItemConfig(item.Type, item.Variant)
 			itemCounts[config.Name]++
 		}
 		for itemName, count := range itemCounts {
@@ -152,8 +151,7 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			yOffset += lineHeight
 			itemCounts := make(map[string]int)
 			for _, item := range character.Inventory {
-				baseItem := (*item).GetItem()
-				config := ng.GetItemConfig(baseItem.Type, baseItem.Variant)
+				config := ng.GetItemConfig(item.Type, item.Variant)
 				itemCounts[config.Name]++
 			}
 			for itemName, count := range itemCounts {

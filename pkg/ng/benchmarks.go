@@ -16,8 +16,6 @@ func (sim *Simulation) BenchmarkItemSearch(position Position, itemType ItemType,
 	// Warm up
 	for i := 0; i < 10; i++ {
 		sim.ScanForItem(position, 10, itemType)
-		sim.GetClosestItem(position, itemType)
-		sim.ScanForItemFullRegion(position, itemType)
 	}
 
 	// Benchmark ScanForItem
@@ -27,23 +25,7 @@ func (sim *Simulation) BenchmarkItemSearch(position Position, itemType ItemType,
 	}
 	scanTime := time.Since(startTime)
 
-	// Benchmark GetClosestItem
-	startTime = time.Now()
-	for i := 0; i < iterations; i++ {
-		sim.GetClosestItem(position, itemType)
-	}
-	closestTime := time.Since(startTime)
-
-	// Benchmark ScanForItemFullRegion
-	startTime = time.Now()
-	for i := 0; i < iterations; i++ {
-		sim.ScanForItemFullRegion(position, itemType)
-	}
-	fullRegionTime := time.Since(startTime)
-
 	// Print results
 	fmt.Printf("Benchmark results for %d iterations:\n", iterations)
 	fmt.Printf("ScanForItem: %v\n", scanTime)
-	fmt.Printf("GetClosestItem: %v\n", closestTime)
-	fmt.Printf("ScanForItemFullRegion: %v\n", fullRegionTime)
 }

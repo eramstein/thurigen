@@ -20,9 +20,6 @@ func LoadItemsConfigs() error {
 	if err := LoadFoodConfigs(); err != nil {
 		return err
 	}
-	if err := LoadMaterialConfigs(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -52,51 +49,10 @@ func LoadFoodConfigs() error {
 	for itemTypeInt, itemData := range rawConfig.Food {
 		itemsConfigs[Food][itemTypeInt] = ItemConfig{
 			Name: itemData.Name,
-			Item: &FoodItem{
-				BaseItem: BaseItem{
-					Type:    ItemType(itemTypeInt),
-					Variant: itemTypeInt,
-				},
-				Nutrition: itemData.Nutrition,
-			},
-		}
-	}
-
-	return nil
-}
-
-// LoadMaterialConfigs reads material configurations from the JSON file
-func LoadMaterialConfigs() error {
-	// Read the JSON file
-	data, err := os.ReadFile("data/items_material.json")
-	if err != nil {
-		fmt.Println("Error reading items_material.json:", err)
-		return err
-	}
-
-	// Parse the JSON data
-	var rawConfig struct {
-		Material map[int]struct {
-			Name         string `json:"name"`
-			MaterialType int    `json:"materialType"`
-		} `json:"material"`
-	}
-
-	if err := json.Unmarshal(data, &rawConfig); err != nil {
-		fmt.Println("Error unmarshalling rawConfig:", err)
-		return err
-	}
-
-	// Convert the raw config to our internal format
-	for itemTypeInt, itemData := range rawConfig.Material {
-		itemsConfigs[Material][itemTypeInt] = ItemConfig{
-			Name: itemData.Name,
-			Item: &MaterialItem{
-				BaseItem: BaseItem{
-					Type:    ItemType(itemTypeInt),
-					Variant: itemTypeInt,
-				},
-				MaterialType: MaterialType(itemData.MaterialType),
+			Item: Item{
+				Type:       ItemType(itemTypeInt),
+				Variant:    itemTypeInt,
+				Efficiency: itemData.Nutrition,
 			},
 		}
 	}

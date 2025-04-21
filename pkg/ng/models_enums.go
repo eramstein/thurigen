@@ -59,14 +59,6 @@ const (
 	Tool
 )
 
-type MaterialType int
-
-const (
-	NoMaterialType MaterialType = iota
-	WoodMaterial
-	StoneMaterial
-)
-
 type TaskType int
 
 const (
@@ -172,20 +164,6 @@ func (i ItemType) String() string {
 		return "Tool"
 	default:
 		return "Unknown Item"
-	}
-}
-
-// String returns a human-readable description of the MaterialType
-func (m MaterialType) String() string {
-	switch m {
-	case NoMaterialType:
-		return "No Material Type"
-	case WoodMaterial:
-		return "Wood Material"
-	case StoneMaterial:
-		return "Stone Material"
-	default:
-		return "Unknown Material Type"
 	}
 }
 

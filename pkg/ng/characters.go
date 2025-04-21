@@ -175,21 +175,14 @@ func (sim *Simulation) SetCharacterPosition(character *Character, position Posit
 }
 
 func (sim *Simulation) Eat(character *Character, task *Task) {
-	// First dereference the *Item to get the Item interface
-	itemInterface := *(task.Target.(*Item))
-	// Then do the type assertion to *FoodItem
-	food, ok := itemInterface.(*FoodItem)
-	if !ok {
-		fmt.Println("Task target is not a FoodItem", task.Target)
-		return
-	}
+	item := task.Target.(*Item)
 	task.Progress += 10
 	if task.Progress >= 100 {
-		character.Needs.Food -= food.Nutrition
+		character.Needs.Food -= item.Efficiency
 		if character.Needs.Food < 0 {
 			character.Needs.Food = 0
 		}
-		sim.DeleteItem(task.Target.(*Item))
+		sim.DeleteItem(item)
 		sim.CompleteTask(character, task)
 	}
 }

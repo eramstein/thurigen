@@ -1,20 +1,8 @@
 package ng
 
-func (b *BaseItem) GetItem() *BaseItem {
-	return b
-}
-
-func (b *FoodItem) GetItem() *BaseItem {
-	return &b.BaseItem
-}
-
-func (b *MaterialItem) GetItem() *BaseItem {
-	return &b.BaseItem
-}
-
 func (sim *Simulation) SpawnItem(item *Item, position Position) {
 	// Set item's position
-	(*item).GetItem().OnTile = &position
+	item.OnTile = &position
 	// Add to simulation's items
 	sim.Items = append(sim.Items, item)
 	// Add to tile's items
@@ -23,20 +11,19 @@ func (sim *Simulation) SpawnItem(item *Item, position Position) {
 }
 
 func (sim *Simulation) DeleteItem(item *Item) {
-	base := (*item).GetItem()
 	// remove reference of item in inventories
-	if base.InInventoryOf != nil {
-		for i, inventoryRef := range base.InInventoryOf.Inventory {
+	if item.InInventoryOf != nil {
+		for i, inventoryRef := range item.InInventoryOf.Inventory {
 			if inventoryRef == item {
-				base.InInventoryOf.Inventory = append(base.InInventoryOf.Inventory[:i], base.InInventoryOf.Inventory[i+1:]...)
+				item.InInventoryOf.Inventory = append(item.InInventoryOf.Inventory[:i], item.InInventoryOf.Inventory[i+1:]...)
 			}
 		}
 	}
 	// remove reference of item on tiles
-	if base.OnTile != nil {
-		for i, tileItemRef := range sim.World[base.OnTile.Region].Tiles[base.OnTile.X][base.OnTile.Y].Items {
+	if item.OnTile != nil {
+		for i, tileItemRef := range sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items {
 			if tileItemRef == item {
-				sim.World[base.OnTile.Region].Tiles[base.OnTile.X][base.OnTile.Y].Items = append(sim.World[base.OnTile.Region].Tiles[base.OnTile.X][base.OnTile.Y].Items[:i], sim.World[base.OnTile.Region].Tiles[base.OnTile.X][base.OnTile.Y].Items[i+1:]...)
+				sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items = append(sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[:i], sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[i+1:]...)
 			}
 		}
 	}
@@ -49,19 +36,13 @@ func (sim *Simulation) DeleteItem(item *Item) {
 }
 
 func MakeItem(itemType ItemType, variant int) Item {
+	item := Item{
+		Type:    itemType,
+		Variant: variant,
+	}
 	switch itemType {
 	case Food:
-		return &FoodItem{
-			BaseItem: BaseItem{
-				Type:    itemType,
-				Variant: variant,
-			},
-			Nutrition: 50, // Default nutrition value
-		}
-	default:
-		return &BaseItem{
-			Type:    itemType,
-			Variant: variant,
-		}
+		item.Efficiency = 50
 	}
+	return item
 }

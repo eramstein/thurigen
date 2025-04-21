@@ -22,9 +22,7 @@ func init() {
 	gob.Register(&PlantProduction{})
 	gob.Register(&Position{})
 	gob.Register(&TileOccupation{})
-	gob.Register(&FoodItem{})
-	gob.Register(&MaterialItem{})
-	gob.Register(&BaseItem{})
+	gob.Register(&Item{})
 
 	// Register tile-related types
 	gob.Register([config.RegionSize][config.RegionSize]Tile{})

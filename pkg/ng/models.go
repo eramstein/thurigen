@@ -108,25 +108,10 @@ type PlantProduction struct {
 
 // Items are small objects that can be on a tile, on a character, or in a container
 // They can be owned, traded, discarded, consumed, used for crafting, etc.
-type Item interface {
-	GetItem() *BaseItem
-}
-
-// All item types embed
-type BaseItem struct {
+type Item struct {
 	Type          ItemType
 	Variant       int
 	OnTile        *Position
 	InInventoryOf *Character
-}
-
-// Food items can be consumed by characters to restore nutrition
-type FoodItem struct {
-	BaseItem
-	Nutrition int // 0-100
-}
-
-type MaterialItem struct {
-	BaseItem
-	MaterialType MaterialType // Wood, Stone, etc.
+	Efficiency    int // for food it's nutrition value
 }

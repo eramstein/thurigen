@@ -62,13 +62,12 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 		// If no food on tile, find the closest food item and add a task to go to it
 		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2, Food)
 		if closestItem != nil {
-			base := (*closestItem).GetItem()
-			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, base.OnTile.X, base.OnTile.Y)
+			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestItem.OnTile.X, closestItem.OnTile.Y)
 			character.Path = &path
 			character.AddTask(Task{
 				Objective: objective,
 				Type:      Move,
-				Target:    base.OnTile,
+				Target:    closestItem.OnTile,
 			})
 		}
 	}
