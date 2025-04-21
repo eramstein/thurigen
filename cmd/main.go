@@ -24,6 +24,9 @@ func main() {
 
 	ticker := 0
 
+	// Load static data (configs, etc)
+	loadData()
+
 	// Initialize sim engine
 	var sim *ng.Simulation
 	var err error
@@ -71,4 +74,9 @@ func render(renderer *ui.Renderer, sim *ng.Simulation) {
 	rl.ClearBackground(rl.RayWhite)
 	renderer.Render(sim)
 	rl.EndDrawing()
+}
+
+func loadData() {
+	ng.LoadStructuresConfigs()
+	ng.LoadItemsConfigs()
 }
