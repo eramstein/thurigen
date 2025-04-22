@@ -98,7 +98,6 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 	// Check for characters at this position
 	if tile.Character != nil {
 		character := tile.Character
-
 		// separator
 		separatorText := "--------------------------------"
 		r.RenderText(separatorText, panelX+10, yOffset)

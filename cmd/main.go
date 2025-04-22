@@ -64,7 +64,6 @@ func main() {
 			}
 			ticker++
 		}
-
 		render(renderer, sim)
 	}
 }

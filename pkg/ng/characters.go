@@ -62,7 +62,7 @@ func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterS
 		Position:  pos,
 		Stats:     stats,
 		Inventory: []*Item{},
-		Needs:     Needs{Food: 49, Water: 0, Sleep: 0},
+		Needs:     Needs{Food: 0, Water: 49, Sleep: 0},
 	}
 	sim.Characters = append(sim.Characters, character)
 	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
@@ -75,17 +75,6 @@ func (sim *Simulation) AddObjective(character *Character, objectiveType Objectiv
 	}
 	character.Objectives = append(character.Objectives, objective)
 	sim.PlanTasks(character, objective)
-}
-
-func (sim *Simulation) PlanTasks(character *Character, objective *Objective) {
-	switch objective.Type {
-	case EatObjective:
-		sim.PlanEatingTasks(character, objective)
-	case DrinkObjective:
-		sim.PlanDrinkingTasks(character, objective)
-	case SleepObjective:
-		sim.PlanSleepingTasks(character, objective)
-	}
 }
 
 func (character *Character) AddTask(task Task) {
@@ -185,4 +174,14 @@ func (sim *Simulation) Eat(character *Character, task *Task) {
 		sim.DeleteItem(item)
 		sim.CompleteTask(character, task)
 	}
+}
+
+func (sim *Simulation) Drink(character *Character, task *Task) {
+	position := task.Target.(*Position)
+	tile := sim.World[position.Region].Tiles[position.X][position.Y]
+	if tile.Terrain != Water {
+		return
+	}
+	character.Needs.Water = 0
+	sim.CompleteTask(character, task)
 }

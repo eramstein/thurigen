@@ -34,9 +34,10 @@ func (sim *Simulation) SpawnPlant(region int, x, y int, variant int) {
 			MoveCost: plant.MoveCost,
 			Position: Position{Region: region, X: x, Y: y},
 		},
-		GrowthRate:     plant.GrowthRate,
-		ProductionRate: plant.ProductionRate,
-		Produces:       plant.Produces,
+		GrowthRate:      plant.GrowthRate,
+		ProductionRate:  plant.ProductionRate,
+		Produces:        plant.Produces,
+		ProductionStage: 99,
 	}
 
 	sim.World[region].Plants = append(sim.World[region].Plants, newPlant)

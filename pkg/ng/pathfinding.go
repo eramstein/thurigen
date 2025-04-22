@@ -43,7 +43,8 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 // FindPath finds the optimal path between two tiles in a region using A* algorithm
-func (region *Region) FindPath(startX, startY, endX, endY int) []Position {
+// if vicinity is set, we stop when reaching this distance of the target tile
+func (region *Region) FindPath(startX, startY, endX, endY, vicinity int) []Position {
 	// Initialize open and closed sets
 	openSet := &PriorityQueue{}
 	heap.Init(openSet)
@@ -74,8 +75,14 @@ func (region *Region) FindPath(startX, startY, endX, endY int) []Position {
 		current := heap.Pop(openSet).(*Node)
 
 		// Check if we reached the goal
-		if current.X == endNode.X && current.Y == endNode.Y {
-			return reconstructPath(current)
+		if vicinity > 0 {
+			if current.X <= endNode.X+vicinity && current.X >= endNode.X-vicinity && current.Y <= endNode.Y+vicinity && current.Y >= endNode.Y-vicinity {
+				return reconstructPath(current)
+			}
+		} else {
+			if current.X == endNode.X && current.Y == endNode.Y {
+				return reconstructPath(current)
+			}
 		}
 
 		// Add current node to closed set

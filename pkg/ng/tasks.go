@@ -4,6 +4,17 @@ import (
 	"eramstein/thurigen/pkg/config"
 )
 
+func (sim *Simulation) PlanTasks(character *Character, objective *Objective) {
+	switch objective.Type {
+	case EatObjective:
+		sim.PlanEatingTasks(character, objective)
+	case DrinkObjective:
+		sim.PlanDrinkingTasks(character, objective)
+	case SleepObjective:
+		sim.PlanSleepingTasks(character, objective)
+	}
+}
+
 func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 	if len(character.Tasks) == 0 {
 		return
@@ -15,6 +26,8 @@ func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 		sim.FollowPath(character, task, false)
 	case Eat:
 		sim.Eat(character, task)
+	case Drink:
+		sim.Drink(character, task)
 	}
 }
 
@@ -32,8 +45,13 @@ func (sim *Simulation) CompleteTask(character *Character, task *Task) {
 }
 
 func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objective *Objective) {
-	if objective.Type == EatObjective {
+	switch objective.Type {
+	case EatObjective:
 		if character.Needs.Food < 40 {
+			character.CompleteObjective(objective)
+		}
+	case DrinkObjective:
+		if character.Needs.Water < 40 {
 			character.CompleteObjective(objective)
 		}
 	}
@@ -62,7 +80,7 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 		// If no food on tile, find the closest food item and add a task to go to it
 		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2, Food)
 		if closestItem != nil {
-			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestItem.OnTile.X, closestItem.OnTile.Y)
+			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestItem.OnTile.X, closestItem.OnTile.Y, 0)
 			character.Path = &path
 			character.AddTask(Task{
 				Objective: objective,
@@ -74,6 +92,27 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 }
 
 func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Objective) {
+	closestWater := sim.ScanForTile(character.Position, config.RegionSize/2, Water)
+	if closestWater == nil {
+		return
+	}
+	if IsAdjacent(character.Position.X, character.Position.Y, closestWater.X, closestWater.Y) {
+		character.AddTask(Task{
+			Objective: objective,
+			Type:      Drink,
+			Target:    closestWater,
+		})
+	} else {
+		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestWater.X, closestWater.Y, 1)
+		if len(path) > 0 {
+			character.Path = &path
+			character.AddTask(Task{
+				Objective: objective,
+				Type:      Move,
+				Target:    path[len(path)-1],
+			})
+		}
+	}
 }
 
 func (sim *Simulation) PlanSleepingTasks(character *Character, objective *Objective) {

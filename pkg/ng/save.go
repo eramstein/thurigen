@@ -116,6 +116,8 @@ func LoadState(filename string) (*Simulation, error) {
 		Characters: saveData.Characters,
 	}
 
+	sim.ReconnectReferences()
+
 	return sim, nil
 }
 
@@ -146,4 +148,14 @@ func LoadLatestState() (*Simulation, error) {
 	// Load the most recent save file
 	latestFile := filepath.Join(savesDir, saveFiles[0])
 	return LoadState(latestFile)
+}
+
+// ReconnectReferences reconnects all the references after loading a save
+// (some data is duplicated for performances reasons, for example which tile a character is on is stored both on the character and on the tile)
+func (sim *Simulation) ReconnectReferences() {
+	// Reconnect character-tile references
+	for _, character := range sim.Characters {
+		// Set correct character reference in tile
+		sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = character
+	}
 }
