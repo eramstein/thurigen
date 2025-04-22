@@ -28,6 +28,11 @@ func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 		sim.Eat(character, task)
 	case Drink:
 		sim.Drink(character, task)
+	case Sleep:
+		sim.Sleep(character, task)
+	}
+	if task.Progress >= 100 {
+		sim.CompleteTask(character, task)
 	}
 }
 
@@ -41,19 +46,6 @@ func (sim *Simulation) CompleteTask(character *Character, task *Task) {
 	sim.CheckIfObjectiveIsAchieved(character, task.Objective)
 	if len(character.Objectives) > 0 {
 		sim.PlanTasks(character, character.Objectives[0])
-	}
-}
-
-func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objective *Objective) {
-	switch objective.Type {
-	case EatObjective:
-		if character.Needs.Food < 40 {
-			character.CompleteObjective(objective)
-		}
-	case DrinkObjective:
-		if character.Needs.Water < 40 {
-			character.CompleteObjective(objective)
-		}
 	}
 }
 
@@ -116,4 +108,8 @@ func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Object
 }
 
 func (sim *Simulation) PlanSleepingTasks(character *Character, objective *Objective) {
+	character.AddTask(Task{
+		Objective: objective,
+		Type:      Sleep,
+	})
 }

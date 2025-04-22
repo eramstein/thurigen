@@ -12,4 +12,8 @@ const (
 	CharacterNeedsUpdateInterval     = 1
 	CharacterObjectiveUpdateInterval = 5
 	CharacterTaskUpdateInterval      = 1
+
+	NeedFoodTick  = 1
+	NeedWaterTick = 1
+	NeedSleepTick = 1
 )

@@ -43,6 +43,10 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 		sim.Benchmark()
 	}
 
+	if rl.IsKeyPressed(rl.KeyL) {
+		ng.PrintCharacterDetails(sim.Characters[0])
+	}
+
 	if rl.IsKeyPressed(rl.KeyF5) { // Press F5 to save
 		if err := sim.SaveState(); err != nil {
 			fmt.Printf("Failed to save simulation state: %v\n", err)

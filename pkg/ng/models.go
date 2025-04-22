@@ -38,7 +38,7 @@ type CharacterStats struct {
 type Needs struct {
 	Food  int // 0-100
 	Water int // 0-100
-	Sleep int // 0-100
+	Sleep int // 1 = 1 minute of sleep needed
 }
 
 type Task struct {

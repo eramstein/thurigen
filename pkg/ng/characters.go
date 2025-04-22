@@ -2,7 +2,6 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
-	"fmt"
 )
 
 func (sim *Simulation) InitCharacters() {
@@ -28,23 +27,9 @@ func (sim *Simulation) UpdateCharacters() {
 }
 
 func (character *Character) UpdateNeeds() {
-	character.Needs.Food += 1
-	character.Needs.Water += 1
-	character.Needs.Sleep += 1
-}
-
-func (sim *Simulation) UpdateObjectives(character *Character) {
-	if character.Needs.Food >= 50 && !character.HasObjective(EatObjective) {
-		sim.AddObjective(character, EatObjective)
-	}
-
-	if character.Needs.Water >= 50 && !character.HasObjective(DrinkObjective) {
-		sim.AddObjective(character, DrinkObjective)
-	}
-
-	if character.Needs.Sleep >= 50 && !character.HasObjective(SleepObjective) {
-		sim.AddObjective(character, SleepObjective)
-	}
+	character.Needs.Food += config.NeedFoodTick
+	character.Needs.Water += config.NeedWaterTick
+	character.Needs.Sleep += config.NeedSleepTick
 }
 
 func (sim *Simulation) RemoveCharacter(character *Character) {
@@ -62,41 +47,15 @@ func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterS
 		Position:  pos,
 		Stats:     stats,
 		Inventory: []*Item{},
-		Needs:     Needs{Food: 0, Water: 49, Sleep: 0},
+		Needs:     Needs{Food: 0, Water: 0, Sleep: 48},
 	}
 	sim.Characters = append(sim.Characters, character)
 	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
 	return character
 }
 
-func (sim *Simulation) AddObjective(character *Character, objectiveType ObjectiveType) {
-	objective := &Objective{
-		Type: objectiveType,
-	}
-	character.Objectives = append(character.Objectives, objective)
-	sim.PlanTasks(character, objective)
-}
-
 func (character *Character) AddTask(task Task) {
 	character.Tasks = append(character.Tasks, &task)
-}
-
-func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
-	for _, objective := range character.Objectives {
-		if objective.Type == objectiveType {
-			return true
-		}
-	}
-	return false
-}
-
-func (character *Character) CompleteObjective(objective *Objective) {
-	fmt.Println("Completing objective", objective.Type, objective)
-	for i, charObjective := range character.Objectives {
-		if charObjective == objective {
-			character.Objectives = append(character.Objectives[:i], character.Objectives[i+1:]...)
-		}
-	}
 }
 
 func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bool) {
@@ -172,7 +131,6 @@ func (sim *Simulation) Eat(character *Character, task *Task) {
 			character.Needs.Food = 0
 		}
 		sim.DeleteItem(item)
-		sim.CompleteTask(character, task)
 	}
 }
 
@@ -183,5 +141,12 @@ func (sim *Simulation) Drink(character *Character, task *Task) {
 		return
 	}
 	character.Needs.Water = 0
-	sim.CompleteTask(character, task)
+	task.Progress = 100
+}
+
+func (sim *Simulation) Sleep(character *Character, task *Task) {
+	character.Needs.Sleep -= config.NeedSleepTick * 2
+	if character.Needs.Sleep == 0 {
+		task.Progress = 100
+	}
 }
