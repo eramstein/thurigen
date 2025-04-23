@@ -4,6 +4,37 @@ import (
 	"fmt"
 )
 
+func printTaskDetails(task *Task, indent string) {
+	fmt.Printf("%sType: %v (Progress: %.0f%%)\n",
+		indent, task.Type, task.Progress)
+
+	// Print task target details based on type
+	switch task.Type {
+	case Move:
+		if pos, ok := task.Target.(*Position); ok && pos != nil {
+			fmt.Printf("%sTarget Location: Region %d (X: %d, Y: %d)\n",
+				indent, pos.Region, pos.X, pos.Y)
+		}
+	case Eat:
+		if item, ok := task.Target.(*Item); ok && item != nil {
+			fmt.Printf("%sTarget Item: %v\n", indent, item.Type)
+			if item.OnTile != nil {
+				fmt.Printf("%sItem Location: Region %d (X: %d, Y: %d)\n",
+					indent, item.OnTile.Region, item.OnTile.X, item.OnTile.Y)
+			}
+		}
+	case Drink:
+		if pos, ok := task.Target.(*Position); ok && pos != nil {
+			fmt.Printf("%sWater Source: Region %d (X: %d, Y: %d)\n",
+				indent, pos.Region, pos.X, pos.Y)
+		}
+	}
+
+	if task.Objective != nil {
+		fmt.Printf("%sFor Objective: %v\n", indent, task.Objective.Type)
+	}
+}
+
 func PrintCharacterDetails(character *Character) {
 	fmt.Printf("=== Character Details ===\n")
 	fmt.Printf("Basic Info:\n")
@@ -18,6 +49,11 @@ func PrintCharacterDetails(character *Character) {
 	fmt.Printf("  Water: %d%%\n", character.Needs.Water)
 	fmt.Printf("  Sleep: %d%%\n", character.Needs.Sleep)
 
+	if character.CurrentTask != nil {
+		fmt.Printf("\nCurrent Task:\n")
+		printTaskDetails(character.CurrentTask, "  ")
+	}
+
 	if character.Path != nil && len(*character.Path) > 0 {
 		fmt.Printf("\nCurrent Path:\n")
 		for i, pos := range *character.Path {
@@ -29,34 +65,8 @@ func PrintCharacterDetails(character *Character) {
 	if len(character.Tasks) > 0 {
 		fmt.Printf("\nCurrent Tasks:\n")
 		for i, task := range character.Tasks {
-			fmt.Printf("  %d. %v (Progress: %.0f%%)\n",
-				i+1, task.Type, task.Progress)
-
-			// Print task target details based on type
-			switch task.Type {
-			case Move:
-				if pos, ok := task.Target.(*Position); ok && pos != nil {
-					fmt.Printf("     Target Location: Region %d (X: %d, Y: %d)\n",
-						pos.Region, pos.X, pos.Y)
-				}
-			case Eat:
-				if item, ok := task.Target.(*Item); ok && item != nil {
-					fmt.Printf("     Target Item: %v\n", item.Type)
-					if item.OnTile != nil {
-						fmt.Printf("     Item Location: Region %d (X: %d, Y: %d)\n",
-							item.OnTile.Region, item.OnTile.X, item.OnTile.Y)
-					}
-				}
-			case Drink:
-				if pos, ok := task.Target.(*Position); ok && pos != nil {
-					fmt.Printf("     Water Source: Region %d (X: %d, Y: %d)\n",
-						pos.Region, pos.X, pos.Y)
-				}
-			}
-
-			if task.Objective != nil {
-				fmt.Printf("     For Objective: %v\n", task.Objective.Type)
-			}
+			fmt.Printf("  %d. ", i+1)
+			printTaskDetails(task, "     ")
 		}
 	}
 

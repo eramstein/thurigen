@@ -28,7 +28,7 @@ var (
 )
 
 func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
-	region := sim.World[r.uiState.DisplayedRegion]
+	region := sim.World[r.UiState.DisplayedRegion]
 
 	// Get the camera's view bounds
 	camera := r.camera.GetCamera()
@@ -78,8 +78,8 @@ func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
 }
 
 func (r *Renderer) BorderSelectedTile() {
-	if r.uiState.SelectedTile != nil {
-		s := *r.uiState.SelectedTile
+	if r.UiState.SelectedTile != nil {
+		s := *r.UiState.SelectedTile
 		screenX := float32(s[0] * config.TilePixelSize)
 		screenY := float32(s[1] * config.TilePixelSize)
 		rl.DrawRectangleLines(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), rl.White)
@@ -117,7 +117,7 @@ func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
 		// Get the sprite sheet name for this structure type
 		sheetConfig := structureToSpriteSheet[base.Type]
 		sheet := r.spriteManager.sheets[sheetConfig.Name]
-		if spriteRect, exists := sheet.Sprites[base.Variant]; exists {
+		if spriteRect, exists := sheet.Sprites[uint64(base.Variant)]; exists {
 			// Draw the sprite centered in the tile
 			if plant, ok := structure.(*ng.PlantStructure); ok {
 				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage)

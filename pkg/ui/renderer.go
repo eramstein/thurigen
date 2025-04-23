@@ -16,7 +16,7 @@ type Renderer struct {
 	spriteManager *SpriteManager
 	fontManager   *FontManager
 	defaultFont   rl.Font // Cache the default font
-	uiState       *Model
+	UiState       *Model
 }
 
 // NewRenderer creates a new renderer instance
@@ -26,7 +26,7 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		screenHeight:  height,
 		spriteManager: NewSpriteManager(),
 		fontManager:   NewFontManager(),
-		uiState: &Model{
+		UiState: &Model{
 			DisplayedRegion: 0,
 		},
 	}

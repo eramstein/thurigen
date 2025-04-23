@@ -19,16 +19,17 @@ type Position struct {
 }
 
 type Character struct {
-	ID         int
-	Name       string
-	Position   Position
-	Stats      CharacterStats
-	Inventory  []*Item
-	Tasks      []*Task
-	Objectives []*Objective
-	Ambitions  []*Ambition
-	Needs      Needs
-	Path       *[]Position
+	ID          uint64
+	Name        string
+	Position    Position
+	Stats       CharacterStats
+	Inventory   []*Item
+	CurrentTask *Task
+	Tasks       []*Task
+	Objectives  []*Objective
+	Ambitions   []*Ambition
+	Needs       Needs
+	Path        *[]Position
 }
 
 type CharacterStats struct {
@@ -42,6 +43,7 @@ type Needs struct {
 }
 
 type Task struct {
+	ID        uint64
 	Type      TaskType
 	Objective *Objective
 	Progress  float32     // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement

@@ -10,7 +10,7 @@ import (
 
 // DisplayTileSidePanel shows information about the selected tile
 func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
-	if r.uiState.SelectedTile == nil {
+	if r.UiState.SelectedTile == nil && r.UiState.SelectedCharacter == nil {
 		return
 	}
 	// Panel dimensions
@@ -24,8 +24,13 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 	rl.DrawRectangleLines(int32(panelX), int32(panelY), int32(panelWidth), int32(panelHeight), rl.Gray)
 
 	// Get selected tile data
-	tileX, tileY := (*r.uiState.SelectedTile)[0], (*r.uiState.SelectedTile)[1]
-	tile := sim.World[r.uiState.DisplayedRegion].Tiles[tileX][tileY]
+	var tileX, tileY int
+	if r.UiState.SelectedCharacter != nil {
+		tileX, tileY = r.UiState.SelectedCharacter.Position.X, r.UiState.SelectedCharacter.Position.Y
+	} else {
+		tileX, tileY = r.UiState.SelectedTile[0], r.UiState.SelectedTile[1]
+	}
+	tile := sim.World[r.UiState.DisplayedRegion].Tiles[tileX][tileY]
 
 	// Draw tile information
 	yOffset := 20
@@ -120,12 +125,20 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 		yOffset += lineHeight
 
 		// Current tasks
+		if character.CurrentTask != nil {
+			tasksText := "Current Task:"
+			r.RenderText(tasksText, panelX+10, yOffset)
+			yOffset += lineHeight
+			taskText := fmt.Sprintf("  - %v - %v", character.CurrentTask.Type, character.CurrentTask.Objective.Type)
+			r.RenderText(taskText, panelX+10, yOffset)
+			yOffset += lineHeight
+		}
 		if len(character.Tasks) > 0 {
-			tasksText := "Current Tasks:"
+			tasksText := "Task backlog:"
 			r.RenderText(tasksText, panelX+10, yOffset)
 			yOffset += lineHeight
 			for _, task := range character.Tasks {
-				taskText := fmt.Sprintf("  - %v", task.Type)
+				taskText := fmt.Sprintf("  - %v - %v", task.Type, task.Objective.Type)
 				r.RenderText(taskText, panelX+10, yOffset)
 				yOffset += lineHeight
 			}

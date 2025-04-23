@@ -2,6 +2,7 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
+	"sync/atomic"
 )
 
 func (sim *Simulation) InitCharacters() {
@@ -42,12 +43,12 @@ func (sim *Simulation) RemoveCharacter(character *Character) {
 
 func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterStats) *Character {
 	character := &Character{
-		ID:        len(sim.Characters),
+		ID:        atomic.AddUint64(&nextCharacterID, 1),
 		Name:      name,
 		Position:  pos,
 		Stats:     stats,
 		Inventory: []*Item{},
-		Needs:     Needs{Food: 0, Water: 0, Sleep: 48},
+		Needs:     Needs{Food: 49, Water: 49, Sleep: 49},
 	}
 	sim.Characters = append(sim.Characters, character)
 	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
@@ -55,6 +56,7 @@ func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterS
 }
 
 func (character *Character) AddTask(task Task) {
+	task.ID = atomic.AddUint64(&nextTaskID, 1)
 	character.Tasks = append(character.Tasks, &task)
 }
 
@@ -70,7 +72,7 @@ func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bo
 		}
 
 		// for move tasks, the progress represents how many move points have been spent in the move to next tile in the path
-		// an "etra move" is using only left over action points from the same tick
+		// an "extra move" is using only left over action points from the same tick
 		if !extraMove {
 			task.Progress += character.Stats.Speed
 		}

@@ -58,3 +58,17 @@ func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objectiv
 		}
 	}
 }
+
+// Get the top priority objective (lowest ObjectiveType is highest priority)
+func (sim *Simulation) GetTopPriorityObjective(character *Character) *Objective {
+	if len(character.Objectives) == 0 {
+		return nil
+	}
+	lowestObjective := character.Objectives[0]
+	for _, objective := range character.Objectives {
+		if objective.Type < lowestObjective.Type {
+			lowestObjective = objective
+		}
+	}
+	return lowestObjective
+}

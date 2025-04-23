@@ -63,7 +63,6 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 			// Replace current simulation with loaded one
 			*sim = *loadedSim
 			fmt.Println("Latest save loaded successfully")
-			fmt.Println(len(sim.World[0].Plants))
 		}
 	}
 
@@ -76,7 +75,13 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 	if m.leftPressed && m.camera != nil {
 		tileX, tileY := m.ScreenToTileCoordinates(m.mousePosition)
 		if tileX >= 0 && tileX < config.RegionSize && tileY >= 0 && tileY < config.RegionSize {
-			renderer.ToggleTileSelection(tileX, tileY)
+			if sim.World[renderer.UiState.DisplayedRegion].Tiles[tileX][tileY].Character != nil {
+				renderer.CancelTileSelection()
+				renderer.ToggleCharacterSelection(sim.World[renderer.UiState.DisplayedRegion].Tiles[tileX][tileY].Character)
+			} else {
+				renderer.CancelCharacterSelection()
+				renderer.ToggleTileSelection(tileX, tileY)
+			}
 		}
 	}
 }

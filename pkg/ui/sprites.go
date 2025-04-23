@@ -9,7 +9,7 @@ import (
 // SpriteSheet represents a loaded texture and its sprite regions
 type SpriteSheet struct {
 	Texture  rl.Texture2D
-	Sprites  map[int]rl.Rectangle
+	Sprites  map[uint64]rl.Rectangle
 	TileSize int32
 }
 
@@ -26,7 +26,7 @@ func NewSpriteManager() *SpriteManager {
 }
 
 // LoadSpriteSheet loads a sprite sheet from a file and defines its sprite regions
-func (sm *SpriteManager) LoadSpriteSheet(name, path string, tileSize int32, spriteRegions map[int]rl.Rectangle) error {
+func (sm *SpriteManager) LoadSpriteSheet(name, path string, tileSize int32, spriteRegions map[uint64]rl.Rectangle) error {
 	texture := rl.LoadTexture(path)
 	if texture.ID == 0 {
 		return fmt.Errorf("failed to load sprite sheet: %s", path)

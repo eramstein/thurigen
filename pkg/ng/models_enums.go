@@ -72,10 +72,11 @@ const (
 
 type ObjectiveType int
 
+// Sorted by priority (lowest number is highest priority)
 const (
 	NoObjective ObjectiveType = iota
-	EatObjective
 	DrinkObjective
+	EatObjective
 	SleepObjective
 )
 
