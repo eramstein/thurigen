@@ -33,7 +33,7 @@ var charactersSpriteSheet = SpriteSheetConfig{
 	TileSize: 32,
 	Sprites: map[uint64]rl.Rectangle{
 		0: rl.NewRectangle(0, 0, 32, 32),
-		1: rl.NewRectangle(64, 0, 32, 32),
+		1: rl.NewRectangle(0, 0, 32, 32),
 		2: rl.NewRectangle(32, 0, 32, 32),
 	},
 }

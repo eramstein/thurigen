@@ -18,13 +18,13 @@ var (
 	}
 
 	surfaceColors = map[ng.SurfaceType]uint64{
-		ng.Grass:       6,
-		ng.WoodSurface: 4,
+		ng.Grass:       0,
+		ng.WoodSurface: 3,
 	}
 
 	volumeColors = map[ng.VolumeType]uint64{
-		ng.RockVolume: 1,
-		ng.WoodVolume: 4,
+		ng.RockVolume: 4,
+		ng.WoodVolume: 3,
 	}
 )
 
