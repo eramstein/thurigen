@@ -22,5 +22,22 @@ func (r *Renderer) DisplayCharacters(Characters []*ng.Character) {
 				rl.White,
 			)
 		}
+
+		// Draw task icon if character has a current task that needs an icon
+		if character.CurrentTask != nil {
+			switch character.CurrentTask.Type {
+			case ng.Eat, ng.Drink, ng.Sleep:
+				taskSheet := r.spriteManager.sheets[taskIconsSpriteSheet.Name]
+				if taskSpriteRect, exists := taskSheet.Sprites[uint64(character.CurrentTask.Type)]; exists {
+					// Draw the task icon in the top-left corner of the character's tile
+					rl.DrawTextureRec(
+						taskSheet.Texture,
+						taskSpriteRect,
+						rl.NewVector2(screenX-float32(taskSheet.TileSize)/2, screenY-float32(taskSheet.TileSize)/2), // Small offset from the top-left corner
+						rl.White,
+					)
+				}
+			}
+		}
 	}
 }

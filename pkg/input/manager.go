@@ -35,8 +35,9 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 		sim.Paused = !sim.Paused
 	}
 
-	if rl.IsKeyPressed(rl.KeyEscape) {
-		rl.CloseWindow()
+	if rl.IsKeyPressed(rl.KeyBackspace) {
+		renderer.CancelTileSelection()
+		renderer.CancelCharacterSelection()
 	}
 
 	if rl.IsKeyPressed(rl.KeyF1) {

@@ -53,6 +53,16 @@ func (r *Renderer) LoadTextures() error {
 		return fmt.Errorf("failed to load sprite sheet %s: %v", charactersSpriteSheet.Name, err)
 	}
 
+	// Load task icons sprite sheet
+	if err := r.spriteManager.LoadSpriteSheet(taskIconsSpriteSheet.Name, taskIconsSpriteSheet.Path, taskIconsSpriteSheet.TileSize, taskIconsSpriteSheet.Sprites); err != nil {
+		return fmt.Errorf("failed to load sprite sheet %s: %v", taskIconsSpriteSheet.Name, err)
+	}
+
+	// Load terrain sprite sheet
+	if err := r.spriteManager.LoadSpriteSheet(terrainSpriteSheet.Name, terrainSpriteSheet.Path, terrainSpriteSheet.TileSize, terrainSpriteSheet.Sprites); err != nil {
+		return fmt.Errorf("failed to load sprite sheet %s: %v", terrainSpriteSheet.Name, err)
+	}
+
 	// Load fonts
 	if err := r.fontManager.LoadFont("default", "assets/fonts/Roboto-Regular.ttf", config.BaseFontSize); err != nil {
 		return fmt.Errorf("failed to load default font: %v", err)

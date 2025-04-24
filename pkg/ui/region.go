@@ -8,22 +8,23 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+// maps tiles to sprite indexes
 var (
-	terrainColors = map[ng.TerrainType]rl.Color{
-		ng.Dirt:  rl.Brown,
-		ng.Rock:  rl.Gray,
-		ng.Sand:  rl.Yellow,
-		ng.Water: rl.Blue,
+	terrainColors = map[ng.TerrainType]uint64{
+		ng.Dirt:  5,
+		ng.Rock:  1,
+		ng.Sand:  5,
+		ng.Water: 2,
 	}
 
-	surfaceColors = map[ng.SurfaceType]rl.Color{
-		ng.Grass:       rl.DarkGreen,
-		ng.WoodSurface: rl.DarkBrown,
+	surfaceColors = map[ng.SurfaceType]uint64{
+		ng.Grass:       6,
+		ng.WoodSurface: 4,
 	}
 
-	volumeColors = map[ng.VolumeType]rl.Color{
-		ng.RockVolume: rl.DarkGray,
-		ng.WoodVolume: rl.Maroon,
+	volumeColors = map[ng.VolumeType]uint64{
+		ng.RockVolume: 1,
+		ng.WoodVolume: 4,
 	}
 )
 
@@ -92,17 +93,22 @@ func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
 	screenY := float32(y * config.TilePixelSize)
 
 	// Draw the tile rectangle with the appropriate color
-	color := terrainColors[tile.Terrain]
+	var spriteIndex uint64 = terrainColors[tile.Terrain]
 	if tile.Surface != 0 {
-		color = surfaceColors[tile.Surface]
+		spriteIndex = surfaceColors[tile.Surface]
 	}
 	if tile.Volume != 0 {
-		color = volumeColors[tile.Volume]
+		spriteIndex = volumeColors[tile.Volume]
 	}
-
-	// Draw the main tile
-	rl.DrawRectangle(int32(screenX), int32(screenY), int32(config.TilePixelSize), int32(config.TilePixelSize), color)
-
+	sheet := r.spriteManager.sheets[terrainSpriteSheet.Name]
+	if spriteRect, exists := sheet.Sprites[spriteIndex]; exists {
+		rl.DrawTextureRec(
+			sheet.Texture,
+			spriteRect,
+			rl.NewVector2(screenX, screenY),
+			rl.White,
+		)
+	}
 }
 
 func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
