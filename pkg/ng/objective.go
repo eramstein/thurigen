@@ -17,11 +17,11 @@ func (sim *Simulation) UpdateObjectives(character *Character) {
 }
 
 func (sim *Simulation) AddObjective(character *Character, objectiveType ObjectiveType) {
+	fmt.Printf("Adding objective %v %v\n", character.Name, objectiveType)
 	objective := &Objective{
 		Type: objectiveType,
 	}
 	character.Objectives = append(character.Objectives, objective)
-	sim.PlanTasks(character, objective)
 }
 
 func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
@@ -34,7 +34,7 @@ func (character *Character) HasObjective(objectiveType ObjectiveType) bool {
 }
 
 func (character *Character) CompleteObjective(objective *Objective) {
-	fmt.Println("Completing objective", objective.Type, objective)
+	fmt.Printf("Completing objective %v %v\n", character.Name, objective.Type)
 	for i, charObjective := range character.Objectives {
 		if charObjective == objective {
 			character.Objectives = append(character.Objectives[:i], character.Objectives[i+1:]...)

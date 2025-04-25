@@ -35,6 +35,12 @@ var charactersSpriteSheet = SpriteSheetConfig{
 		0: rl.NewRectangle(0, 0, 32, 32),
 		1: rl.NewRectangle(32, 0, 32, 32),
 		2: rl.NewRectangle(64, 0, 32, 32),
+		3: rl.NewRectangle(0, 32, 32, 32),
+		4: rl.NewRectangle(32, 32, 32, 32),
+		5: rl.NewRectangle(64, 32, 32, 32),
+		6: rl.NewRectangle(0, 64, 32, 32),
+		7: rl.NewRectangle(32, 64, 32, 32),
+		8: rl.NewRectangle(64, 64, 32, 32),
 	},
 }
 

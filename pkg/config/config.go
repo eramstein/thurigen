@@ -1,7 +1,7 @@
 package config
 
 const (
-	WindowWidth        = 1024
+	WindowWidth        = 1344
 	WindowHeight       = 960
 	FPS                = 60
 	RegionSize         = 64

@@ -2,11 +2,13 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
+	"fmt"
 	"sync/atomic"
 )
 
 func (sim *Simulation) InitCharacters() {
-	sim.MakeCharacter("Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.5})
+	sim.MakeCharacter(1, "Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.5})
+	sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 31, Y: 30}, CharacterStats{Speed: 1})
 }
 
 func (sim *Simulation) UpdateCharacters() {
@@ -41,9 +43,9 @@ func (sim *Simulation) RemoveCharacter(character *Character) {
 	}
 }
 
-func (sim *Simulation) MakeCharacter(name string, pos Position, stats CharacterStats) *Character {
+func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats CharacterStats) *Character {
 	character := &Character{
-		ID:        atomic.AddUint64(&nextCharacterID, 1),
+		ID:        id,
 		Name:      name,
 		Position:  pos,
 		Stats:     stats,
@@ -60,51 +62,16 @@ func (character *Character) AddTask(task Task) {
 	character.Tasks = append(character.Tasks, &task)
 }
 
-func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bool) {
-	if character.Path == nil {
-		return
-	}
-	path := *character.Path
-	if len(path) > 0 {
-		moveCost := sim.GetMoveCost(character, path[0])
-		if moveCost == -1 {
-			return
-		}
-
-		// for move tasks, the progress represents how many move points have been spent in the move to next tile in the path
-		// an "extra move" is using only left over action points from the same tick
-		if !extraMove {
-			task.Progress += character.Stats.Speed
-		}
-		// if enough move points have been spent, set the character to the new position
-		if task.Progress >= moveCost {
-			sim.SetCharacterPosition(character, path[0])
-			if len(path) == 1 {
-				character.Path = nil
-				sim.CompleteTask(character, task)
-				return
-			}
-			newPath := path[1:]
-			character.Path = &newPath
-			task.Progress = task.Progress - moveCost
-			// get started on next move if excess move points
-			if task.Progress >= 1 {
-				sim.FollowPath(character, task, true)
-			}
-		}
-	}
-}
-
 // How much movement points are needed for a character to move to a tile
 // One movement point corresponds to one tick for a character with speed 1 on a default tile
-// Returns -1 if the tile is impassable or occupied
+// Returns -1 if the tile is impassable
 func (sim *Simulation) GetMoveCost(character *Character, position Position) float32 {
 	if character.Stats.Speed == 0 {
 		return -1
 	}
-	// check if tile is passable or occupied
+	// check if tile is passable
 	targetTile := sim.World[position.Region].Tiles[position.X][position.Y]
-	if targetTile.Character != nil || targetTile.MoveCost == ImpassableCost {
+	if targetTile.MoveCost == ImpassableCost {
 		return -1
 	}
 	// base tile move cost
@@ -127,6 +94,7 @@ func (sim *Simulation) SetCharacterPosition(character *Character, position Posit
 func (sim *Simulation) Eat(character *Character, task *Task) {
 	item := task.Target.(*Item)
 	task.Progress += 10
+	fmt.Println("Eating", character.Name, item.Type)
 	if task.Progress >= 100 {
 		character.Needs.Food -= item.Efficiency
 		if character.Needs.Food < 0 {
@@ -147,6 +115,7 @@ func (sim *Simulation) Drink(character *Character, task *Task) {
 }
 
 func (sim *Simulation) Sleep(character *Character, task *Task) {
+	fmt.Println("Sleeping", character.Name)
 	character.Needs.Sleep -= config.NeedSleepTick * 2
 	if character.Needs.Sleep == 0 {
 		task.Progress = 100

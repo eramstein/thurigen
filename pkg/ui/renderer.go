@@ -99,12 +99,6 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	r.DisplayTileSidePanel(sim)
 }
 
-// DisplayTime shows the current time
-func (r *Renderer) DisplayTime(sim *ng.Simulation) {
-	turnText := fmt.Sprintf("Minutes: %d", sim.Time)
-	r.RenderText(turnText, 10, 10)
-}
-
 // RenderText renders text at a specific position
 func (r *Renderer) RenderText(text string, x, y int) {
 	rl.DrawTextEx(r.defaultFont, text, rl.Vector2{X: float32(x), Y: float32(y)}, float32(r.defaultFont.BaseSize), 1.0, rl.Black)

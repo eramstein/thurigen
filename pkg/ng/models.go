@@ -1,15 +1,29 @@
 package ng
 
-import "eramstein/thurigen/pkg/config"
+import (
+	"eramstein/thurigen/pkg/config"
+	"time"
+)
 
 // Simulation represents the main simulation state
 type Simulation struct {
 	Paused     bool
 	Speed      int // how many frames until next sim update
 	Time       int // in minutes since the start of the simulation
+	Calendar   Calendar
 	World      []*Region
 	Items      []*Item
 	Characters []*Character
+}
+
+type Calendar struct {
+	Minute int
+	Hour   int
+	Day    int
+}
+
+type Day struct {
+	Date time.Time
 }
 
 type Position struct {

@@ -8,6 +8,7 @@ import (
 // When an objective is added, plan tasks for it
 // When a task is completed, plan tasks for the top priority objective
 func (sim *Simulation) PlanTasks(character *Character, objective *Objective) {
+	fmt.Printf("Planning tasks for %v %v\n", character.Name, objective.Type)
 	// Add tasks for the objective
 	switch objective.Type {
 	case EatObjective:
@@ -17,8 +18,6 @@ func (sim *Simulation) PlanTasks(character *Character, objective *Objective) {
 	case SleepObjective:
 		sim.PlanSleepingTasks(character, objective)
 	}
-	// Set current task to the highest priority task
-	character.CurrentTask = sim.GetPriorityTask(character)
 }
 
 func (sim *Simulation) GetPriorityTask(character *Character) *Task {
@@ -44,13 +43,22 @@ func (sim *Simulation) GetPriorityTask(character *Character) *Task {
 }
 
 func (sim *Simulation) WorkOnPriorityTask(character *Character) {
+	// if not current task, plan new ones for the priority objective and set new priority task
 	if character.CurrentTask == nil {
-		return
+		topObjective := sim.GetTopPriorityObjective(character)
+		if topObjective != nil {
+			sim.PlanTasks(character, topObjective)
+		}
+		character.CurrentTask = sim.GetPriorityTask(character)
 	}
 	task := character.CurrentTask
+	if task == nil {
+		fmt.Printf("No task for %v\n", character.Name)
+		return
+	}
 	switch task.Type {
 	case Move:
-		sim.FollowPath(character, task, false)
+		sim.MoveForTask(character, task)
 	case Eat:
 		sim.Eat(character, task)
 	case Drink:
@@ -64,7 +72,7 @@ func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 }
 
 func (sim *Simulation) CompleteTask(character *Character, task *Task) {
-	fmt.Printf("Completing task: %v\n %v\n", &task, task.Objective)
+	fmt.Printf("Completing task:  %v %v %v\n", character.Name, task.Type, task.Objective)
 	if character.CurrentTask == task {
 		character.CurrentTask = nil
 	}
@@ -75,10 +83,6 @@ func (sim *Simulation) CompleteTask(character *Character, task *Task) {
 		}
 	}
 	sim.CheckIfObjectiveIsAchieved(character, task.Objective)
-	topObjective := sim.GetTopPriorityObjective(character)
-	if topObjective != nil {
-		sim.PlanTasks(character, topObjective)
-	}
 }
 
 // Set next task required to achieve an eat objective
@@ -110,8 +114,6 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 		// If no food on tile, find the closest food item and add a task to go to it
 		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2-1, Food)
 		if closestItem != nil {
-			path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestItem.OnTile.X, closestItem.OnTile.Y, 0)
-			character.Path = &path
 			character.AddTask(Task{
 				Objective: objective,
 				Type:      Move,
@@ -130,6 +132,7 @@ func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Object
 	}
 	// Go to the closest water tile if needed, then drink
 	closestWater := sim.ScanForTile(character.Position, config.RegionSize/2-1, Water)
+	fmt.Printf("closestWater: %v\n", closestWater)
 	if closestWater == nil {
 		return
 	}
@@ -140,13 +143,15 @@ func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Object
 			Target:    closestWater,
 		})
 	} else {
+		// stop one tile before the water tile
+		// problem: if closestWater is not accessible, there will be no path found and not task added
 		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestWater.X, closestWater.Y, 1)
+		fmt.Printf("path: %v\n", path)
 		if len(path) > 0 {
-			character.Path = &path
 			character.AddTask(Task{
 				Objective: objective,
 				Type:      Move,
-				Target:    path[len(path)-1],
+				Target:    &(path[len(path)-1]),
 			})
 		}
 	}

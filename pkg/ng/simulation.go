@@ -4,6 +4,11 @@ package ng
 func NewSimulation() *Simulation {
 	sim := &Simulation{
 		Speed: 60,
+		Calendar: Calendar{
+			Minute: 0,
+			Hour:   6,
+			Day:    0,
+		},
 	}
 	sim.InitWorld()
 	sim.InitCharacters()
@@ -11,7 +16,19 @@ func NewSimulation() *Simulation {
 }
 
 func (sim *Simulation) Update() {
-	sim.Time++
+	sim.UpdateTime()
 	sim.UpdatePlants()
 	sim.UpdateCharacters()
+}
+
+func (sim *Simulation) UpdateTime() {
+	sim.Time++
+	sim.Calendar.Minute++
+	if sim.Calendar.Minute%60 == 0 {
+		sim.Calendar.Hour++
+	}
+	if sim.Calendar.Hour >= 24 {
+		sim.Calendar.Hour = 0
+		sim.Calendar.Day++
+	}
 }
