@@ -129,5 +129,6 @@ type Item struct {
 	Variant       int
 	OnTile        *Position
 	InInventoryOf *Character
+	OwnedBy       *Character
 	Efficiency    int // for food it's nutrition value
 }

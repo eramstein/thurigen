@@ -118,7 +118,10 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 			Target:    itemInInventory,
 		}
 		// If the character is on a tile with a food item, add a task to eat it
-	} else if itemOnTile := sim.FindItemInTile(character.Position.Region, character.Position.X, character.Position.Y, Food); itemOnTile != nil {
+	} else if itemOnTile := sim.FindItemInTile(character.Position.Region, character.Position.X, character.Position.Y, Food, false); itemOnTile != nil {
+		// claim item
+		itemOnTile.OwnedBy = character
+		// eat it
 		newTask = &Task{
 			Objective: objective,
 			Type:      Eat,
@@ -126,8 +129,11 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 		}
 	} else {
 		// If no food on tile, find the closest food item and add a task to go to it
-		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2-1, Food)
+		closestItem := sim.ScanForItem(character.Position, config.RegionSize/2-1, Food, true)
 		if closestItem != nil {
+			// claim item
+			closestItem.OwnedBy = character
+			// go to it
 			newTask = &Task{
 				Objective: objective,
 				Type:      Move,
@@ -143,7 +149,7 @@ func (sim *Simulation) PlanEatingTasks(character *Character, objective *Objectiv
 func (sim *Simulation) PlanDrinkingTasks(character *Character, objective *Objective) (task *Task) {
 	var newTask *Task
 	// Go to the closest water tile if needed, then drink
-	closestWater := sim.ScanForTile(character.Position, config.RegionSize/2-2, Water)
+	closestWater := sim.ScanForTile(character.Position, config.RegionSize/2-1, Water)
 	fmt.Printf("closestWater: %v\n", closestWater)
 	if closestWater == nil {
 		return

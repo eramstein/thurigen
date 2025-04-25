@@ -15,13 +15,13 @@ func (sim *Simulation) Benchmark() {
 func (sim *Simulation) BenchmarkItemSearch(position Position, itemType ItemType, iterations int) {
 	// Warm up
 	for i := 0; i < 10; i++ {
-		sim.ScanForItem(position, 10, itemType)
+		sim.ScanForItem(position, 10, itemType, false)
 	}
 
 	// Benchmark ScanForItem
 	startTime := time.Now()
 	for i := 0; i < iterations; i++ {
-		sim.ScanForItem(position, 30, itemType)
+		sim.ScanForItem(position, 30, itemType, false)
 	}
 	scanTime := time.Since(startTime)
 

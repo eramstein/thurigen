@@ -5,11 +5,11 @@ import (
 )
 
 // ScanForItem searches the closest item of a given type by looping tiles around a position
-func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType ItemType) *Item {
+func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType ItemType, unclaimedOnly bool) *Item {
 	// Check current tile
 	tile := &sim.World[position.Region].Tiles[position.X][position.Y]
 	for _, item := range tile.Items {
-		if item.Type == itemType {
+		if item.Type == itemType && (unclaimedOnly == false || item.OwnedBy == nil) {
 			return item
 		}
 	}
@@ -20,7 +20,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 		for dx := -distance; dx <= distance; dx++ {
 			x := position.X + dx
 			y := position.Y - distance
-			item := sim.FindItemInTile(position.Region, x, y, itemType)
+			item := sim.FindItemInTile(position.Region, x, y, itemType, unclaimedOnly)
 			if item != nil {
 				return item
 			}
@@ -29,7 +29,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 		for dx := -distance; dx <= distance; dx++ {
 			x := position.X + dx
 			y := position.Y + distance
-			item := sim.FindItemInTile(position.Region, x, y, itemType)
+			item := sim.FindItemInTile(position.Region, x, y, itemType, unclaimedOnly)
 			if item != nil {
 				return item
 			}
@@ -38,7 +38,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 		for dy := -distance; dy <= distance; dy++ {
 			x := position.X - distance
 			y := position.Y + dy
-			item := sim.FindItemInTile(position.Region, x, y, itemType)
+			item := sim.FindItemInTile(position.Region, x, y, itemType, unclaimedOnly)
 			if item != nil {
 				return item
 			}
@@ -47,7 +47,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 		for dy := -distance; dy <= distance; dy++ {
 			x := position.X + distance
 			y := position.Y + dy
-			item := sim.FindItemInTile(position.Region, x, y, itemType)
+			item := sim.FindItemInTile(position.Region, x, y, itemType, unclaimedOnly)
 			if item != nil {
 				return item
 			}
@@ -56,7 +56,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 	return nil
 }
 
-func (sim *Simulation) FindItemInTile(region int, x int, y int, itemType ItemType) *Item {
+func (sim *Simulation) FindItemInTile(region int, x int, y int, itemType ItemType, unclaimedOnly bool) *Item {
 	// Skip if out of bounds
 	if x < 0 || x >= config.RegionSize || y < 0 || y >= config.RegionSize {
 		return nil
@@ -65,7 +65,7 @@ func (sim *Simulation) FindItemInTile(region int, x int, y int, itemType ItemTyp
 	// Check items on this tile
 	tile := &sim.World[region].Tiles[x][y]
 	for _, item := range tile.Items {
-		if item.Type == itemType {
+		if item.Type == itemType && (unclaimedOnly == false || item.OwnedBy == nil) {
 			return item
 		}
 	}
