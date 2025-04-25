@@ -24,6 +24,9 @@ func (sim *Simulation) UpdateCharacters() {
 	}
 	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
 		for _, character := range sim.Characters {
+			if character.CurrentTask == nil {
+				sim.SetPriorityTask(character)
+			}
 			sim.WorkOnPriorityTask(character)
 		}
 	}
@@ -57,9 +60,9 @@ func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats
 	return character
 }
 
-func (character *Character) AddTask(task Task) {
+func (character *Character) AddTask(task *Task) {
 	task.ID = atomic.AddUint64(&nextTaskID, 1)
-	character.Tasks = append(character.Tasks, &task)
+	character.Tasks = append(character.Tasks, task)
 }
 
 // How much movement points are needed for a character to move to a tile
@@ -116,8 +119,9 @@ func (sim *Simulation) Drink(character *Character, task *Task) {
 
 func (sim *Simulation) Sleep(character *Character, task *Task) {
 	fmt.Println("Sleeping", character.Name)
-	character.Needs.Sleep -= config.NeedSleepTick * 2
-	if character.Needs.Sleep == 0 {
+	character.Needs.Sleep -= config.NeedSleepTick * 5
+	if character.Needs.Sleep <= 0 {
+		character.Needs.Sleep = 0
 		task.Progress = 100
 	}
 }
