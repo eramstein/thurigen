@@ -8,6 +8,18 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+// Color multipliers for different times of day
+var (
+	dayColor   = rl.White
+	nightColor = rl.NewColor(40, 40, 80, 255) // Dark blue tint
+
+	// Define transition periods (in hours)
+	dawnStart = 5  // Start transitioning to day at 5 AM
+	dawnEnd   = 7  // Fully day by 7 AM
+	duskStart = 19 // Start transitioning to night at 7 PM
+	duskEnd   = 21 // Fully night by 9 PM
+)
+
 // maps tiles to sprite indexes
 var (
 	terrainColors = map[ng.TerrainType]uint64{
@@ -30,6 +42,8 @@ var (
 
 func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
 	region := sim.World[r.UiState.DisplayedRegion]
+
+	tint := getTint(sim.Calendar.Hour, sim.Calendar.Minute)
 
 	// Get the camera's view bounds
 	camera := r.camera.GetCamera()
@@ -56,21 +70,21 @@ func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
 	// First pass: Render all surface rectangles
 	for y := startTileY; y < endTileY; y++ {
 		for x := startTileX; x < endTileX; x++ {
-			r.RenderTileSurface(region.Tiles[x][y], x, y)
+			r.RenderTileSurface(region.Tiles[x][y], x, y, tint)
 		}
 	}
 
 	// Second pass: Render all structures
 	for y := startTileY; y < endTileY; y++ {
 		for x := startTileX; x < endTileX; x++ {
-			r.RenderTileStructures(region.Tiles[x][y], x, y)
+			r.RenderTileStructures(region.Tiles[x][y], x, y, tint)
 		}
 	}
 
 	// Third pass: Render all items
 	for y := startTileY; y < endTileY; y++ {
 		for x := startTileX; x < endTileX; x++ {
-			r.RenderTileItems(region.Tiles[x][y], x, y)
+			r.RenderTileItems(region.Tiles[x][y], x, y, tint)
 		}
 	}
 
@@ -87,7 +101,7 @@ func (r *Renderer) BorderSelectedTile() {
 	}
 }
 
-func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
+func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int, tint rl.Color) {
 	// Calculate screen position
 	screenX := float32(x * config.TilePixelSize)
 	screenY := float32(y * config.TilePixelSize)
@@ -106,12 +120,12 @@ func (r *Renderer) RenderTileSurface(tile ng.Tile, x, y int) {
 			sheet.Texture,
 			spriteRect,
 			rl.NewVector2(screenX, screenY),
-			rl.White,
+			tint,
 		)
 	}
 }
 
-func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
+func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int, tint rl.Color) {
 	// Calculate screen position
 	screenX := float32(x * config.TilePixelSize)
 	screenY := float32(y * config.TilePixelSize)
@@ -126,15 +140,15 @@ func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int) {
 		if spriteRect, exists := sheet.Sprites[uint64(base.Variant)]; exists {
 			// Draw the sprite centered in the tile
 			if plant, ok := structure.(*ng.PlantStructure); ok {
-				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage)
+				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage, tint)
 			} else {
-				r.RenderStructure(spriteRect, sheet.Texture, screenX, screenY)
+				r.RenderStructure(spriteRect, sheet.Texture, screenX, screenY, tint)
 			}
 		}
 	}
 }
 
-func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int) {
+func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int, tint rl.Color) {
 	// Calculate screen position
 	screenX := float32(x * config.TilePixelSize)
 	screenY := float32(y * config.TilePixelSize)
@@ -152,11 +166,11 @@ func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int) {
 		rl.DrawRectangle(int32(textX-2), int32(textY-2), 12, 12, rl.NewColor(0, 0, 0, 128))
 
 		// Draw the text
-		rl.DrawText(itemText, int32(textX), int32(textY), 10, rl.White)
+		rl.DrawText(itemText, int32(textX), int32(textY), 10, tint)
 	}
 }
 
-func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, growthStage int) {
+func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, growthStage int, tint rl.Color) {
 	scale := 0.3 + (float32(growthStage) / 100.0 * 0.7)
 	scaledsize := float32(config.TilePixelSize) * scale
 	offset := (config.TilePixelSize - scaledsize) / 2
@@ -166,16 +180,16 @@ func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, sc
 		rl.NewRectangle(screenX+offset, screenY+offset, scaledsize, scaledsize),
 		rl.Vector2{X: 0, Y: 0},
 		0,
-		rl.White,
+		tint,
 	)
 }
 
-func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32) {
+func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, tint rl.Color) {
 	rl.DrawTextureRec(
 		texture,
 		spriteRect,
 		rl.NewVector2(screenX, screenY),
-		rl.White,
+		tint,
 	)
 }
 
@@ -206,4 +220,36 @@ func (r *Renderer) DrawGridLines(startTileX, startTileY, endTileX, endTileY int)
 			rl.White,
 		)
 	}
+}
+
+func getTint(hour int, minute int) rl.Color {
+	var tint rl.Color
+
+	switch {
+	case hour >= (duskEnd) || hour < (dawnStart):
+		// Full night
+		tint = nightColor
+	case hour >= (dawnStart) && hour < (dawnEnd):
+		// Dawn transition
+		progress := float32(hour*60+minute-dawnStart*60) / float32(dawnEnd*60-dawnStart*60)
+		tint = lerpColor(nightColor, dayColor, progress)
+	case hour >= (duskStart) && hour < (duskEnd):
+		// Dusk transition
+		progress := float32(hour*60+minute-duskStart*60) / float32(duskEnd*60-duskStart*60)
+		tint = lerpColor(dayColor, nightColor, progress)
+	default:
+		// Full day
+		tint = dayColor
+	}
+	return tint
+}
+
+// lerpColor performs linear interpolation between two colors
+func lerpColor(c1, c2 rl.Color, t float32) rl.Color {
+	return rl.NewColor(
+		uint8(float32(c1.R)+t*(float32(c2.R)-float32(c1.R))),
+		uint8(float32(c1.G)+t*(float32(c2.G)-float32(c1.G))),
+		uint8(float32(c1.B)+t*(float32(c2.B)-float32(c1.B))),
+		uint8(float32(c1.A)+t*(float32(c2.A)-float32(c1.A))),
+	)
 }

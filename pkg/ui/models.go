@@ -1,6 +1,8 @@
 package ui
 
-import "eramstein/thurigen/pkg/ng"
+import (
+	"eramstein/thurigen/pkg/ng"
+)
 
 type Model struct {
 	DisplayedRegion   int

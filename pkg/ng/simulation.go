@@ -6,7 +6,7 @@ func NewSimulation() *Simulation {
 		Speed: 60,
 		Calendar: Calendar{
 			Minute: 0,
-			Hour:   6,
+			Hour:   5,
 			Day:    0,
 		},
 	}
@@ -26,6 +26,7 @@ func (sim *Simulation) UpdateTime() {
 	sim.Calendar.Minute++
 	if sim.Calendar.Minute%60 == 0 {
 		sim.Calendar.Hour++
+		sim.Calendar.Minute = 0
 	}
 	if sim.Calendar.Hour >= 24 {
 		sim.Calendar.Hour = 0
