@@ -43,7 +43,8 @@ func (sim *Simulation) MoveForTask(character *Character, task *Task) {
 		fmt.Printf("Task target is not a Position: %v\n", task.Target)
 		return
 	}
-	if character.Path == nil || (*character.Path)[len(*character.Path)-1] != task.Target {
+
+	if character.Path == nil || (*character.Path)[len(*character.Path)-1] != *target {
 		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, target.X, target.Y, 0)
 		character.Path = &path
 	}

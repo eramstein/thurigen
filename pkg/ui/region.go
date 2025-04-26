@@ -88,7 +88,10 @@ func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
 		}
 	}
 
+	// debug helpers
+	//r.HighlightSelectedCharacterPath(r.UiState.SelectedCharacter)
 	//r.DrawGridLines(startTileX, startTileY, endTileX, endTileY)
+
 	r.BorderSelectedTile()
 }
 
@@ -191,35 +194,6 @@ func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D
 		rl.NewVector2(screenX, screenY),
 		tint,
 	)
-}
-
-// DrawGridLines draws white lines to separate tiles
-func (r *Renderer) DrawGridLines(startTileX, startTileY, endTileX, endTileY int) {
-	// Draw vertical lines
-	for x := startTileX; x <= endTileX; x++ {
-		lineX := float32(x * config.TilePixelSize)
-		startY := float32(startTileY * config.TilePixelSize)
-		endY := float32(endTileY * config.TilePixelSize)
-		rl.DrawLineEx(
-			rl.Vector2{X: lineX, Y: startY},
-			rl.Vector2{X: lineX, Y: endY},
-			1.0, // Line thickness
-			rl.White,
-		)
-	}
-
-	// Draw horizontal lines
-	for y := startTileY; y <= endTileY; y++ {
-		lineY := float32(y * config.TilePixelSize)
-		startX := float32(startTileX * config.TilePixelSize)
-		endX := float32(endTileX * config.TilePixelSize)
-		rl.DrawLineEx(
-			rl.Vector2{X: startX, Y: lineY},
-			rl.Vector2{X: endX, Y: lineY},
-			1.0, // Line thickness
-			rl.White,
-		)
-	}
 }
 
 func getTint(hour int, minute int) rl.Color {
