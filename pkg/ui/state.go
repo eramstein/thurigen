@@ -18,6 +18,8 @@ func (r *Renderer) ToggleCharacterSelection(character *ng.Character) {
 		r.UiState.SelectedCharacter = nil
 	} else {
 		r.UiState.SelectedCharacter = character
+		// Center camera on the selected character
+		r.camera.CenterOnPosition(float32(character.Position.X), float32(character.Position.Y))
 	}
 }
 

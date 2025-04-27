@@ -27,6 +27,25 @@ func (m *Manager) SetCamera(camera rl.Camera2D) {
 	m.camera = &camera
 }
 
+// IsClickInPortraitArea checks if a click is within any character portrait area
+func (m *Manager) IsClickInPortraitArea(screenPos rl.Vector2, characters []*ng.Character) *ng.Character {
+	if screenPos.Y > float32(config.PortraitStartY+config.PortraitSize) || screenPos.X < float32(config.PortraitStartX) {
+		return nil
+	}
+
+	for i, character := range characters {
+		x := float32(config.PortraitStartX) + float32(i)*(float32(config.PortraitSize)+float32(config.PortraitSpacing))
+		y := float32(config.PortraitStartY)
+
+		// Check if click is within the portrait rectangle
+		if screenPos.X >= x-2 && screenPos.X <= x+float32(config.PortraitSize)+2 &&
+			screenPos.Y >= y-2 && screenPos.Y <= y+float32(config.PortraitSize)+2 {
+			return character
+		}
+	}
+	return nil
+}
+
 // Update updates the input state
 func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 	m.SetCamera(renderer.GetCamera())
@@ -74,6 +93,14 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 
 	// Handle clicks
 	if m.leftPressed && m.camera != nil {
+		// First check if we clicked on a portrait
+		if clickedCharacter := m.IsClickInPortraitArea(m.mousePosition, sim.Characters); clickedCharacter != nil {
+			renderer.CancelTileSelection()
+			renderer.ToggleCharacterSelection(clickedCharacter)
+			return
+		}
+
+		// If not a portrait click, handle tile/character selection as before
 		tileX, tileY := m.ScreenToTileCoordinates(m.mousePosition)
 		if tileX >= 0 && tileX < config.RegionSize && tileY >= 0 && tileY < config.RegionSize {
 			if sim.World[renderer.UiState.DisplayedRegion].Tiles[tileX][tileY].Character != nil {

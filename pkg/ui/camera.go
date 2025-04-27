@@ -95,3 +95,9 @@ func (c *Camera) Update() {
 func (c *Camera) GetCamera() rl.Camera2D {
 	return c.camera
 }
+
+// CenterOnPosition centers the camera on a specific position in world coordinates
+func (c *Camera) CenterOnPosition(x, y float32) {
+	c.camera.Target.X = x * float32(config.TilePixelSize)
+	c.camera.Target.Y = y * float32(config.TilePixelSize)
+}

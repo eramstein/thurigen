@@ -41,3 +41,33 @@ func (r *Renderer) DisplayCharacters(Characters []*ng.Character) {
 		}
 	}
 }
+
+func (r *Renderer) DisplayCharacterPortraits(characters []*ng.Character) {
+	for i, character := range characters {
+		sheet := r.spriteManager.sheets[charactersSpriteSheet.Name]
+		if spriteRect, exists := sheet.Sprites[character.ID]; exists {
+			// Calculate position for this portrait
+			x := float32(config.PortraitStartX) + float32(i)*(float32(config.PortraitSize)+float32(config.PortraitSpacing))
+			y := float32(config.PortraitStartY)
+
+			// Draw a background rectangle for the portrait
+			rl.DrawRectangle(
+				int32(x-2),
+				int32(y-2),
+				int32(float32(config.PortraitSize)+4),
+				int32(float32(config.PortraitSize)+4),
+				rl.NewColor(200, 200, 200, 128),
+			)
+
+			// Draw the character portrait
+			rl.DrawTexturePro(
+				sheet.Texture,
+				spriteRect,
+				rl.NewRectangle(x, y, float32(config.PortraitSize), float32(config.PortraitSize)),
+				rl.Vector2{X: 10, Y: 0},
+				0,
+				rl.White,
+			)
+		}
+	}
+}
