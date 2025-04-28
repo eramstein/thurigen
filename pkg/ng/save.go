@@ -23,6 +23,7 @@ func init() {
 	gob.Register(&Position{})
 	gob.Register(&TileOccupation{})
 	gob.Register(&Item{})
+	gob.Register(&Calendar{})
 
 	// Register tile-related types
 	gob.Register([config.RegionSize][config.RegionSize]Tile{})
@@ -50,6 +51,7 @@ func (sim *Simulation) SaveState() error {
 		Paused     bool         `json:"paused"`
 		Speed      int          `json:"speed"`
 		Time       int          `json:"time"`
+		Calendar   Calendar     `json:"calendar"`
 		World      []*Region    `json:"world"`
 		Items      []*Item      `json:"items"`
 		Characters []*Character `json:"characters"`
@@ -57,6 +59,7 @@ func (sim *Simulation) SaveState() error {
 		Paused:     sim.Paused,
 		Speed:      sim.Speed,
 		Time:       sim.Time,
+		Calendar:   sim.Calendar,
 		World:      sim.World,
 		Items:      sim.Items,
 		Characters: sim.Characters,
@@ -97,6 +100,7 @@ func LoadState(filename string) (*Simulation, error) {
 		Paused     bool         `json:"paused"`
 		Speed      int          `json:"speed"`
 		Time       int          `json:"time"`
+		Calendar   Calendar     `json:"calendar"`
 		World      []*Region    `json:"world"`
 		Items      []*Item      `json:"items"`
 		Characters []*Character `json:"characters"`
@@ -111,6 +115,7 @@ func LoadState(filename string) (*Simulation, error) {
 		Paused:     saveData.Paused,
 		Speed:      saveData.Speed,
 		Time:       saveData.Time,
+		Calendar:   saveData.Calendar,
 		World:      saveData.World,
 		Items:      saveData.Items,
 		Characters: saveData.Characters,
