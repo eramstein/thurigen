@@ -30,3 +30,14 @@ func (r *Renderer) CancelTileSelection() {
 func (r *Renderer) CancelCharacterSelection() {
 	r.UiState.SelectedCharacter = nil
 }
+
+func (r *Renderer) UpdatePreviousCharacterPositions(sim *ng.Simulation) {
+	for _, character := range sim.Characters {
+		r.UiState.PreviousCharacterPositions[character.ID] = character.Position
+	}
+}
+
+func (r *Renderer) InitPreviousCharacterPositions(sim *ng.Simulation) {
+	r.UiState.PreviousCharacterPositions = make(map[uint64]ng.Position)
+	r.UpdatePreviousCharacterPositions(sim)
+}

@@ -31,6 +31,7 @@ func NewRenderer(width, height int, sim *ng.Simulation) *Renderer {
 		},
 	}
 	r.camera = NewCamera(width, height)
+	r.InitPreviousCharacterPositions(sim)
 	return r
 }
 
@@ -83,7 +84,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	rl.BeginMode2D(r.camera.GetCamera())
 
 	r.DisplayRegion(sim)
-	r.DisplayCharacters(sim.Characters)
+	r.DisplayCharacters(sim)
 
 	// End camera drawing
 	rl.EndMode2D()

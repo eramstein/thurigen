@@ -22,8 +22,6 @@ func main() {
 	rl.SetTargetFPS(fps)
 	defer rl.CloseWindow()
 
-	ticker := 0
-
 	// Load static data (configs, etc)
 	loadData()
 
@@ -56,13 +54,14 @@ func main() {
 	for !rl.WindowShouldClose() {
 		inputManager.Update(sim, renderer)
 		if !sim.Paused {
-			if ticker == sim.Speed {
+			if renderer.UiState.Ticker == sim.Speed {
 				go func() {
+					renderer.UpdatePreviousCharacterPositions(sim)
 					sim.Update()
 				}()
-				ticker = 0
+				renderer.UiState.Ticker = 0
 			}
-			ticker++
+			renderer.UiState.Ticker++
 		}
 		render(renderer, sim)
 	}

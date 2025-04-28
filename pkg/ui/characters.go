@@ -7,10 +7,16 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (r *Renderer) DisplayCharacters(Characters []*ng.Character) {
-	for _, character := range Characters {
+func (r *Renderer) DisplayCharacters(sim *ng.Simulation) {
+	for _, character := range sim.Characters {
 		screenX := float32(character.Position.X * config.TilePixelSize)
 		screenY := float32(character.Position.Y * config.TilePixelSize)
+		prevScreenX := float32(r.UiState.PreviousCharacterPositions[character.ID].X * config.TilePixelSize)
+		prevScreenY := float32(r.UiState.PreviousCharacterPositions[character.ID].Y * config.TilePixelSize)
+
+		interpolationFactor := float32(r.UiState.Ticker) / float32(sim.Speed)
+		screenX = prevScreenX + (screenX-prevScreenX)*interpolationFactor
+		screenY = prevScreenY + (screenY-prevScreenY)*interpolationFactor
 
 		sheet := r.spriteManager.sheets[charactersSpriteSheet.Name]
 		if spriteRect, exists := sheet.Sprites[character.ID]; exists {

@@ -7,8 +7,8 @@ import (
 )
 
 func (sim *Simulation) InitCharacters() {
-	sim.MakeCharacter(1, "Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.5})
-	sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 31, Y: 30}, CharacterStats{Speed: 1})
+	sim.MakeCharacter(1, "Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.8})
+	sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 31, Y: 30}, CharacterStats{Speed: 1.45})
 }
 
 func (sim *Simulation) UpdateCharacters() {
@@ -113,8 +113,12 @@ func (sim *Simulation) Drink(character *Character, task *Task) {
 	if tile.Terrain != Water {
 		return
 	}
-	character.Needs.Water = 0
-	task.Progress = 100
+	task.Progress += 50
+	fmt.Println("Drinking", character.Name)
+	if task.Progress >= 100 {
+		character.Needs.Water = 0
+		task.Progress = 100
+	}
 }
 
 func (sim *Simulation) Sleep(character *Character, task *Task) {

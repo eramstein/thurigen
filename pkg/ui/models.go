@@ -5,7 +5,9 @@ import (
 )
 
 type Model struct {
-	DisplayedRegion   int
-	SelectedTile      *[2]int
-	SelectedCharacter *ng.Character
+	Ticker                     int
+	DisplayedRegion            int
+	SelectedTile               *[2]int
+	SelectedCharacter          *ng.Character
+	PreviousCharacterPositions map[uint64]ng.Position
 }
