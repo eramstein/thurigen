@@ -25,6 +25,14 @@ const (
 	WoodVolume
 )
 
+type MaterialType int
+
+const (
+	NoMaterial MaterialType = iota
+	RockMaterial
+	WoodMaterial
+)
+
 // MoveCost represents the cost of moving through a tile
 type MoveCost float64
 
@@ -199,5 +207,18 @@ func (o ObjectiveType) String() string {
 		return "Sleep Objective"
 	default:
 		return "Unknown Objective"
+	}
+}
+
+func (m MaterialType) String() string {
+	switch m {
+	case NoMaterial:
+		return "No Material"
+	case RockMaterial:
+		return "Rock Material"
+	case WoodMaterial:
+		return "Wood Material"
+	default:
+		return "Unknown Material"
 	}
 }

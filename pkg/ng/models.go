@@ -117,6 +117,11 @@ type BaseStructure struct {
 	MoveCost MoveCost // Cost to move through this structure
 }
 
+type WallStructure struct {
+	BaseStructure
+	Completion int // 0-100
+}
+
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
 type PlantStructure struct {
 	BaseStructure

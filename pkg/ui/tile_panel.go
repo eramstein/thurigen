@@ -79,6 +79,13 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			r.RenderText(prodText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}
+
+		// If it's a wall, show completion percentage
+		if wall, ok := structure.(*ng.WallStructure); ok {
+			completionText := fmt.Sprintf("Completion: %d%%", wall.Completion)
+			r.RenderText(completionText, panelX+10, yOffset)
+			yOffset += lineHeight
+		}
 	}
 
 	// Items information

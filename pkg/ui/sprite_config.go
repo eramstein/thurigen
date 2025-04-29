@@ -25,6 +25,15 @@ var structureToSpriteSheet = map[ng.StructureType]SpriteSheetConfig{
 			3: rl.NewRectangle(64, 0, 32, 32),
 		},
 	},
+	ng.Wall: {
+		Name:     "walls",
+		Path:     "assets/images/world/walls.png",
+		TileSize: 32,
+		Sprites: map[uint64]rl.Rectangle{
+			uint64(ng.WoodMaterial): rl.NewRectangle(0, 0, 32, 32),
+			uint64(ng.RockMaterial): rl.NewRectangle(32, 0, 32, 32),
+		},
+	},
 }
 
 var charactersSpriteSheet = SpriteSheetConfig{

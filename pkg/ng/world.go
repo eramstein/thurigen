@@ -2,13 +2,16 @@ package ng
 
 import (
 	"eramstein/thurigen/pkg/config"
+	"fmt"
 	"math/rand"
 )
 
 func (sim *Simulation) InitWorld() {
+	fmt.Println("Initializing world")
 	mainRegion := makeMainRegion()
 	sim.World = []*Region{mainRegion}
 	sim.addRandomTrees()
+	sim.addRuins()
 }
 
 func makeMainRegion() *Region {
@@ -163,6 +166,32 @@ func (sim *Simulation) addRandomTrees() {
 			sim.SpawnPlant(0, x, y, rand.Intn(2)+1)
 		}
 	}
+}
+
+// hardcoded ruins
+func (sim *Simulation) addRuins() {
+	sim.AddWall(0, 10, 10, RockMaterial, 100)
+	sim.AddWall(0, 10, 11, RockMaterial, 100)
+	sim.AddWall(0, 10, 12, RockMaterial, 50)
+	sim.AddWall(0, 10, 13, RockMaterial, 50)
+	sim.AddWall(0, 10, 14, RockMaterial, 100)
+	sim.AddWall(0, 11, 14, RockMaterial, 100)
+	sim.AddWall(0, 12, 14, RockMaterial, 100)
+	sim.AddWall(0, 13, 14, RockMaterial, 100)
+	sim.AddWall(0, 15, 14, RockMaterial, 100)
+	sim.AddWall(0, 16, 14, RockMaterial, 100)
+	sim.AddWall(0, 17, 14, RockMaterial, 100)
+	sim.AddWall(0, 17, 13, RockMaterial, 100)
+	sim.AddWall(0, 17, 12, RockMaterial, 100)
+	sim.AddWall(0, 17, 11, RockMaterial, 100)
+	sim.AddWall(0, 17, 10, RockMaterial, 100)
+	sim.AddWall(0, 16, 10, RockMaterial, 100)
+	sim.AddWall(0, 15, 10, RockMaterial, 100)
+	sim.AddWall(0, 14, 10, RockMaterial, 100)
+	sim.AddWall(0, 13, 10, RockMaterial, 100)
+	sim.AddWall(0, 12, 10, RockMaterial, 100)
+	sim.AddWall(0, 11, 10, RockMaterial, 100)
+
 }
 
 // isValidTreeTile checks if a tile is suitable for a tree
