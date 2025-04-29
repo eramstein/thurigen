@@ -9,7 +9,7 @@ func (sim *Simulation) ScanForItem(position Position, maxDistance int, itemType 
 	// Check current tile
 	tile := &sim.World[position.Region].Tiles[position.X][position.Y]
 	for _, item := range tile.Items {
-		if item.Type == itemType && (unclaimedOnly == false || item.OwnedBy == nil) {
+		if item.Type == itemType && (!unclaimedOnly || item.OwnedBy == nil) {
 			return item
 		}
 	}
@@ -65,7 +65,7 @@ func (sim *Simulation) FindItemInTile(region int, x int, y int, itemType ItemTyp
 	// Check items on this tile
 	tile := &sim.World[region].Tiles[x][y]
 	for _, item := range tile.Items {
-		if item.Type == itemType && (unclaimedOnly == false || item.OwnedBy == nil) {
+		if item.Type == itemType && (!unclaimedOnly || item.OwnedBy == nil) {
 			return item
 		}
 	}

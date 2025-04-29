@@ -43,6 +43,7 @@ type Character struct {
 	Objectives  []*Objective
 	Ambitions   []*Ambition
 	Needs       Needs
+	Wants       Wants
 	Path        *[]Position
 }
 
@@ -54,6 +55,15 @@ type Needs struct {
 	Food  int // 0-100
 	Water int // 0-100
 	Sleep int // 1 = 1 minute of sleep needed
+}
+
+type Wants struct {
+	Confort Confort
+}
+
+type Confort struct {
+	Total           int
+	SleepConditions int // -10 to 10, how confortable last sleep was
 }
 
 type Task struct {

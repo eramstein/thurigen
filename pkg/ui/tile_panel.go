@@ -124,6 +124,13 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 		r.RenderText(fmt.Sprintf("  Sleep: %d%%", character.Needs.Sleep), panelX+10, yOffset)
 		yOffset += lineHeight
 
+		// Character wants
+		wantsText := "Wants:"
+		r.RenderText(wantsText, panelX+10, yOffset)
+		yOffset += lineHeight
+		r.RenderText(fmt.Sprintf("  Sleep Comfort: %d", character.Wants.Confort.SleepConditions), panelX+10, yOffset)
+		yOffset += lineHeight
+
 		// Current tasks
 		if character.CurrentTask != nil {
 			tasksText := "Current Task:"

@@ -53,7 +53,7 @@ func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats
 		Position:  pos,
 		Stats:     stats,
 		Inventory: []*Item{},
-		Needs:     Needs{Food: 49, Water: 49, Sleep: 49},
+		Needs:     Needs{Food: 0, Water: 0, Sleep: 49},
 	}
 	sim.Characters = append(sim.Characters, character)
 	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
@@ -127,5 +127,6 @@ func (sim *Simulation) Sleep(character *Character, task *Task) {
 	if character.Needs.Sleep <= 0 {
 		character.Needs.Sleep = 0
 		task.Progress = 100
+		character.UpdateSleepConditionsWants(WantSleepOnFloor)
 	}
 }
