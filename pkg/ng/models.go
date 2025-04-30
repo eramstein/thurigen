@@ -67,15 +67,20 @@ type Confort struct {
 }
 
 type Task struct {
-	ID        uint64
-	Type      TaskType
-	Objective *Objective
-	Progress  float32     // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
-	Target    interface{} // Can be any type of struct
+	ID             uint64
+	Type           TaskType
+	ProductType    int // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
+	ProductVariant int // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
+	Objective      *Objective
+	Progress       float32     // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
+	Target         interface{} // optional target, for example for bulding tasks it's tile on which to build, for eating tasks it's the food item to eat
+	MaterialSource *Item       // optional, for bulding tasks it's the material item to use
 }
 
 type Objective struct {
-	Type ObjectiveType
+	Type    ObjectiveType
+	Variant int    // optional, further precises the objective by providing a variant (e.g. "build a house")
+	Plan    []Task // A Plan is a list of tasks needed to complete an objective. NOTE, TODO?: risk of circular reference, plan tasks must not point to the objective
 }
 
 type Ambition struct {
@@ -143,7 +148,8 @@ type Item struct {
 	Type          ItemType
 	Variant       int
 	OnTile        *Position
-	InInventoryOf *Character
-	OwnedBy       *Character
-	Efficiency    int // for food it's nutrition value
+	InInventoryOf uint64 // character id
+	OwnedBy       uint64 // character id
+	Efficiency    int    // for food it's nutrition value
+	Durability    int    // for materials it's how many builds they can support
 }

@@ -6,9 +6,18 @@ import (
 	"sync/atomic"
 )
 
+func (sim *Simulation) GetCharacter(id uint64) *Character {
+	for _, character := range sim.Characters {
+		if character.ID == id {
+			return character
+		}
+	}
+	return nil
+}
+
 func (sim *Simulation) InitCharacters() {
 	sim.MakeCharacter(1, "Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.8})
-	sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 31, Y: 30}, CharacterStats{Speed: 1.45})
+	//sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 35, Y: 35}, CharacterStats{Speed: 1.45})
 }
 
 func (sim *Simulation) UpdateCharacters() {
@@ -129,4 +138,37 @@ func (sim *Simulation) Sleep(character *Character, task *Task) {
 		task.Progress = 100
 		character.UpdateSleepConditionsWants(WantSleepOnFloor)
 	}
+}
+
+func (sim *Simulation) Build(character *Character, task *Task) {
+	materialSource := task.MaterialSource
+	if materialSource == nil || materialSource.Durability <= 0 {
+		fmt.Printf("WARNING: Material source %v to BUILD is inexistant or has no durability, drop task\n", materialSource)
+		sim.CompleteTask(character, task)
+		return
+	}
+	task.Progress += 10
+	sim.ReduceItemDurability(materialSource, 1)
+	if task.Progress >= 100 {
+		switch task.ProductType {
+		case int(Wall):
+			targetTile := task.Target.(*Position)
+			sim.AddWall(targetTile.Region, targetTile.X, targetTile.Y, MaterialType(task.ProductVariant), 0)
+		}
+		sim.CompleteTask(character, task)
+	}
+}
+
+func (sim *Simulation) PickUp(character *Character, task *Task) {
+	item := task.Target.(*Item)
+	if item.OnTile == nil || !IsAdjacent(character.Position.X, character.Position.Y, item.OnTile.X, item.OnTile.Y) {
+		fmt.Printf("WARNING: Item %v to PICKUP is not on a tile or not adjacent, drop task\n", item)
+		sim.CompleteTask(character, task)
+		return
+	}
+	fmt.Printf("Picking up %v\n", item)
+	character.Inventory = append(character.Inventory, item)
+	item.InInventoryOf = character.ID
+	sim.RemoveItemFromTile(item)
+	sim.CompleteTask(character, task)
 }

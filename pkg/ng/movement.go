@@ -40,12 +40,16 @@ func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bo
 func (sim *Simulation) MoveForTask(character *Character, task *Task) {
 	target, ok := task.Target.(*Position)
 	if !ok {
-		fmt.Printf("Task target is not a Position: %v\n", task.Target)
+		fmt.Printf("Task target is not a *Position: %v\n", task.Target)
 		return
 	}
-
 	if character.Path == nil || (*character.Path)[len(*character.Path)-1] != *target {
 		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, target.X, target.Y, 0)
+		if path == nil {
+			// TODO: roll back objective planning due to invalid path
+			fmt.Printf("No path found for %v to %v\n", character.Name, target)
+			return
+		}
 		character.Path = &path
 	}
 	sim.FollowPath(character, task, false)

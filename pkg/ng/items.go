@@ -1,5 +1,7 @@
 package ng
 
+import "fmt"
+
 func (sim *Simulation) SpawnItem(item *Item, position Position) {
 	// Set item's position
 	item.OnTile = &position
@@ -12,20 +14,17 @@ func (sim *Simulation) SpawnItem(item *Item, position Position) {
 
 func (sim *Simulation) DeleteItem(item *Item) {
 	// remove reference of item in inventories
-	if item.InInventoryOf != nil {
-		for i, inventoryRef := range item.InInventoryOf.Inventory {
+	if item.InInventoryOf != 0 {
+		character := sim.GetCharacter(item.InInventoryOf)
+		for i, inventoryRef := range character.Inventory {
 			if inventoryRef == item {
-				item.InInventoryOf.Inventory = append(item.InInventoryOf.Inventory[:i], item.InInventoryOf.Inventory[i+1:]...)
+				character.Inventory = append(character.Inventory[:i], character.Inventory[i+1:]...)
 			}
 		}
 	}
 	// remove reference of item on tiles
 	if item.OnTile != nil {
-		for i, tileItemRef := range sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items {
-			if tileItemRef == item {
-				sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items = append(sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[:i], sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[i+1:]...)
-			}
-		}
+		sim.RemoveItemFromTile(item)
 	}
 	// remove actual item in simulation
 	for i, simItem := range sim.Items {
@@ -33,6 +32,26 @@ func (sim *Simulation) DeleteItem(item *Item) {
 			sim.Items = append(sim.Items[:i], sim.Items[i+1:]...)
 		}
 	}
+}
+
+func (sim *Simulation) ReduceItemDurability(item *Item, amount int) {
+	item.Durability -= amount
+	if item.Durability <= 0 {
+		sim.DeleteItem(item)
+	}
+}
+
+func (sim *Simulation) RemoveItemFromTile(item *Item) {
+	if item.OnTile == nil {
+		fmt.Printf("WARNING: Item %v to REMOVE FROM TILE is not on a tile, drop task\n", item)
+		return
+	}
+	for i, tileItem := range sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items {
+		if tileItem == item {
+			sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items = append(sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[:i], sim.World[item.OnTile.Region].Tiles[item.OnTile.X][item.OnTile.Y].Items[i+1:]...)
+		}
+	}
+	item.OnTile = nil
 }
 
 func MakeItem(itemType ItemType, variant int) Item {
@@ -43,6 +62,8 @@ func MakeItem(itemType ItemType, variant int) Item {
 	switch itemType {
 	case Food:
 		item.Efficiency = 50
+	case Material:
+		item.Durability = 10
 	}
 	return item
 }

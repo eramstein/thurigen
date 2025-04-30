@@ -6,7 +6,7 @@ func NewSimulation() *Simulation {
 		Speed: 60,
 		Calendar: Calendar{
 			Minute: 0,
-			Hour:   5,
+			Hour:   7,
 			Day:    0,
 		},
 	}

@@ -116,7 +116,7 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 		yOffset += lineHeight
 
 		// Character name and ID
-		charText := fmt.Sprintf("Character: %s", character.Name)
+		charText := fmt.Sprintf("Character: %s (ID: %d)", character.Name, character.ID)
 		r.RenderText(charText, panelX+10, yOffset)
 		yOffset += lineHeight
 
@@ -145,6 +145,9 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			yOffset += lineHeight
 			taskText := fmt.Sprintf("  - %v - %v", character.CurrentTask.Type, character.CurrentTask.Objective.Type)
 			r.RenderText(taskText, panelX+10, yOffset)
+			yOffset += lineHeight
+			progressText := fmt.Sprintf("  Progress: %.0f%%", character.CurrentTask.Progress)
+			r.RenderText(progressText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}
 		if len(character.Tasks) > 0 {
@@ -175,13 +178,8 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			inventoryText := "Inventory:"
 			r.RenderText(inventoryText, panelX+10, yOffset)
 			yOffset += lineHeight
-			itemCounts := make(map[string]int)
 			for _, item := range character.Inventory {
-				config := ng.GetItemConfig(item.Type, item.Variant)
-				itemCounts[config.Name]++
-			}
-			for itemName, count := range itemCounts {
-				itemText := fmt.Sprintf("  - %s: %d", itemName, count)
+				itemText := fmt.Sprintf("  - %s: %d", item.Type, item.Variant)
 				r.RenderText(itemText, panelX+10, yOffset)
 				yOffset += lineHeight
 			}

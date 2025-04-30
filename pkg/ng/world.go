@@ -12,6 +12,7 @@ func (sim *Simulation) InitWorld() {
 	sim.World = []*Region{mainRegion}
 	sim.addRandomTrees()
 	sim.addRuins()
+	sim.spawnItems()
 }
 
 func makeMainRegion() *Region {
@@ -67,8 +68,8 @@ func getTileMoseCost(tile Tile) MoveCost {
 
 func addLake(tiles *[config.RegionSize][config.RegionSize]Tile) {
 	// Random lake parameters
-	centerX := rand.Intn(config.RegionSize-20) + 10 // Avoid edges
-	centerY := rand.Intn(config.RegionSize-20) + 10
+	centerX := rand.Intn(config.RegionSize-20) - 20 // Avoid edges
+	centerY := rand.Intn(config.RegionSize-20) - 20
 	limitSize := rand.Intn(8) + 10
 	directions := [4]float64{0.2, 0.2, 0.2, 0.2}
 
@@ -78,8 +79,8 @@ func addLake(tiles *[config.RegionSize][config.RegionSize]Tile) {
 
 func addMountain(tiles *[config.RegionSize][config.RegionSize]Tile) {
 	// Random lake parameters
-	centerX := rand.Intn(config.RegionSize-20) + 10 // Avoid edges
-	centerY := rand.Intn(config.RegionSize-20) + 10
+	centerX := rand.Intn(config.RegionSize-20) + 20 // Avoid edges
+	centerY := rand.Intn(config.RegionSize-20) + 20
 	limitSize := rand.Intn(8) + 20
 	directions := [4]float64{0.2, 0.4, 0.2, 0.4}
 
@@ -191,7 +192,13 @@ func (sim *Simulation) addRuins() {
 	sim.AddWall(0, 13, 10, RockMaterial, 100)
 	sim.AddWall(0, 12, 10, RockMaterial, 100)
 	sim.AddWall(0, 11, 10, RockMaterial, 100)
+}
 
+func (sim *Simulation) spawnItems() {
+	wood := MakeItem(Material, int(WoodMaterial))
+	wood2 := MakeItem(Material, int(WoodMaterial))
+	sim.SpawnItem(&wood, Position{Region: 0, X: 20, Y: 20})
+	sim.SpawnItem(&wood2, Position{Region: 0, X: 21, Y: 20})
 }
 
 // isValidTreeTile checks if a tile is suitable for a tree

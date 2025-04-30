@@ -75,7 +75,8 @@ const (
 	Eat
 	Drink
 	Sleep
-	Find
+	PickUp
+	Build
 )
 
 type ObjectiveType int
@@ -86,6 +87,14 @@ const (
 	DrinkObjective
 	EatObjective
 	SleepObjective
+	BuildObjective
+)
+
+type BuildObjectiveVariant int
+
+const (
+	NoVariant BuildObjectiveVariant = iota
+	BuildHouse
 )
 
 // String returns a human-readable description of the TerrainType
@@ -188,8 +197,10 @@ func (t TaskType) String() string {
 		return "Drink Task"
 	case Sleep:
 		return "Sleep Task"
-	case Find:
-		return "Find Task"
+	case PickUp:
+		return "PickUp Task"
+	case Build:
+		return "Build Task"
 	default:
 		return "Unknown Task"
 	}
@@ -205,6 +216,8 @@ func (o ObjectiveType) String() string {
 		return "Drink Objective"
 	case SleepObjective:
 		return "Sleep Objective"
+	case BuildObjective:
+		return "Build Objective"
 	default:
 		return "Unknown Objective"
 	}
@@ -220,5 +233,16 @@ func (m MaterialType) String() string {
 		return "Wood Material"
 	default:
 		return "Unknown Material"
+	}
+}
+
+func (v BuildObjectiveVariant) String() string {
+	switch v {
+	case NoVariant:
+		return "No Variant"
+	case BuildHouse:
+		return "Build House"
+	default:
+		return "Unknown Variant"
 	}
 }
