@@ -63,9 +63,14 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 	// Structure information
 	if tile.Occupation != nil && tile.Occupation.Structure != nil {
 		structure := tile.Occupation.Structure
+		var structureText string
 		base := structure.GetStructure()
-		config := ng.GetStructureConfig(base.Type, base.Variant)
-		structureText := fmt.Sprintf(config.Name)
+		if base.Type == ng.Wall {
+			structureText = fmt.Sprintf("Wall (%s)", ng.MaterialType(base.Variant))
+		} else {
+			config := ng.GetStructureConfig(base.Type, base.Variant)
+			structureText = fmt.Sprintf(config.Name)
+		}
 		r.RenderText(structureText, panelX+10, yOffset)
 		yOffset += lineHeight
 
