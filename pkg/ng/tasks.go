@@ -54,7 +54,6 @@ func (sim *Simulation) GetPriorityTask(character *Character) *Task {
 			break
 		}
 	}
-	fmt.Printf("topObjectiveFirstTask %v\n", topObjectiveFirstTask)
 	if topObjectiveFirstTask != nil {
 		return topObjectiveFirstTask
 	} else {
@@ -92,6 +91,8 @@ func (sim *Simulation) WorkOnPriorityTask(character *Character) {
 		sim.Build(character, task)
 	case PickUp:
 		sim.PickUp(character, task)
+	case Chop:
+		sim.Chop(character, task)
 	}
 	if task.Progress >= 100 {
 		sim.CompleteTask(character, task)
@@ -192,6 +193,7 @@ func (sim *Simulation) GetNextSleepingTask(character *Character, objective *Obje
 	return newTask
 }
 
+// TODO: split this up it became too complex
 func (sim *Simulation) GetNextBuildingTask(character *Character, objective *Objective) (task *Task) {
 	if len(objective.Plan) == 0 {
 		return nil
@@ -262,6 +264,21 @@ func (sim *Simulation) GetNextBuildingTask(character *Character, objective *Obje
 			}
 		} else {
 			fmt.Printf("No material found for %v\n", character.Name)
+			// go chop a tree (but not an apple tree)
+			closestTree := sim.FindClosestPlant(character.Position, Plant, 1, Tree)
+			if IsAdjacent(character.Position.X, character.Position.Y, closestTree.Position.X, closestTree.Position.Y) {
+				newTask = &Task{
+					Objective: objective,
+					Type:      Chop,
+					Target:    closestTree,
+				}
+			} else {
+				newTask = &Task{
+					Objective: objective,
+					Type:      Move,
+					Target:    &closestTree.Position,
+				}
+			}
 		}
 	}
 

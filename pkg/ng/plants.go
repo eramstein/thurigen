@@ -18,7 +18,7 @@ func (sim *Simulation) UpdatePlants() {
 	}
 }
 
-func (sim *Simulation) SpawnPlant(region int, x, y int, variant int) {
+func (sim *Simulation) SpawnPlant(region int, x, y int, variant int, plantType PlantType) {
 	structureConfig := GetStructureConfig(Plant, variant)
 	plant, ok := structureConfig.Structure.(*PlantStructure)
 	if !ok {
@@ -34,6 +34,7 @@ func (sim *Simulation) SpawnPlant(region int, x, y int, variant int) {
 			MoveCost: plant.MoveCost,
 			Position: Position{Region: region, X: x, Y: y},
 		},
+		PlantType:       plantType,
 		GrowthRate:      plant.GrowthRate,
 		ProductionRate:  plant.ProductionRate,
 		Produces:        plant.Produces,
@@ -54,4 +55,9 @@ func (plant *PlantStructure) Update() {
 	if plant.ProductionStage >= 100+plant.ProductionRate {
 		plant.ProductionStage = 0
 	}
+}
+
+func (sim *Simulation) ChopTree(tree *PlantStructure) {
+	sim.SpawnItem(&Item{Type: Material, Variant: int(WoodMaterial), Durability: tree.GrowthStage}, tree.Position)
+	sim.RemoveStructure(tree)
 }

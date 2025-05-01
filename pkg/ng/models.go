@@ -130,6 +130,7 @@ type WallStructure struct {
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
 type PlantStructure struct {
 	BaseStructure
+	PlantType       PlantType
 	GrowthStage     int // 0-100
 	ProductionStage int // 0-100
 	GrowthRate      int // How many growth stages per update

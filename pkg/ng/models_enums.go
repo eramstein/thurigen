@@ -77,6 +77,7 @@ const (
 	Sleep
 	PickUp
 	Build
+	Chop
 )
 
 type ObjectiveType int
@@ -201,6 +202,8 @@ func (t TaskType) String() string {
 		return "PickUp Task"
 	case Build:
 		return "Build Task"
+	case Chop:
+		return "Chop Task"
 	default:
 		return "Unknown Task"
 	}

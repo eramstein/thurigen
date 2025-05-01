@@ -172,3 +172,17 @@ func (sim *Simulation) PickUp(character *Character, task *Task) {
 	sim.RemoveItemFromTile(item)
 	sim.CompleteTask(character, task)
 }
+
+func (sim *Simulation) Chop(character *Character, task *Task) {
+	tree := task.Target.(*PlantStructure)
+	if tree == nil {
+		fmt.Printf("WARNING: Tree %v to CHOP is inexistant, drop task\n", tree)
+		sim.CompleteTask(character, task)
+		return
+	}
+	task.Progress += 20
+	if task.Progress >= 100 {
+		sim.ChopTree(tree)
+		sim.CompleteTask(character, task)
+	}
+}

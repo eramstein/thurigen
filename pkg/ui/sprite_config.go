@@ -62,6 +62,7 @@ var taskIconsSpriteSheet = SpriteSheetConfig{
 		uint64(ng.Eat):   rl.NewRectangle(32, 0, 32, 32),
 		uint64(ng.Drink): rl.NewRectangle(64, 0, 32, 32),
 		uint64(ng.Build): rl.NewRectangle(0, 32, 32, 32),
+		uint64(ng.Chop):  rl.NewRectangle(64, 32, 32, 32),
 	},
 }
 

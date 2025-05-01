@@ -32,7 +32,7 @@ func (r *Renderer) DisplayCharacters(sim *ng.Simulation) {
 		// Draw task icon if character has a current task that needs an icon
 		if character.CurrentTask != nil {
 			switch character.CurrentTask.Type {
-			case ng.Eat, ng.Drink, ng.Sleep, ng.Build:
+			case ng.Eat, ng.Drink, ng.Sleep, ng.Build, ng.Chop:
 				taskSheet := r.spriteManager.sheets[taskIconsSpriteSheet.Name]
 				if taskSpriteRect, exists := taskSheet.Sprites[uint64(character.CurrentTask.Type)]; exists {
 					// Draw the task icon in the top-left corner of the character's tile

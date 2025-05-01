@@ -164,7 +164,7 @@ func (sim *Simulation) addRandomTrees() {
 		tile := &sim.World[0].Tiles[x][y]
 
 		if isValidTreeTile(tile) {
-			sim.SpawnPlant(0, x, y, rand.Intn(2)+1)
+			sim.SpawnPlant(0, x, y, rand.Intn(2)+1, Tree)
 		}
 	}
 }
@@ -196,9 +196,7 @@ func (sim *Simulation) addRuins() {
 
 func (sim *Simulation) spawnItems() {
 	wood := MakeItem(Material, int(WoodMaterial))
-	wood2 := MakeItem(Material, int(WoodMaterial))
-	sim.SpawnItem(&wood, Position{Region: 0, X: 20, Y: 20})
-	sim.SpawnItem(&wood2, Position{Region: 0, X: 21, Y: 20})
+	sim.SpawnItem(&wood, Position{Region: 0, X: 28, Y: 28})
 }
 
 // isValidTreeTile checks if a tile is suitable for a tree
