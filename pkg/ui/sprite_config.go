@@ -61,6 +61,7 @@ var taskIconsSpriteSheet = SpriteSheetConfig{
 		uint64(ng.Sleep): rl.NewRectangle(0, 0, 32, 32),
 		uint64(ng.Eat):   rl.NewRectangle(32, 0, 32, 32),
 		uint64(ng.Drink): rl.NewRectangle(64, 0, 32, 32),
+		uint64(ng.Build): rl.NewRectangle(0, 32, 32, 32),
 	},
 }
 
@@ -78,5 +79,17 @@ var terrainSpriteSheet = SpriteSheetConfig{
 		6: rl.NewRectangle(0, 64, 32, 32),
 		7: rl.NewRectangle(32, 64, 32, 32),
 		8: rl.NewRectangle(64, 64, 32, 32),
+	},
+}
+
+var itemToSpriteSheet = map[ng.ItemType]SpriteSheetConfig{
+	ng.Material: {
+		Name:     "materials",
+		Path:     "assets/images/world/materials.png",
+		TileSize: 32,
+		Sprites: map[uint64]rl.Rectangle{
+			uint64(ng.WoodMaterial): rl.NewRectangle(0, 0, 32, 32),
+			uint64(ng.RockMaterial): rl.NewRectangle(32, 0, 32, 32),
+		},
 	},
 }

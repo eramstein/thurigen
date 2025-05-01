@@ -171,6 +171,17 @@ func (r *Renderer) RenderTileItems(tile ng.Tile, x, y int, tint rl.Color) {
 		// Draw the text
 		rl.DrawText(itemText, int32(textX), int32(textY), 10, tint)
 	}
+
+	// Render large item types (materials)
+	for _, item := range tile.Items {
+		if item.Type != ng.Material {
+			continue
+		}
+		sheet := r.spriteManager.sheets[itemToSpriteSheet[item.Type].Name]
+		if spriteRect, exists := sheet.Sprites[uint64(item.Variant)]; exists {
+			r.RenderItem(spriteRect, sheet.Texture, screenX, screenY, tint)
+		}
+	}
 }
 
 func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, growthStage int, tint rl.Color) {
@@ -188,6 +199,15 @@ func (r *Renderer) RenderPlant(spriteRect rl.Rectangle, texture rl.Texture2D, sc
 }
 
 func (r *Renderer) RenderStructure(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, tint rl.Color) {
+	rl.DrawTextureRec(
+		texture,
+		spriteRect,
+		rl.NewVector2(screenX, screenY),
+		tint,
+	)
+}
+
+func (r *Renderer) RenderItem(spriteRect rl.Rectangle, texture rl.Texture2D, screenX, screenY float32, tint rl.Color) {
 	rl.DrawTextureRec(
 		texture,
 		spriteRect,
