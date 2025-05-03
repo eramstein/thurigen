@@ -42,8 +42,15 @@ func (r *Renderer) GetCamera() rl.Camera2D {
 
 // LoadTextures loads all required textures for the renderer
 func (r *Renderer) LoadTextures() error {
-	// Load each structure sprite sheet
+	// Load each non-building structure sprite sheet
 	for _, config := range structureToSpriteSheet {
+		if err := r.spriteManager.LoadSpriteSheet(config.Name, config.Path, config.TileSize, config.Sprites); err != nil {
+			return fmt.Errorf("failed to load sprite sheet %s: %v", config.Name, err)
+		}
+	}
+
+	// Load each building sprite sheet
+	for _, config := range buildingTypeToSpriteSheet {
 		if err := r.spriteManager.LoadSpriteSheet(config.Name, config.Path, config.TileSize, config.Sprites); err != nil {
 			return fmt.Errorf("failed to load sprite sheet %s: %v", config.Name, err)
 		}

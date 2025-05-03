@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-func (sim *Simulation) FindClosestPlant(position Position, structureType StructureType, variant int, plantType PlantType) *PlantStructure {
+func (sim *Simulation) FindClosestPlant(position Position, structureType StructureType, variant int, plantType PlantVariant) *PlantStructure {
 	region := sim.World[position.Region]
 	var closestPlant *PlantStructure
 	minDistance := math.MaxFloat64

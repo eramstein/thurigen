@@ -65,8 +65,8 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 		structure := tile.Occupation.Structure
 		var structureText string
 		base := structure.GetStructure()
-		if base.Type == ng.Wall {
-			structureText = fmt.Sprintf("Wall (%s)", ng.MaterialType(base.Variant))
+		if base.Type == ng.Building {
+			structureText = fmt.Sprintf("Building (%s)", ng.BuildingVariant(base.Variant))
 		} else {
 			config := ng.GetStructureConfig(base.Type, base.Variant)
 			structureText = fmt.Sprintf(config.Name)
@@ -85,9 +85,9 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			yOffset += lineHeight
 		}
 
-		// If it's a wall, show completion percentage
-		if wall, ok := structure.(*ng.WallStructure); ok {
-			completionText := fmt.Sprintf("Completion: %d%%", wall.Completion)
+		// If it's a building, show completion percentage
+		if building, ok := structure.(*ng.BuildingStructure); ok {
+			completionText := fmt.Sprintf("Completion: %d%%", building.Completion)
 			r.RenderText(completionText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}

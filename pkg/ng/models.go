@@ -114,15 +114,16 @@ type Structure interface {
 
 // All structure types embed
 type BaseStructure struct {
-	Type     StructureType
-	Variant  int
-	Size     [2]int // Width and height in tiles
-	Position Position
-	Rotation int      // 0, 90, 180, 270 degrees
-	MoveCost MoveCost // Cost to move through this structure
+	Type         StructureType
+	Variant      int
+	Size         [2]int // Width and height in tiles
+	Position     Position
+	Rotation     int      // 0, 90, 180, 270 degrees
+	MoveCost     MoveCost // Cost to move through this structure
+	MaterialType MaterialType
 }
 
-type WallStructure struct {
+type BuildingStructure struct {
 	BaseStructure
 	Completion int // 0-100
 }
@@ -130,7 +131,7 @@ type WallStructure struct {
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
 type PlantStructure struct {
 	BaseStructure
-	PlantType       PlantType
+	PlantType       PlantVariant
 	GrowthStage     int // 0-100
 	ProductionStage int // 0-100
 	GrowthRate      int // How many growth stages per update

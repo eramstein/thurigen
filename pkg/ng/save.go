@@ -26,7 +26,7 @@ func init() {
 	gob.Register(&Calendar{})
 	gob.Register(&Wants{})
 	gob.Register(&Confort{})
-	gob.Register(&WallStructure{})
+	gob.Register(&BuildingStructure{})
 
 	// Register tile-related types
 	gob.Register([config.RegionSize][config.RegionSize]Tile{})

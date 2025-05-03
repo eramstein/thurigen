@@ -138,9 +138,20 @@ func (r *Renderer) RenderTileStructures(tile ng.Tile, x, y int, tint rl.Color) {
 		structure := tile.Occupation.Structure
 		base := structure.GetStructure()
 		// Get the sprite sheet name for this structure type
-		sheetConfig := structureToSpriteSheet[base.Type]
+		var sheetConfig SpriteSheetConfig
+		var spriteIndex uint64
+		if base.Type == ng.Building {
+			sheetConfig = buildingTypeToSpriteSheet[ng.BuildingVariant(base.Variant)]
+		} else {
+			sheetConfig = structureToSpriteSheet[base.Type]
+		}
+		if base.MaterialType != ng.NoMaterial {
+			spriteIndex = uint64(base.MaterialType)
+		} else {
+			spriteIndex = uint64(base.Variant)
+		}
 		sheet := r.spriteManager.sheets[sheetConfig.Name]
-		if spriteRect, exists := sheet.Sprites[uint64(base.Variant)]; exists {
+		if spriteRect, exists := sheet.Sprites[spriteIndex]; exists {
 			// Draw the sprite centered in the tile
 			if plant, ok := structure.(*ng.PlantStructure); ok {
 				r.RenderPlant(spriteRect, sheet.Texture, screenX, screenY, plant.GrowthStage, tint)

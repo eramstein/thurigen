@@ -18,7 +18,7 @@ func (sim *Simulation) UpdatePlants() {
 	}
 }
 
-func (sim *Simulation) SpawnPlant(region int, x, y int, variant int, plantType PlantType) {
+func (sim *Simulation) SpawnPlant(region int, x, y int, variant int, plantType PlantVariant) {
 	structureConfig := GetStructureConfig(Plant, variant)
 	plant, ok := structureConfig.Structure.(*PlantStructure)
 	if !ok {

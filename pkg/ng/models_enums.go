@@ -47,14 +47,23 @@ type StructureType int
 const (
 	NoStructure StructureType = iota
 	Plant
-	Wall
+	Building
 	Furniture
 )
 
-type PlantType int
+type BuildingVariant int
 
 const (
-	NoPlant PlantType = iota
+	NoBuildingVariant BuildingVariant = iota
+	Wall
+	Door
+	Window
+)
+
+type PlantVariant int
+
+const (
+	NoPlantVariant PlantVariant = iota
 	Tree
 )
 
@@ -149,8 +158,8 @@ func (s StructureType) String() string {
 		return "No Structure"
 	case Plant:
 		return "Plant"
-	case Wall:
-		return "Wall"
+	case Building:
+		return "Building"
 	case Furniture:
 		return "Furniture"
 	default:
@@ -158,10 +167,26 @@ func (s StructureType) String() string {
 	}
 }
 
+// String returns a human-readable description of the BuildingVariant
+func (b BuildingVariant) String() string {
+	switch b {
+	case NoBuildingVariant:
+		return "No Building"
+	case Wall:
+		return "Wall"
+	case Door:
+		return "Door"
+	case Window:
+		return "Window"
+	default:
+		return "Unknown Building"
+	}
+}
+
 // String returns a human-readable description of the PlantType
-func (p PlantType) String() string {
+func (p PlantVariant) String() string {
 	switch p {
-	case NoPlant:
+	case NoPlantVariant:
 		return "No Plant"
 	case Tree:
 		return "Tree"

@@ -25,6 +25,9 @@ var structureToSpriteSheet = map[ng.StructureType]SpriteSheetConfig{
 			3: rl.NewRectangle(64, 0, 32, 32),
 		},
 	},
+}
+
+var buildingTypeToSpriteSheet = map[ng.BuildingVariant]SpriteSheetConfig{
 	ng.Wall: {
 		Name:     "walls",
 		Path:     "assets/images/world/walls.png",
