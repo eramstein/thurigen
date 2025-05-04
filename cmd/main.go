@@ -55,6 +55,7 @@ func main() {
 		inputManager.Update(sim, renderer)
 		if !sim.Paused {
 			if renderer.UiState.Ticker == sim.Speed {
+				// TODO: is this efficient? we create one routine per second, check how they are handled
 				go func() {
 					renderer.UpdatePreviousCharacterPositions(sim)
 					sim.Update()

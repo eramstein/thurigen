@@ -2,13 +2,6 @@ package ng
 
 import "fmt"
 
-// These objective types can have only one ongoing task at a time
-var UniqueObjectiveTypes = map[ObjectiveType]bool{
-	DrinkObjective: true,
-	EatObjective:   true,
-	SleepObjective: true,
-}
-
 func (sim *Simulation) UpdateObjectives(character *Character) {
 	if character.Needs.Food >= 50 && !character.HasObjective(EatObjective) {
 		sim.AddObjective(character, EatObjective, 0)

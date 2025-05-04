@@ -62,12 +62,9 @@ func PrintCharacterDetails(character *Character) {
 		}
 	}
 
-	if len(character.Tasks) > 0 {
-		fmt.Printf("\nCurrent Tasks:\n")
-		for i, task := range character.Tasks {
-			fmt.Printf("  %d. ", i+1)
-			printTaskDetails(task, "     ")
-		}
+	if character.CurrentTask != nil {
+		fmt.Printf("\nCurrent Task:\n")
+		printTaskDetails(character.CurrentTask, "  ")
 	}
 
 	if len(character.Objectives) > 0 {

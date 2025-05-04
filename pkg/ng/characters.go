@@ -3,7 +3,6 @@ package ng
 import (
 	"eramstein/thurigen/pkg/config"
 	"fmt"
-	"sync/atomic"
 )
 
 func (sim *Simulation) GetCharacter(id uint64) *Character {
@@ -34,9 +33,9 @@ func (sim *Simulation) UpdateCharacters() {
 	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
 		for _, character := range sim.Characters {
 			if character.CurrentTask == nil {
-				sim.SetPriorityTask(character)
+				sim.SetCurrentTask(character)
 			}
-			sim.WorkOnPriorityTask(character)
+			sim.WorkOnCurrentTask(character)
 		}
 	}
 }
@@ -69,11 +68,6 @@ func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats
 	return character
 }
 
-func (character *Character) AddTask(task *Task) {
-	task.ID = atomic.AddUint64(&nextTaskID, 1)
-	character.Tasks = append(character.Tasks, task)
-}
-
 // How much movement points are needed for a character to move to a tile
 // One movement point corresponds to one tick for a character with speed 1 on a default tile
 // Returns -1 if the tile is impassable
@@ -103,7 +97,8 @@ func (sim *Simulation) SetCharacterPosition(character *Character, position Posit
 	character.Position = position
 }
 
-func (sim *Simulation) Eat(character *Character, task *Task) {
+func (sim *Simulation) Eat(character *Character) {
+	task := character.CurrentTask
 	item := task.Target.(*Item)
 	task.Progress += 10
 	fmt.Println("Eating", character.Name, item.Type)
@@ -116,7 +111,8 @@ func (sim *Simulation) Eat(character *Character, task *Task) {
 	}
 }
 
-func (sim *Simulation) Drink(character *Character, task *Task) {
+func (sim *Simulation) Drink(character *Character) {
+	task := character.CurrentTask
 	position := task.Target.(*Position)
 	tile := sim.World[position.Region].Tiles[position.X][position.Y]
 	if tile.Terrain != Water {
@@ -130,7 +126,8 @@ func (sim *Simulation) Drink(character *Character, task *Task) {
 	}
 }
 
-func (sim *Simulation) Sleep(character *Character, task *Task) {
+func (sim *Simulation) Sleep(character *Character) {
+	task := character.CurrentTask
 	fmt.Println("Sleeping", character.Name)
 	character.Needs.Sleep -= config.NeedSleepTick * 5
 	if character.Needs.Sleep <= 0 {
@@ -140,11 +137,12 @@ func (sim *Simulation) Sleep(character *Character, task *Task) {
 	}
 }
 
-func (sim *Simulation) Build(character *Character, task *Task) {
+func (sim *Simulation) Build(character *Character) {
+	task := character.CurrentTask
 	materialSource := task.MaterialSource
 	if materialSource == nil || materialSource.Durability <= 0 {
-		fmt.Printf("WARNING: Material source %v to BUILD is inexistant or has no durability, drop task\n", materialSource)
-		sim.CompleteTask(character, task)
+		fmt.Printf("WARNING: Material source %v to BUILD is inexistant or has no durability\n", materialSource)
+		sim.CancelTask(character)
 		return
 	}
 	task.Progress += 10
@@ -155,34 +153,34 @@ func (sim *Simulation) Build(character *Character, task *Task) {
 			targetTile := task.Target.(*Position)
 			sim.AddWall(targetTile.Region, targetTile.X, targetTile.Y, MaterialType(task.ProductVariant), 0)
 		}
-		sim.CompleteTask(character, task)
 	}
 }
 
-func (sim *Simulation) PickUp(character *Character, task *Task) {
+func (sim *Simulation) PickUp(character *Character) {
+	task := character.CurrentTask
 	item := task.Target.(*Item)
 	if item.OnTile == nil || !IsAdjacent(character.Position.X, character.Position.Y, item.OnTile.X, item.OnTile.Y) {
-		fmt.Printf("WARNING: Item %v to PICKUP is not on a tile or not adjacent, drop task\n", item)
-		sim.CompleteTask(character, task)
+		fmt.Printf("WARNING: Item %v to PICKUP is not on a tile or not adjacent\n", item)
+		sim.CancelTask(character)
 		return
 	}
 	fmt.Printf("Picking up %v\n", item)
 	character.Inventory = append(character.Inventory, item)
 	item.InInventoryOf = character.ID
 	sim.RemoveItemFromTile(item)
-	sim.CompleteTask(character, task)
+	task.Progress = 100
 }
 
-func (sim *Simulation) Chop(character *Character, task *Task) {
+func (sim *Simulation) Chop(character *Character) {
+	task := character.CurrentTask
 	tree := task.Target.(*PlantStructure)
 	if tree == nil {
-		fmt.Printf("WARNING: Tree %v to CHOP is inexistant, drop task\n", tree)
-		sim.CompleteTask(character, task)
+		fmt.Printf("WARNING: Tree %v to CHOP is inexistant\n", tree)
+		sim.CancelTask(character)
 		return
 	}
 	task.Progress += 20
 	if task.Progress >= 100 {
 		sim.ChopTree(tree)
-		sim.CompleteTask(character, task)
 	}
 }

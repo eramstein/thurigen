@@ -2,10 +2,11 @@ package ng
 
 import "fmt"
 
-func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bool) {
+func (sim *Simulation) FollowPath(character *Character, extraMove bool) {
 	if character.Path == nil {
 		return
 	}
+	task := character.CurrentTask
 	path := *character.Path
 	if len(path) > 0 {
 		moveCost := sim.GetMoveCost(character, path[0])
@@ -23,7 +24,7 @@ func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bo
 			sim.SetCharacterPosition(character, path[0])
 			if len(path) == 1 {
 				character.Path = nil
-				sim.CompleteTask(character, task)
+				sim.CompleteTask(character)
 				return
 			}
 			newPath := path[1:]
@@ -31,13 +32,14 @@ func (sim *Simulation) FollowPath(character *Character, task *Task, extraMove bo
 			task.Progress = task.Progress - moveCost
 			// get started on next move if excess move points
 			if task.Progress >= 1 {
-				sim.FollowPath(character, task, true)
+				sim.FollowPath(character, true)
 			}
 		}
 	}
 }
 
-func (sim *Simulation) MoveForTask(character *Character, task *Task) {
+func (sim *Simulation) MoveForTask(character *Character) {
+	task := character.CurrentTask
 	target, ok := task.Target.(*Position)
 	if !ok {
 		fmt.Printf("Task target is not a *Position: %v\n", task.Target)
@@ -52,5 +54,5 @@ func (sim *Simulation) MoveForTask(character *Character, task *Task) {
 		}
 		character.Path = &path
 	}
-	sim.FollowPath(character, task, false)
+	sim.FollowPath(character, false)
 }

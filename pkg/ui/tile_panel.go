@@ -155,16 +155,6 @@ func (r *Renderer) DisplayTileSidePanel(sim *ng.Simulation) {
 			r.RenderText(progressText, panelX+10, yOffset)
 			yOffset += lineHeight
 		}
-		if len(character.Tasks) > 0 {
-			tasksText := "Task backlog:"
-			r.RenderText(tasksText, panelX+10, yOffset)
-			yOffset += lineHeight
-			for _, task := range character.Tasks {
-				taskText := fmt.Sprintf("  - %v - %v", task.Type, task.Objective.Type)
-				r.RenderText(taskText, panelX+10, yOffset)
-				yOffset += lineHeight
-			}
-		}
 
 		// Objectives
 		if len(character.Objectives) > 0 {

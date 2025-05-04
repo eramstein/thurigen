@@ -39,7 +39,6 @@ type Character struct {
 	Stats       CharacterStats
 	Inventory   []*Item
 	CurrentTask *Task
-	Tasks       []*Task
 	Objectives  []*Objective
 	Ambitions   []*Ambition
 	Needs       Needs
