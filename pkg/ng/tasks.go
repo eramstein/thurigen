@@ -11,6 +11,9 @@ func (sim *Simulation) SetCurrentTask(character *Character) {
 		nextTask := sim.CreateNextTask(character, topObjective)
 		if nextTask != nil {
 			character.CurrentTask = nextTask
+		} else {
+			topObjective.Stuck = true
+			fmt.Printf("Objective stuck because no task: %v\n", topObjective)
 		}
 	}
 }
@@ -61,13 +64,11 @@ func (sim *Simulation) CompleteTask(character *Character) {
 	if character.CurrentTask == nil {
 		return
 	}
-	fmt.Printf("Completing task:  %v %v %v\n", character.Name, character.CurrentTask.Type, character.CurrentTask.Objective)
+	fmt.Printf("Completing task:  %v %v %v\n", character.Name, character.CurrentTask.Type, character.CurrentTask.Objective.Type)
 	sim.CheckIfObjectiveIsAchieved(character, character.CurrentTask.Objective)
 	character.CurrentTask = nil
 }
 
-// TODO: at the moment cancelling a task because it's impossible (e.g. no path found) will only lead to recreating the same task
-// have the character drop objective or re-prioritize it
 func (sim *Simulation) CancelTask(character *Character) {
 	if character.CurrentTask == nil {
 		return
@@ -133,7 +134,7 @@ func (sim *Simulation) GetNextDrinkingTask(character *Character, objective *Obje
 		}
 	} else {
 		// stop one tile before the water tile
-		// problem: if closestWater is not accessible, there will be no path found and not task added
+		// problem: if closestWater is not accessible, there will be no path found and no task added
 		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, closestWater.X, closestWater.Y, 1)
 		if len(path) > 0 {
 			newTask = &Task{

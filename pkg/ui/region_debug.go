@@ -55,3 +55,30 @@ func (r *Renderer) HighlightSelectedCharacterPath(character *ng.Character) {
 		}
 	}
 }
+
+func (r *Renderer) HighlightSelectedCharacterObjectives(character *ng.Character) {
+	if character == nil {
+		return
+	}
+
+	for _, objective := range character.Objectives {
+		for _, task := range objective.Plan {
+			if task.Target != nil {
+				if pos, ok := task.Target.(*ng.Position); ok && pos != nil {
+					if pos.Region == r.UiState.DisplayedRegion {
+						screenX := float32(pos.X * config.TilePixelSize)
+						screenY := float32(pos.Y * config.TilePixelSize)
+						// Draw a semi-transparent yellow rectangle over the objective tile
+						rl.DrawRectangle(
+							int32(screenX),
+							int32(screenY),
+							int32(config.TilePixelSize),
+							int32(config.TilePixelSize),
+							rl.NewColor(255, 255, 0, 128),
+						)
+					}
+				}
+			}
+		}
+	}
+}

@@ -37,6 +37,24 @@ var buildingTypeToSpriteSheet = map[ng.BuildingVariant]SpriteSheetConfig{
 			uint64(ng.RockMaterial): rl.NewRectangle(32, 0, 32, 32),
 		},
 	},
+	ng.Door: {
+		Name:     "doors",
+		Path:     "assets/images/world/furniture.png",
+		TileSize: 32,
+		Sprites: map[uint64]rl.Rectangle{
+			uint64(ng.WoodMaterial): rl.NewRectangle(0, 0, 32, 32),
+			uint64(ng.RockMaterial): rl.NewRectangle(0, 0, 32, 32),
+		},
+	},
+	ng.Window: {
+		Name:     "windows",
+		Path:     "assets/images/world/furniture.png",
+		TileSize: 32,
+		Sprites: map[uint64]rl.Rectangle{
+			uint64(ng.WoodMaterial): rl.NewRectangle(32, 0, 32, 32),
+			uint64(ng.RockMaterial): rl.NewRectangle(32, 0, 32, 32),
+		},
+	},
 }
 
 var charactersSpriteSheet = SpriteSheetConfig{

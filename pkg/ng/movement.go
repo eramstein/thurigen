@@ -48,8 +48,8 @@ func (sim *Simulation) MoveForTask(character *Character) {
 	if character.Path == nil || (*character.Path)[len(*character.Path)-1] != *target {
 		path := sim.World[character.Position.Region].FindPath(character.Position.X, character.Position.Y, target.X, target.Y, 0)
 		if path == nil {
-			// TODO: roll back objective planning due to invalid path
 			fmt.Printf("No path found for %v to %v\n", character.Name, target)
+			sim.CancelTask(character)
 			return
 		}
 		character.Path = &path

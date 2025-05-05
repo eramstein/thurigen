@@ -90,6 +90,7 @@ func (r *Renderer) DisplayRegion(sim *ng.Simulation) {
 
 	// debug helpers
 	//r.HighlightSelectedCharacterPath(r.UiState.SelectedCharacter)
+	r.HighlightSelectedCharacterObjectives(r.UiState.SelectedCharacter)
 	//r.DrawGridLines(startTileX, startTileY, endTileX, endTileY)
 
 	r.BorderSelectedTile()

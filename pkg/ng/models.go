@@ -78,6 +78,7 @@ type Task struct {
 
 type Objective struct {
 	Type    ObjectiveType
+	Stuck   bool
 	Variant int    // optional, further precises the objective by providing a variant (e.g. "build a house")
 	Plan    []Task // A Plan is a list of tasks needed to complete an objective. NOTE, TODO?: risk of circular reference, plan tasks must not point to the objective
 }

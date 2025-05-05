@@ -70,7 +70,19 @@ func PrintCharacterDetails(character *Character) {
 	if len(character.Objectives) > 0 {
 		fmt.Printf("\nObjectives:\n")
 		for i, objective := range character.Objectives {
-			fmt.Printf("  %d. %v\n", i+1, objective.Type)
+			fmt.Printf("  %d. %v (Stuck: %v)\n", i+1, objective.Type, objective.Stuck)
+			if len(objective.Plan) > 0 {
+				fmt.Printf("    Plan:\n")
+				for j, task := range objective.Plan {
+					fmt.Printf("      %d. %v\n", j+1, task.Type)
+					if task.Target != nil {
+						if pos, ok := task.Target.(*Position); ok && pos != nil {
+							fmt.Printf("        Target: Region %d (X: %d, Y: %d)\n",
+								pos.Region, pos.X, pos.Y)
+						}
+					}
+				}
+			}
 		}
 	}
 

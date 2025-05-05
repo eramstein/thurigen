@@ -1,8 +1,18 @@
 package ng
 
-import "fmt"
+import (
+	"eramstein/thurigen/pkg/config"
+	"fmt"
+)
 
 func (sim *Simulation) UpdateObjectives(character *Character) {
+	// periodically un-stuck all objectives to try again
+	if sim.Time%config.CharacterObjectiveResetInterval == 0 {
+		for _, objective := range character.Objectives {
+			objective.Stuck = false
+		}
+	}
+
 	if character.Needs.Food >= 50 && !character.HasObjective(EatObjective) {
 		sim.AddObjective(character, EatObjective, 0)
 	}
@@ -72,14 +82,14 @@ func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objectiv
 	}
 }
 
-// Get the top priority objective (lowest ObjectiveType is highest priority)
+// Get the top non-stuck priority objective (lowest ObjectiveType is highest priority)
 func (sim *Simulation) GetTopPriorityObjective(character *Character) *Objective {
 	if len(character.Objectives) == 0 {
 		return nil
 	}
 	lowestObjective := character.Objectives[0]
 	for _, objective := range character.Objectives {
-		if objective.Type < lowestObjective.Type {
+		if !objective.Stuck && objective.Type < lowestObjective.Type {
 			lowestObjective = objective
 		}
 	}
@@ -98,28 +108,4 @@ func (sim *Simulation) PlanBuildingTasks(character *Character, objective *Object
 	case BuildHouse:
 		sim.PlanHouseBuildingTasks(character, objective)
 	}
-}
-
-func (sim *Simulation) PlanHouseBuildingTasks(character *Character, objective *Objective) {
-	// TODO: plan an actual house, for now just plan a wall next to the character
-	objective.Plan = append(objective.Plan, Task{
-		Type:           Build,
-		ProductType:    int(Wall),
-		ProductVariant: int(WoodMaterial),
-		Target: &Position{
-			Region: character.Position.Region,
-			X:      character.Position.X + 1,
-			Y:      character.Position.Y,
-		},
-	})
-	objective.Plan = append(objective.Plan, Task{
-		Type:           Build,
-		ProductType:    int(Wall),
-		ProductVariant: int(WoodMaterial),
-		Target: &Position{
-			Region: character.Position.Region,
-			X:      character.Position.X + 2,
-			Y:      character.Position.Y,
-		},
-	})
 }

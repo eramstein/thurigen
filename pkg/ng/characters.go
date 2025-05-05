@@ -148,11 +148,8 @@ func (sim *Simulation) Build(character *Character) {
 	task.Progress += 10
 	sim.ReduceItemDurability(materialSource, 1)
 	if task.Progress >= 100 {
-		switch task.ProductType {
-		case int(Wall):
-			targetTile := task.Target.(*Position)
-			sim.AddWall(targetTile.Region, targetTile.X, targetTile.Y, MaterialType(task.ProductVariant), 0)
-		}
+		targetTile := task.Target.(*Position)
+		sim.AddBuilding(targetTile.Region, targetTile.X, targetTile.Y, BuildingVariant(task.ProductType), MaterialType(task.ProductVariant), 100)
 	}
 }
 

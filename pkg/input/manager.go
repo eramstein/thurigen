@@ -64,7 +64,7 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 	}
 
 	if rl.IsKeyPressed(rl.KeyL) {
-		ng.PrintCharacterDetails(sim.Characters[1])
+		ng.PrintCharacterDetails(sim.Characters[0])
 	}
 
 	if rl.IsKeyPressed(rl.KeyF5) { // Press F5 to save

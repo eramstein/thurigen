@@ -11,6 +11,7 @@ const (
 
 	CharacterNeedsUpdateInterval     = 1
 	CharacterObjectiveUpdateInterval = 5
+	CharacterObjectiveResetInterval  = 60
 	CharacterTaskUpdateInterval      = 1
 
 	// TODO: restore to 1 after testing buildign

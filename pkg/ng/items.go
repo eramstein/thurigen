@@ -63,7 +63,7 @@ func MakeItem(itemType ItemType, variant int) Item {
 	case Food:
 		item.Efficiency = 50
 	case Material:
-		item.Durability = 10
+		item.Durability = 100
 	}
 	return item
 }

@@ -9,13 +9,12 @@ func (sim *Simulation) GetNextBuildingTask(character *Character, objective *Obje
 	if len(objective.Plan) == 0 {
 		return nil
 	}
-	var newTask *Task
 
 	// Building objectives have pre-planned set of build tasks
 	// Check if conditions to work on first one are met
 	nextBuildTask := objective.Plan[0]
-	buildTile, ok := nextBuildTask.Target.(*Position)
-	if !ok || buildTile == nil {
+	buildPos, ok := nextBuildTask.Target.(*Position)
+	if !ok || buildPos == nil {
 		fmt.Printf("ERR: Build task target is not a valid Position: %v\n", nextBuildTask.Target)
 		return nil
 	}
@@ -25,32 +24,47 @@ func (sim *Simulation) GetNextBuildingTask(character *Character, objective *Obje
 	}
 	requiredItemType, requiredItemVariant := getRequiredItem(nextBuildTask)
 
-	itemInInventory := character.FindInInventory(requiredItemType, requiredItemVariant)
-	if itemInInventory != nil {
-		newTask = buildFromInventory(character, objective, nextBuildTask, buildTile, itemInInventory)
-	} else if itemOnTile := sim.FindItemInTile(character.Position.Region, character.Position.X, character.Position.Y, requiredItemType, requiredItemVariant, false); itemOnTile != nil {
-		newTask = pickupMaterial(character, objective, itemOnTile)
-	} else {
-		newTask = sim.goGetMaterial(character, objective, requiredItemType, requiredItemVariant)
+	if sim.IsOccupied(Position{Region: buildPos.Region, X: buildPos.X, Y: buildPos.Y}) {
+		blockingStructure := sim.GetTile(*buildPos).Occupation.Structure
+		if blockingStructure.GetStructure().Type == Plant {
+			return &Task{
+				Objective: objective,
+				Type:      Chop,
+				Target:    blockingStructure,
+			}
+		}
+		fmt.Printf("ERR: Build tile %v is occupied by %v\n", buildPos, blockingStructure)
+		return nil
 	}
 
-	return newTask
+	itemInInventory := character.FindInInventory(requiredItemType, requiredItemVariant)
+	if itemInInventory != nil {
+		return buildFromInventory(character, objective, nextBuildTask, buildPos, itemInInventory)
+	} else if itemOnTile := sim.FindItemInTile(character.Position.Region, character.Position.X, character.Position.Y, requiredItemType, requiredItemVariant, false); itemOnTile != nil {
+		return pickupMaterial(character, objective, itemOnTile)
+	} else {
+		return sim.goGetMaterial(character, objective, requiredItemType, requiredItemVariant)
+	}
 }
 
 func getRequiredItem(nextBuildTask Task) (ItemType, int) {
 	var requiredItemType ItemType
 	var requiredItemVariant int
 	switch nextBuildTask.ProductType {
-	case int(Wall):
+	case int(Wall), int(Door), int(Window):
 		requiredItemType = Material
 		requiredItemVariant = nextBuildTask.ProductVariant
 	}
 	return requiredItemType, requiredItemVariant
 }
 
-func buildFromInventory(character *Character, objective *Objective, nextBuildTask Task, buildTile *Position, itemInInventory *Item) (task *Task) {
+func chopBlockingPlant(buildPos *Tile, objective *Objective) (task *Task) {
+	return
+}
+
+func buildFromInventory(character *Character, objective *Objective, nextBuildTask Task, buildPos *Position, itemInInventory *Item) (task *Task) {
 	// if the character is already adjacent to the build site, build and remove task from plan
-	if IsAdjacent(character.Position.X, character.Position.Y, buildTile.X, buildTile.Y) {
+	if IsAdjacent(character.Position.X, character.Position.Y, buildPos.X, buildPos.Y) {
 		// complete plan task: link to objective and used material source
 		nextBuildTask.Objective = objective
 		nextBuildTask.MaterialSource = itemInInventory
@@ -61,7 +75,7 @@ func buildFromInventory(character *Character, objective *Objective, nextBuildTas
 		return &Task{
 			Objective: objective,
 			Type:      Move,
-			Target:    buildTile,
+			Target:    buildPos,
 		}
 	}
 }
