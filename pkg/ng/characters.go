@@ -145,11 +145,11 @@ func (sim *Simulation) Build(character *Character) {
 		sim.CancelTask(character)
 		return
 	}
-	task.Progress += 10
+	task.Progress += 100
 	sim.ReduceItemDurability(materialSource, 1)
 	if task.Progress >= 100 {
 		targetTile := task.Target.(*Position)
-		sim.AddBuilding(targetTile.Region, targetTile.X, targetTile.Y, BuildingVariant(task.ProductType), MaterialType(task.ProductVariant), 100)
+		sim.AddBuilding(*targetTile, BuildingVariant(task.ProductType), MaterialType(task.ProductVariant), 100, task.Objective.Target.(*Edifice))
 	}
 }
 

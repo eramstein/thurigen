@@ -100,11 +100,11 @@ const (
 	BuildObjective
 )
 
-type BuildObjectiveVariant int
+type EdificeType int
 
 const (
-	NoVariant BuildObjectiveVariant = iota
-	BuildHouse
+	NoEdifice EdificeType = iota
+	House
 )
 
 // String returns a human-readable description of the TerrainType
@@ -264,13 +264,13 @@ func (m MaterialType) String() string {
 	}
 }
 
-func (v BuildObjectiveVariant) String() string {
-	switch v {
-	case NoVariant:
-		return "No Variant"
-	case BuildHouse:
-		return "Build House"
+func (e EdificeType) String() string {
+	switch e {
+	case NoEdifice:
+		return "No Edifice"
+	case House:
+		return "House"
 	default:
-		return "Unknown Variant"
+		return "Unknown Edifice"
 	}
 }

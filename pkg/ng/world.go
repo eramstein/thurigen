@@ -171,27 +171,31 @@ func (sim *Simulation) addRandomTrees() {
 
 // hardcoded ruins
 func (sim *Simulation) addRuins() {
-	sim.AddBuilding(0, 10, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 10, 11, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 10, 12, Wall, RockMaterial, 50)
-	sim.AddBuilding(0, 10, 13, Wall, RockMaterial, 50)
-	sim.AddBuilding(0, 10, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 11, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 12, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 13, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 15, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 16, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 17, 14, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 17, 13, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 17, 12, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 17, 11, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 17, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 16, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 15, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 14, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 13, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 12, 10, Wall, RockMaterial, 100)
-	sim.AddBuilding(0, 11, 10, Wall, RockMaterial, 100)
+	edifice := Edifice{
+		ID:   getNextID(),
+		Type: House,
+	}
+	sim.AddBuilding(Position{Region: 0, X: 10, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 10, Y: 11}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 10, Y: 12}, Wall, RockMaterial, 50, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 10, Y: 13}, Wall, RockMaterial, 50, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 10, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 11, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 12, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 13, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 15, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 16, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 17, Y: 14}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 17, Y: 13}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 17, Y: 12}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 17, Y: 11}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 17, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 16, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 15, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 14, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 13, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 12, Y: 10}, Wall, RockMaterial, 100, &edifice)
+	sim.AddBuilding(Position{Region: 0, X: 11, Y: 10}, Wall, RockMaterial, 100, &edifice)
 }
 
 func (sim *Simulation) spawnItems() {

@@ -58,10 +58,6 @@ func getRequiredItem(nextBuildTask Task) (ItemType, int) {
 	return requiredItemType, requiredItemVariant
 }
 
-func chopBlockingPlant(buildPos *Tile, objective *Objective) (task *Task) {
-	return
-}
-
 func buildFromInventory(character *Character, objective *Objective, nextBuildTask Task, buildPos *Position, itemInInventory *Item) (task *Task) {
 	// if the character is already adjacent to the build site, build and remove task from plan
 	if IsAdjacent(character.Position.X, character.Position.Y, buildPos.X, buildPos.Y) {

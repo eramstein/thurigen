@@ -25,9 +25,8 @@ func (sim *Simulation) UpdateObjectives(character *Character) {
 		sim.AddObjective(character, SleepObjective, 0)
 	}
 
-	// TODO: better trigger for building a house
-	if character.Wants.Confort.SleepConditions <= 0 && !character.HasObjective(BuildObjective) {
-		createdObjective := sim.AddObjective(character, BuildObjective, int(BuildHouse))
+	if !character.Wants.Safety.HasHouse && !character.HasObjective(BuildObjective) {
+		createdObjective := sim.AddObjective(character, BuildObjective, int(House))
 		sim.PlanObjectiveTasks(character, createdObjective)
 	}
 }
@@ -78,6 +77,8 @@ func (sim *Simulation) CheckIfObjectiveIsAchieved(character *Character, objectiv
 	case BuildObjective:
 		if len(objective.Plan) == 0 {
 			character.CompleteObjective(objective)
+			objective.Target.(*Edifice).IsComplete = true
+			character.Wants.Safety.HasHouse = true
 		}
 	}
 }
@@ -104,8 +105,21 @@ func (sim *Simulation) PlanObjectiveTasks(character *Character, objective *Objec
 }
 
 func (sim *Simulation) PlanBuildingTasks(character *Character, objective *Objective) {
-	switch BuildObjectiveVariant(objective.Variant) {
-	case BuildHouse:
+	//create edifice
+	edifice := Edifice{
+		ID:        getNextID(),
+		Type:      EdificeType(objective.Variant),
+		OwnedBy:   character.ID,
+		Buildings: []*BuildingStructure{},
+	}
+	sim.AddEdifice(character.Position.Region, edifice)
+
+	// make the objective target the edifice
+	objective.Target = &edifice
+
+	// plan tasks
+	switch EdificeType(objective.Variant) {
+	case House:
 		sim.PlanHouseBuildingTasks(character, objective)
 	}
 }

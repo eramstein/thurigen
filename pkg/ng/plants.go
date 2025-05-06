@@ -28,6 +28,7 @@ func (sim *Simulation) SpawnPlant(region int, x, y int, variant int, plantType P
 
 	newPlant := &PlantStructure{
 		BaseStructure: BaseStructure{
+			ID:       getNextID(),
 			Type:     Plant,
 			Variant:  variant,
 			Size:     [2]int{1, 1},
@@ -40,9 +41,8 @@ func (sim *Simulation) SpawnPlant(region int, x, y int, variant int, plantType P
 		Produces:        plant.Produces,
 		ProductionStage: 99,
 	}
-
 	sim.World[region].Plants = append(sim.World[region].Plants, newPlant)
-	sim.AddStructure(newPlant)
+	sim.AddStructureOccupation(newPlant)
 }
 
 func (plant *PlantStructure) Update() {
@@ -59,5 +59,10 @@ func (plant *PlantStructure) Update() {
 
 func (sim *Simulation) ChopTree(tree *PlantStructure) {
 	sim.SpawnItem(&Item{Type: Material, Variant: int(WoodMaterial), Durability: tree.GrowthStage}, tree.Position)
-	sim.RemoveStructure(tree)
+	sim.RemovePlant(tree)
+}
+
+func (sim *Simulation) RemovePlant(plant *PlantStructure) {
+	sim.RemoveStructureOccupation(plant)
+	sim.World[plant.Position.Region].Plants = removeFromSlice(sim.World[plant.Position.Region].Plants, plant)
 }

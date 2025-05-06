@@ -2,7 +2,7 @@ package ng
 
 import "eramstein/thurigen/pkg/config"
 
-func (sim *Simulation) AddStructure(structure Structure) {
+func (sim *Simulation) AddStructureOccupation(structure Structure) {
 	base := structure.GetStructure()
 
 	// Update the tiles it occupies
@@ -24,7 +24,7 @@ func (sim *Simulation) AddStructure(structure Structure) {
 	}
 }
 
-func (sim *Simulation) RemoveStructure(structure Structure) {
+func (sim *Simulation) RemoveStructureOccupation(structure Structure) {
 	base := structure.GetStructure()
 
 	// Update the tiles it occupies
@@ -37,7 +37,14 @@ func (sim *Simulation) RemoveStructure(structure Structure) {
 			}
 		}
 	}
-	if plant, ok := structure.(*PlantStructure); ok {
-		sim.World[base.Position.Region].Plants = append(sim.World[base.Position.Region].Plants, plant)
+}
+
+// removeFromSlice removes a structure from a slice of structures by ID
+func removeFromSlice[T Structure](slice []T, structure T) []T {
+	for i, s := range slice {
+		if s.GetStructure().ID == structure.GetStructure().ID {
+			return append(slice[:i], slice[i+1:]...)
+		}
 	}
+	return slice
 }

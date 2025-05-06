@@ -58,11 +58,16 @@ type Needs struct {
 
 type Wants struct {
 	Confort Confort
+	Safety  Safety
 }
 
 type Confort struct {
 	Total           int
 	SleepConditions int // -10 to 10, how confortable last sleep was
+}
+
+type Safety struct {
+	HasHouse bool
 }
 
 type Task struct {
@@ -71,9 +76,9 @@ type Task struct {
 	ProductType    int // optional, precises the task is producing based on the Task Type, for example for bulding tasks it's the StructureType to build (e.g. Wall)
 	ProductVariant int // optional, further precises the task's product by providing a variant (e.g. Wooden Wall, Stone Wall)
 	Objective      *Objective
-	Progress       float32     // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
-	Target         interface{} // optional target, for example for bulding tasks it's tile on which to build, for eating tasks it's the food item to eat
-	MaterialSource *Item       // optional, for bulding tasks it's the material item to use
+	Progress       float32 // by default, 0 to 1, as percent of task already done, but can be used otherwise like for movement
+	Target         any     // optional target, for example for bulding tasks it's tile on which to build, for eating tasks it's the food item to eat
+	MaterialSource *Item   // optional, for bulding tasks it's the material item to use
 }
 
 type Objective struct {
@@ -81,6 +86,7 @@ type Objective struct {
 	Stuck   bool
 	Variant int    // optional, further precises the objective by providing a variant (e.g. "build a house")
 	Plan    []Task // A Plan is a list of tasks needed to complete an objective. NOTE, TODO?: risk of circular reference, plan tasks must not point to the objective
+	Target  any    // optional target, for example for bulding objectives it's an edifice to complete
 }
 
 type Ambition struct {
@@ -88,8 +94,9 @@ type Ambition struct {
 }
 
 type Region struct {
-	Tiles  [config.RegionSize][config.RegionSize]Tile // Tiles[X][Y]
-	Plants []*PlantStructure
+	Tiles    [config.RegionSize][config.RegionSize]Tile // Tiles[X][Y]
+	Plants   []*PlantStructure
+	Edifices []*Edifice
 }
 
 type Tile struct {
@@ -114,6 +121,7 @@ type Structure interface {
 
 // All structure types embed
 type BaseStructure struct {
+	ID           uint64
 	Type         StructureType
 	Variant      int
 	Size         [2]int // Width and height in tiles
@@ -125,7 +133,8 @@ type BaseStructure struct {
 
 type BuildingStructure struct {
 	BaseStructure
-	Completion int // 0-100
+	Completion      int // 0-100
+	PartOfEdificeID uint64
 }
 
 // Plants grow and can produce edible or craft materials (fruits, wood, etc.)
@@ -154,4 +163,12 @@ type Item struct {
 	OwnedBy       uint64 // character id
 	Efficiency    int    // for food it's nutrition value
 	Durability    int    // for materials it's how many builds they can support
+}
+
+type Edifice struct {
+	ID         uint64
+	Type       EdificeType
+	OwnedBy    uint64 // character id
+	Buildings  []*BuildingStructure
+	IsComplete bool
 }

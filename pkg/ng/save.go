@@ -27,6 +27,8 @@ func init() {
 	gob.Register(&Wants{})
 	gob.Register(&Confort{})
 	gob.Register(&BuildingStructure{})
+	gob.Register(&Edifice{})
+	gob.Register([]*Edifice{})
 
 	// Register tile-related types
 	gob.Register([config.RegionSize][config.RegionSize]Tile{})
@@ -165,5 +167,28 @@ func (sim *Simulation) ReconnectReferences() {
 	for _, character := range sim.Characters {
 		// Set correct character reference in tile
 		sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = character
+	}
+
+	// Reconnect structure-tile references
+	for _, region := range sim.World {
+		// Build maps for quick lookup
+		plantMap := make(map[uint64]*PlantStructure)
+		for _, plant := range region.Plants {
+			plantMap[plant.ID] = plant
+		}
+		for x := 0; x < config.RegionSize; x++ {
+			for y := 0; y < config.RegionSize; y++ {
+				tile := &region.Tiles[x][y]
+				if tile.Occupation != nil && tile.Occupation.Structure != nil {
+					id := tile.Occupation.Structure.GetStructure().ID
+					switch tile.Occupation.Structure.GetStructure().Type {
+					case Plant:
+						if realPlant, ok := plantMap[id]; ok {
+							tile.Occupation.Structure = realPlant
+						}
+					}
+				}
+			}
+		}
 	}
 }
