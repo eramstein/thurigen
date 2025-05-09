@@ -6,9 +6,9 @@ import (
 )
 
 func (sim *Simulation) GetCharacter(id uint64) *Character {
-	for _, character := range sim.Characters {
-		if character.ID == id {
-			return character
+	for i := range sim.Characters {
+		if sim.Characters[i].ID == id {
+			return sim.Characters[i]
 		}
 	}
 	return nil
@@ -16,26 +16,26 @@ func (sim *Simulation) GetCharacter(id uint64) *Character {
 
 func (sim *Simulation) InitCharacters() {
 	sim.MakeCharacter(1, "Henry", Position{Region: 0, X: 30, Y: 30}, CharacterStats{Speed: 1.8})
-	//sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 35, Y: 35}, CharacterStats{Speed: 1.45})
+	sim.MakeCharacter(2, "Ella", Position{Region: 0, X: 35, Y: 35}, CharacterStats{Speed: 1.45})
 }
 
 func (sim *Simulation) UpdateCharacters() {
 	if sim.Time%config.CharacterNeedsUpdateInterval == 0 {
-		for _, character := range sim.Characters {
-			character.UpdateNeeds()
+		for i := range sim.Characters {
+			sim.Characters[i].UpdateNeeds()
 		}
 	}
 	if sim.Time%config.CharacterObjectiveUpdateInterval == 0 {
-		for _, character := range sim.Characters {
-			sim.UpdateObjectives(character)
+		for i := range sim.Characters {
+			sim.UpdateObjectives(sim.Characters[i])
 		}
 	}
 	if sim.Time%config.CharacterTaskUpdateInterval == 0 {
-		for _, character := range sim.Characters {
-			if character.CurrentTask == nil {
-				sim.SetCurrentTask(character)
+		for i := range sim.Characters {
+			if sim.Characters[i].CurrentTask == nil {
+				sim.SetCurrentTask(sim.Characters[i])
 			}
-			sim.WorkOnCurrentTask(character)
+			sim.WorkOnCurrentTask(sim.Characters[i])
 		}
 	}
 }
@@ -48,24 +48,23 @@ func (character *Character) UpdateNeeds() {
 
 func (sim *Simulation) RemoveCharacter(character *Character) {
 	for i, c := range sim.Characters {
-		if c == character {
+		if c.ID == character.ID {
 			sim.Characters = append(sim.Characters[:i], sim.Characters[i+1:]...)
 		}
 	}
 }
 
-func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats CharacterStats) *Character {
-	character := &Character{
+func (sim *Simulation) MakeCharacter(id uint64, name string, pos Position, stats CharacterStats) {
+	character := Character{
 		ID:        id,
 		Name:      name,
 		Position:  pos,
 		Stats:     stats,
 		Inventory: []*Item{},
-		Needs:     Needs{Food: 0, Water: 0, Sleep: 49},
+		Needs:     Needs{Food: 49, Water: 49, Sleep: 49},
 	}
-	sim.Characters = append(sim.Characters, character)
-	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = character
-	return character
+	sim.Characters = append(sim.Characters, &character)
+	sim.World[pos.Region].Tiles[pos.X][pos.Y].Character = sim.Characters[len(sim.Characters)-1]
 }
 
 // How much movement points are needed for a character to move to a tile
@@ -101,7 +100,7 @@ func (sim *Simulation) Eat(character *Character) {
 	task := character.CurrentTask
 	item := task.Target.(*Item)
 	task.Progress += 10
-	fmt.Println("Eating", character.Name, item.Type)
+	fmt.Println("Eating", character.Name, item.Type, item.Efficiency)
 	if task.Progress >= 100 {
 		character.Needs.Food -= item.Efficiency
 		if character.Needs.Food < 0 {

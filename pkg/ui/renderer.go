@@ -104,7 +104,7 @@ func (r *Renderer) Render(sim *ng.Simulation) {
 	rl.EndMode2D()
 
 	// Display character portraits at the top of the screen
-	r.DisplayCharacterPortraits(sim.Characters)
+	r.DisplayCharacterPortraits(sim)
 
 	if sim.Paused {
 		r.RenderTextWithColor("Paused", r.screenWidth/2-50, r.screenHeight/2-10, rl.Red)

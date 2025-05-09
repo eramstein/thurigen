@@ -11,8 +11,7 @@ func (sim *Simulation) UpdatePlants() {
 		for _, plant := range region.Plants {
 			plant.Update()
 			if plant.Produces.Type != NoItem && plant.ProductionStage >= 100 {
-				item := MakeItem(plant.Produces.Type, plant.Produces.Variant)
-				sim.SpawnItem(&item, plant.Position)
+				sim.SpawnItem(Item{Type: plant.Produces.Type, Variant: plant.Produces.Variant, Durability: 100, Efficiency: 100}, plant.Position)
 			}
 		}
 	}
@@ -58,7 +57,7 @@ func (plant *PlantStructure) Update() {
 }
 
 func (sim *Simulation) ChopTree(tree *PlantStructure) {
-	sim.SpawnItem(&Item{Type: Material, Variant: int(WoodMaterial), Durability: tree.GrowthStage}, tree.Position)
+	sim.SpawnItem(Item{Type: Material, Variant: int(WoodMaterial), Durability: tree.GrowthStage}, tree.Position)
 	sim.RemovePlant(tree)
 }
 

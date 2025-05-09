@@ -199,8 +199,7 @@ func (sim *Simulation) addRuins() {
 }
 
 func (sim *Simulation) spawnItems() {
-	wood := MakeItem(Material, int(WoodMaterial))
-	sim.SpawnItem(&wood, Position{Region: 0, X: 28, Y: 28})
+	sim.SpawnItem(Item{Type: Material, Variant: int(WoodMaterial), Durability: 100}, Position{Region: 0, X: 28, Y: 28})
 }
 
 // isValidTreeTile checks if a tile is suitable for a tree

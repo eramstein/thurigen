@@ -48,8 +48,8 @@ func (r *Renderer) DisplayCharacters(sim *ng.Simulation) {
 	}
 }
 
-func (r *Renderer) DisplayCharacterPortraits(characters []*ng.Character) {
-	for i, character := range characters {
+func (r *Renderer) DisplayCharacterPortraits(sim *ng.Simulation) {
+	for i, character := range sim.Characters {
 		sheet := r.spriteManager.sheets[charactersSpriteSheet.Name]
 		if spriteRect, exists := sheet.Sprites[character.ID]; exists {
 			// Calculate position for this portrait

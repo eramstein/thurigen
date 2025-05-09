@@ -9,15 +9,14 @@ const (
 	TileSidePanelWidth = 350
 	BaseFontSize       = 16
 
-	CharacterNeedsUpdateInterval     = 1
-	CharacterObjectiveUpdateInterval = 5
+	CharacterNeedsUpdateInterval     = 5
+	CharacterObjectiveUpdateInterval = 10
 	CharacterObjectiveResetInterval  = 60
 	CharacterTaskUpdateInterval      = 1
 
-	// TODO: restore to 1 after testing buildign
-	NeedFoodTick  = 0
-	NeedWaterTick = 0
-	NeedSleepTick = 0
+	NeedFoodTick  = 1
+	NeedWaterTick = 1
+	NeedSleepTick = 1
 
 	// Character portrait UI settings
 	PortraitSize    = TilePixelSize * 2 // Twice the size of regular character icons

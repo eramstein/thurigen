@@ -12,7 +12,7 @@ type Simulation struct {
 	Time       int // in minutes since the start of the simulation
 	Calendar   Calendar
 	World      []*Region
-	Items      []*Item
+	Items      []Item // TODO: check if map by item type would be better (if we loop often by item type), or map by item id if we do a lot of random access
 	Characters []*Character
 }
 
@@ -156,6 +156,7 @@ type PlantProduction struct {
 // Items are small objects that can be on a tile, on a character, or in a container
 // They can be owned, traded, discarded, consumed, used for crafting, etc.
 type Item struct {
+	ID            uint64
 	Type          ItemType
 	Variant       int
 	OnTile        *Position

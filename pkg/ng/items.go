@@ -2,14 +2,15 @@ package ng
 
 import "fmt"
 
-func (sim *Simulation) SpawnItem(item *Item, position Position) {
+func (sim *Simulation) SpawnItem(item Item, position Position) {
+	item.ID = getNextID()
 	// Set item's position
 	item.OnTile = &position
 	// Add to simulation's items
 	sim.Items = append(sim.Items, item)
 	// Add to tile's items
 	tile := &sim.World[position.Region].Tiles[position.X][position.Y]
-	tile.Items = append(tile.Items, item)
+	tile.Items = append(tile.Items, &item)
 }
 
 func (sim *Simulation) DeleteItem(item *Item) {
@@ -28,7 +29,7 @@ func (sim *Simulation) DeleteItem(item *Item) {
 	}
 	// remove actual item in simulation
 	for i, simItem := range sim.Items {
-		if simItem == item {
+		if simItem.ID == item.ID {
 			sim.Items = append(sim.Items[:i], sim.Items[i+1:]...)
 		}
 	}
@@ -52,18 +53,4 @@ func (sim *Simulation) RemoveItemFromTile(item *Item) {
 		}
 	}
 	item.OnTile = nil
-}
-
-func MakeItem(itemType ItemType, variant int) Item {
-	item := Item{
-		Type:    itemType,
-		Variant: variant,
-	}
-	switch itemType {
-	case Food:
-		item.Efficiency = 50
-	case Material:
-		item.Durability = 100
-	}
-	return item
 }

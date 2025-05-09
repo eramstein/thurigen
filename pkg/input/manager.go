@@ -28,12 +28,12 @@ func (m *Manager) SetCamera(camera rl.Camera2D) {
 }
 
 // IsClickInPortraitArea checks if a click is within any character portrait area
-func (m *Manager) IsClickInPortraitArea(screenPos rl.Vector2, characters []*ng.Character) *ng.Character {
+func (m *Manager) IsClickInPortraitArea(screenPos rl.Vector2, sim *ng.Simulation) *ng.Character {
 	if screenPos.Y > float32(config.PortraitStartY+config.PortraitSize) || screenPos.X < float32(config.PortraitStartX) {
 		return nil
 	}
 
-	for i, character := range characters {
+	for i, character := range sim.Characters {
 		x := float32(config.PortraitStartX) + float32(i)*(float32(config.PortraitSize)+float32(config.PortraitSpacing))
 		y := float32(config.PortraitStartY)
 
@@ -94,7 +94,7 @@ func (m *Manager) Update(sim *ng.Simulation, renderer *ui.Renderer) {
 	// Handle clicks
 	if m.leftPressed && m.camera != nil {
 		// First check if we clicked on a portrait
-		if clickedCharacter := m.IsClickInPortraitArea(m.mousePosition, sim.Characters); clickedCharacter != nil {
+		if clickedCharacter := m.IsClickInPortraitArea(m.mousePosition, sim); clickedCharacter != nil {
 			renderer.CancelTileSelection()
 			renderer.ToggleCharacterSelection(clickedCharacter)
 			return

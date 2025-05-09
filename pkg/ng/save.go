@@ -14,8 +14,8 @@ import (
 func init() {
 	// Register all types that need to be encoded/decoded
 	gob.Register([]*Region{})
-	gob.Register([]*Item{})
-	gob.Register([]*Character{})
+	gob.Register([]Item{})
+	gob.Register([]Character{})
 	gob.Register([]*PlantStructure{})
 	gob.Register(&PlantStructure{})
 	gob.Register(&BaseStructure{})
@@ -58,7 +58,7 @@ func (sim *Simulation) SaveState() error {
 		Time       int          `json:"time"`
 		Calendar   Calendar     `json:"calendar"`
 		World      []*Region    `json:"world"`
-		Items      []*Item      `json:"items"`
+		Items      []Item       `json:"items"`
 		Characters []*Character `json:"characters"`
 	}{
 		Paused:     sim.Paused,
@@ -107,7 +107,7 @@ func LoadState(filename string) (*Simulation, error) {
 		Time       int          `json:"time"`
 		Calendar   Calendar     `json:"calendar"`
 		World      []*Region    `json:"world"`
-		Items      []*Item      `json:"items"`
+		Items      []Item       `json:"items"`
 		Characters []*Character `json:"characters"`
 	}
 
@@ -164,7 +164,8 @@ func LoadLatestState() (*Simulation, error) {
 // (some data is duplicated for performances reasons, for example which tile a character is on is stored both on the character and on the tile)
 func (sim *Simulation) ReconnectReferences() {
 	// Reconnect character-tile references
-	for _, character := range sim.Characters {
+	for i := range sim.Characters {
+		character := sim.Characters[i]
 		// Set correct character reference in tile
 		sim.World[character.Position.Region].Tiles[character.Position.X][character.Position.Y].Character = character
 	}
